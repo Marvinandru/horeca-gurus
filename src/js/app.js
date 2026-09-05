@@ -1352,6 +1352,10 @@ function dispatchOrderViaWhatsApp() {
 ⏰ *Scheduled Delivery:* ${deliverySlot}
 💳 *Payment Terms:* ${paymentTerm}
 ⛔ *STRICT ZERO-CREDIT POLICY:* Goods released only upon verified advance settlement or live M-Pesa Till payment at receiving bay.
+🛡️ *RECEIVING & RETURN POLICY:*
+• Non-standard material MUST be inspected and reported immediately upon receipt.
+• Return window: Maximum 2 days depending on item perishability.
+• Fresh Fish & Seafood: Strict NO-RETURN POLICY once accepted at receiving bay.
 
 📋 *ORDERED LINE ITEMS:*
 ${lineItemsText}

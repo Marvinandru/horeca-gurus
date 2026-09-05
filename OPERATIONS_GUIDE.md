@@ -40,7 +40,39 @@ MAHALE Distributors bans dirty gunny bags and disintegrating cardboard cartons. 
 
 ---
 
-## 3. Strict Zero-Credit Financial Execution (Cashflow Protection)
+## 3. Receiving Bay Inspection, Non-Standard Material Protocol & Tiered Return Policy
+
+To protect kitchen food safety, maintain strict HACCP standards, and guarantee commercial transparency, MAHALE Distributors enforces a rigorous receiving bay inspection protocol alongside a **perishability-graded return policy**:
+
+### 1. Mandatory Receiving Bay Protocol
+- All consignments must be inspected jointly by the client's receiving chef/storekeeper and the MAHALE delivery runner at the kitchen bay before the runner departs.
+- Temperature probe readings must be verified (Seafood 0°C–1°C on flake ice slurry, Meat 0°C–2°C, Produce 12°C–15°C).
+
+### 2. Immediate Reporting on Receipt for Non-Standard Material
+- **Rule**: Any **non-standard material** (e.g. bruised or defective produce, out-of-spec butchery cuts, sub-standard grading, off-odors, broken tamper seals, or temperature breaches) **MUST BE REPORTED ON RECEIPT IMMEDIATELY AFTER RECEIPT**.
+- **Action Required**: The receiving chef must note the defect on the delivery docket, capture photo evidence, and alert MAHALE 24/7 Dispatch Desk (`+254 722 841 290`) via WhatsApp before the delivery runner leaves the bay.
+- **Resolution**: Immediate reporting activates our **45-Minute Emergency Replacement SLA** (runner dispatched with Grade 1 replacement) or an instant credit note applied to the client's PO balance ledger.
+
+### 3. Tiered Return Policy Matrix (Maximum 2 Days Based on Perishability)
+
+Returns are strictly governed by how perishable the material is, with an absolute ceiling of **2 days**:
+
+| Commodity Category | Product Examples | Perishability Index | Return Policy & Allowable Window | Conditions for Eligibility |
+| :--- | :--- | :--- | :--- | :--- |
+| 🐟 **Fresh Fish & Coastal Seafood** | Lake Victoria Tilapia, Nile Perch, Lobster Tails, U-10 Tiger Prawns, Red Snapper, Calamari | **Ultra-High** (Extreme microbial vulnerability) | **STRICT NO-RETURN POLICY (0 Days)** once accepted | **No returns permitted once signed for & accepted at the receiving bay.** Non-standard fish must be rejected *immediately upon delivery*. Cannot be returned post-handover due to cold-chain break risk and food contamination hazards. |
+| 🍅 **High-Perishability Produce** | Mwea Salad Tomatoes, Kinangop Snow Peas, Fine French Beans, Export Herbs, Hass Avocados | **High** (Rapid respiration) | **Maximum 24 – 48 Hours (Max 2 Days)** | Must remain in original ventilated green Euro-crates with unbroken batch tracking; kitchen walk-in chiller temperature must be logged between 4°C – 8°C. |
+| 🥔 **Tubers, Bulbs & Root Staples** | Nyandarua Shangi Potatoes, Oloitokitok Red Onions, Garlic, Carrots | **Moderate** (Durable ambient goods) | **Maximum 2 Days (48 Hours)** | Internal rot or grading size deviation exceeding 3% tolerance. Must be stored in dry, well-ventilated conditions. |
+| 🥩 **Prime Halal Butchery & Meats** | Aged Boran Beef Ribeye/Striploin, Halal Mbuzi, Lamb Racks | **Sensitive / Controlled** (0°C – 2°C) | **Maximum 2 Days (48 Hours)** | Vacuum packaging must be 100% intact and undamaged. Continuous cold storage (0°C–2°C) audit trail required. |
+| 📦 **Dry Pantry & Export Staples** | Dried Legumes, Packaging Liners, Seasoning Salt | **Low** (Shelf-stable) | **Maximum 2 Days (48 Hours)** | Unopened, undamaged original packaging. |
+
+### 4. Non-Returnable Conditions
+- Products inspected and signed off as compliant at delivery that subsequently spoil due to kitchen refrigeration breakdown, improper handling, or extended ambient room exposure.
+- Any fresh fish or seafood once the delivery runner has departed the receiving bay.
+- Consignments where original tamper-evident seals or MAHALE crate identification tags have been removed or altered.
+
+---
+
+## 4. Strict Zero-Credit Financial Execution (Cashflow Protection)
 
 Traditional food wholesalers in Kenya frequently collapse due to 60-to-90 day hotel invoice debts. **MAHALE Distributors operates under an iron-clad Zero-Credit Policy**:
 
@@ -61,7 +93,7 @@ Traditional food wholesalers in Kenya frequently collapse due to 60-to-90 day ho
 
 ---
 
-## 4. Kenya Produce & Commodity Sourcing Intelligence
+## 5. Kenya Produce & Commodity Sourcing Intelligence
 
 Wholesale benchmarks refresh dynamically every morning based on harvest arrivals in Nairobi and landing pier haulage.
 
@@ -78,7 +110,7 @@ Wholesale benchmarks refresh dynamically every morning based on harvest arrivals
 
 ---
 
-## 5. Converting Cold Restaurant Leads: The Chef's Tasting Basket
+## 6. Converting Cold Restaurant Leads: The Chef's Tasting Basket
 
 ### The Dilemma
 Head Chefs and F&B Managers receive 5–10 supplier calls daily. If you call trying to pitch a monthly contract, you will get an immediate rejection (*"We already have a supplier"*).
@@ -112,7 +144,7 @@ Head Chefs and F&B Managers receive 5–10 supplier calls daily. If you call try
 
 ---
 
-## 6. Nairobi Route Dispatch Matrix
+## 7. Nationwide & Regional Route Dispatch Matrix
 
 | Route | Dining Corridors Covered | Key Client Stops | Delivery Window |
 | :--- | :--- | :--- | :--- |
@@ -122,10 +154,13 @@ Head Chefs and F&B Managers receive 5–10 supplier calls daily. If you call try
 | **Route D (Gigiri & Two Rivers)** | Limuru Rd, Village Market, UN Crescent, Runda | Lord Erroll, Ocean Basket VM, Harvest, Tribe Hotel, Zen Garden | 06:00 AM – 07:15 AM |
 | **Route E (Karen & Lang'ata)** | Ngong Rd, Langata Rd, Karen Rd, Diani Close | Carnivore, The Talisman, Cultiva Kenya, Boho Eatery, Tamambo | 06:15 AM – 07:30 AM |
 | **Route F (Mombasa Rd & Airport)**| Mombasa Rd, Southern Bypass, JKIA Perimeter | Ole Sereni, Panari Hotel, Four Points by Sheraton JKIA | 05:30 AM – 06:45 AM |
+| **Route G (Mombasa & Coast Express)**| SGR Chilled Container / Chilled Truck (Mombasa, Diani, Watamu) | Severin Sea Lodge, Sarova Whitesands, Nomad Diani, Hemingways Watamu | 05:00 AM – 07:00 AM (Bi-weekly) |
+| **Route H (Rift Valley & Naivasha)**| Nairobi-Nakuru Highway Corridor | Enashipai, Great Rift Valley Lodge, Sopa Naivasha, Sarova Woodlands | 06:00 AM – 07:30 AM |
+| **Route I (Mount Kenya & Laikipia)**| Thika Superhighway to Nanyuki Corridor | Fairmont Mt Kenya Safari Club, Sweetwaters Serena, Maiyan Resort | 06:30 AM – 08:00 AM |
 
 ---
 
-## 7. Agricultural Export Gateway (JKIA Air Cargo to EU/UAE)
+## 8. Agricultural Export Gateway (JKIA Air Cargo to EU/UAE)
 
 1. **HCD Dealer License**: Authorized horticultural exporter certificate via AFA.
 2. **KEPHIS Phytosanitary Certificate**: Mandatory inspection at JKIA Cargo Village for pest-free compliance (False Codling Moth & Fruit Fly).
