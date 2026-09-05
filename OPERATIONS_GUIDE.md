@@ -1,10 +1,10 @@
-# HORECA Gurus Kenya: "Glovo for B2B" Operations Manual
+# HORECA Gurus Kenya: Operations SOPs (Standard Operating Procedures)
 
 > **Mission**: Deliver farm-fresh produce, coastal seafood, and abattoir meats to Kenya's premier commercial kitchens with the speed, technology, and SLA discipline of an on-demand logistics network — operating under a **Strict Zero-Credit Policy**.
 
 ---
 
-## 1. The "Glovo for B2B" Operating Philosophy
+## 1. High-Velocity Operations SOPs & Operating Philosophy
 
 Commercial kitchens (hotels, fine dining, upscale cafes, catering commissaries) operate under extreme time pressure and high table-turn volatility. Traditional Kenyan food suppliers fail them in two fatal ways:
 1. **Unpredictable Deliveries**: Arriving at 9:30 AM after kitchen prep has already stalled.
