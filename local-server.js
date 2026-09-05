@@ -38,7 +38,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       status: 'healthy',
-      engine: 'Node.js HORECA Gurus Gateway',
+      engine: 'Node.js MAHALE Distributors Gateway',
       version: '1.0.0'
     }));
     return;
@@ -76,7 +76,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log('=================================================================');
-  console.log('🌿 HORECA GURUS B2B PLATFORM (Node.js ES Module)');
+  console.log('🌿 MAHALE DISTRIBUTORS B2B PLATFORM (Node.js ES Module)');
   console.log('=================================================================');
   console.log(`🚀 Server running locally at: http://localhost:${PORT}`);
   console.log('Press Ctrl+C to stop.');

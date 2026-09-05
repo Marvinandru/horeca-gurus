@@ -12,8 +12,8 @@
 
 ---
 
-## 2. HORECA Gurus Platform Standards
-* **Project Identity**: The project name is strictly **HORECA Gurus**.
+## 2. MAHALE Distributors Platform Standards
+* **Project Identity**: The project name is strictly **MAHALE Distributors**.
 * **Development Server**: Maintain the local Node.js server running on `http://localhost:8000` and keep it open in the browser for live viewing during development.
 * **Continuous Version Control**: Automatically stage, commit with clear descriptive messages, and push all updates to GitHub:
   - Repository: `https://github.com/Marvinandru/horeca-gurus`

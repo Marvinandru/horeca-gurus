@@ -1,5 +1,5 @@
 /**
- * HORECA Gurus Default Inventory Catalog
+ * MAHALE Distributors Default Inventory Catalog
  * Structured across Farm Fresh Produce, Lake & Ocean Seafood, Butchery, and Export.
  * All items mapped to verified, high-resolution authentic local product assets.
  */

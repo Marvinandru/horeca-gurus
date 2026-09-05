@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HORECA Gurus Local Server
+MAHALE Distributors Local Server
 Zero-dependency Python 3 HTTP Server with REST API Endpoints and Static File Serving.
 """
 
@@ -13,7 +13,7 @@ import sys
 PORT = 8000
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-class HorecaGurusHandler(http.server.SimpleHTTPRequestHandler):
+class MahaleDistributorsHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
 
@@ -35,9 +35,9 @@ class HorecaGurusHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             response = {
                 "status": "healthy",
-                "service": "HORECA Gurus Supply Engine",
+                "service": "MAHALE Distributors Supply Engine",
                 "version": "1.0.0",
-                "regions": ["Nairobi", "Nyandarua", "Mwea", "Oloitokitok", "Kisumu"]
+                "regions": ["Nairobi", "Coast", "Rift Valley", "Western", "Mount Kenya"]
             }
             self.wfile.write(json.dumps(response).encode('utf-8'))
             return
@@ -54,7 +54,7 @@ class HorecaGurusHandler(http.server.SimpleHTTPRequestHandler):
                 response = {
                     "status": "success",
                     "orderId": order_id,
-                    "message": "Purchase order successfully received by Nairobi Dispatch Hub.",
+                    "message": "Purchase order successfully received by MAHALE Distributors Dispatch Hub.",
                     "data": order_payload
                 }
                 self.send_response(201)
@@ -74,9 +74,9 @@ class HorecaGurusHandler(http.server.SimpleHTTPRequestHandler):
 def run(port=PORT):
     # Allow port reuse immediately
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", port), HorecaGurusHandler) as httpd:
+    with socketserver.TCPServer(("", port), MahaleDistributorsHandler) as httpd:
         print("=" * 65)
-        print("🌿 HORECA GURUS B2B PLATFORM")
+        print("🌿 MAHALE DISTRIBUTORS B2B PLATFORM")
         print("=" * 65)
         print(f"🚀 Server running locally at: http://localhost:{port}")
         print("📦 Serving Kitchen Storefront, Market Intelligence & Leads CRM")

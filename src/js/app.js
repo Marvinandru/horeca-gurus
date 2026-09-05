@@ -1,5 +1,5 @@
 /**
- * HORECA Gurus Supply Platform Controller
+ * MAHALE Distributors Supply Platform Controller
  * Manages reactive state, digital ordering, dynamic daily market pricing,
  * Nairobi restaurant leads directory, and B2B Accounts CRM with Zero-Credit enforcement.
  */
@@ -22,18 +22,20 @@ import { DEFAULT_INVENTORY } from "../data/default_inventory.js";
 class Store {
   constructor() {
     this.inventory = this.loadInventory();
-    this.leads = this.loadState("horecagurus_leads", RESTAURANT_LEADS);
-    this.crmAccounts = this.loadState("horecagurus_crm_accounts", INITIAL_CRM_ACCOUNTS);
-    this.crmCallLogs = this.loadState("horecagurus_crm_logs", INITIAL_CALL_LOGS);
-    this.cart = this.loadState("horecagurus_cart", {});
+    this.leads = this.loadState("mahale_leads_v1", RESTAURANT_LEADS);
+    this.crmAccounts = this.loadState("mahale_crm_accounts_v1", INITIAL_CRM_ACCOUNTS);
+    this.crmCallLogs = this.loadState("mahale_crm_logs_v1", INITIAL_CALL_LOGS);
+    this.cart = this.loadState("mahale_cart_v1", {});
 
     this.activeTab = "storefront";
     this.categoryFilter = "all";
     this.searchQuery = "";
 
+    this.leadsRegionFilter = "all";
     this.leadsAreaFilter = "all";
     this.leadsStatusFilter = "all";
 
+    this.crmRegionFilter = "all";
     this.crmStageFilter = "all";
     this.crmAreaFilter = "all";
     this.crmSearchQuery = "";
@@ -41,7 +43,7 @@ class Store {
 
   loadInventory() {
     try {
-      const saved = localStorage.getItem("horecagurus_inventory_v4");
+      const saved = localStorage.getItem("mahale_inventory_v1");
       if (saved) {
         const parsed = JSON.parse(saved);
         const defaultMap = new Map(DEFAULT_INVENTORY.map((item) => [item.id, item]));
@@ -53,7 +55,7 @@ class Store {
           return item;
         });
       }
-      localStorage.setItem("horecagurus_inventory_v4", JSON.stringify(DEFAULT_INVENTORY));
+      localStorage.setItem("mahale_inventory_v1", JSON.stringify(DEFAULT_INVENTORY));
       return DEFAULT_INVENTORY;
     } catch (e) {
       console.warn("Failed to read inventory from storage:", e);
@@ -81,27 +83,27 @@ class Store {
 
   updateInventory(newInventory) {
     this.inventory = newInventory;
-    this.saveState("horecagurus_inventory_v4", this.inventory);
+    this.saveState("mahale_inventory_v1", this.inventory);
   }
 
   updateLeads(newLeads) {
     this.leads = newLeads;
-    this.saveState("horecagurus_leads", this.leads);
+    this.saveState("mahale_leads_v1", this.leads);
   }
 
   updateCRMAccounts(newAccounts) {
     this.crmAccounts = newAccounts;
-    this.saveState("horecagurus_crm_accounts", this.crmAccounts);
+    this.saveState("mahale_crm_accounts_v1", this.crmAccounts);
   }
 
   updateCRMCallLogs(newLogs) {
     this.crmCallLogs = newLogs;
-    this.saveState("horecagurus_crm_logs", this.crmCallLogs);
+    this.saveState("mahale_crm_logs_v1", this.crmCallLogs);
   }
 
   updateCart(newCart) {
     this.cart = newCart;
-    this.saveState("horecagurus_cart", this.cart);
+    this.saveState("mahale_cart_v1", this.cart);
   }
 }
 
@@ -191,6 +193,13 @@ function setupEventListeners() {
   }
 
   // Leads Filter Triggers
+  const leadsRegionSelect = document.getElementById("leads-region-filter");
+  if (leadsRegionSelect) {
+    leadsRegionSelect.addEventListener("change", (e) => {
+      store.leadsRegionFilter = e.target.value;
+      renderLeadsCRM();
+    });
+  }
   const leadsAreaSelect = document.getElementById("leads-area-filter");
   if (leadsAreaSelect) {
     leadsAreaSelect.addEventListener("change", (e) => {
@@ -281,6 +290,13 @@ function setupEventListeners() {
     updatePOForm.addEventListener("submit", handleUpdatePOSubmit);
   }
 
+  const crmRegionSelect = document.getElementById("crm-filter-region");
+  if (crmRegionSelect) {
+    crmRegionSelect.addEventListener("change", (e) => {
+      store.crmRegionFilter = e.target.value;
+      renderCRM();
+    });
+  }
   const crmStageSelect = document.getElementById("crm-filter-stage");
   if (crmStageSelect) {
     crmStageSelect.addEventListener("change", (e) => {
@@ -613,16 +629,17 @@ function renderLeadsCRM() {
   ).length;
 
   const filtered = leads.filter((lead) => {
+    const matchesRegion = store.leadsRegionFilter === "all" || (lead.region || "Nairobi") === store.leadsRegionFilter;
     const matchesArea = store.leadsAreaFilter === "all" || lead.area === store.leadsAreaFilter;
     const matchesStatus = store.leadsStatusFilter === "all" || lead.currentStatus === store.leadsStatusFilter;
-    return matchesArea && matchesStatus;
+    return matchesRegion && matchesArea && matchesStatus;
   });
 
   if (filtered.length === 0) {
     container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;">
-        <h3 style="color: #475569; font-weight: 700;">No restaurants match this filter</h3>
-        <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 4px;">Try selecting another Nairobi location hub or resetting the pipeline status.</p>
+        <h3 style="color: #475569; font-weight: 700;">No establishments match this filter</h3>
+        <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 4px;">Try selecting another Kenya region/location hub or resetting the pipeline stage.</p>
       </div>
     `;
     return;
@@ -646,7 +663,10 @@ function renderLeadsCRM() {
         <div>
           <div class="lead-card-top">
             <h4 class="lead-name">${lead.name}</h4>
-            <span class="lead-area-tag">📍 ${lead.area}</span>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end;">
+              <span class="lead-area-tag" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;">${lead.region || "Nairobi"}</span>
+              <span class="lead-area-tag">📍 ${lead.area}</span>
+            </div>
           </div>
           <div class="lead-cuisine">${lead.cuisine}</div>
           <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">
@@ -656,7 +676,7 @@ function renderLeadsCRM() {
           <!-- Tailored Supply Breakdown -->
           <div class="supply-box" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.78rem;">
             <div style="font-weight: 800; color: #0f172a; margin-bottom: 6px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;">
-              📦 What HORECA Gurus Supplies (${lead.area}):
+              📦 What MAHALE Distributors Supplies (${lead.area}):
             </div>
             <div style="margin-bottom: 3px; color: #1e40af;">
               🦐 <strong>Sea Food & Lake Fish:</strong> ${supply.seafood}
@@ -728,7 +748,7 @@ window.sendChefWhatsApp = (leadId) => {
   const phoneClean = lead.phone.replace(/[^0-9]/g, "");
   const template = SALES_SCRIPTS.whatsappPitch.template
     .replace("{chefName}", lead.name)
-    .replace("{salesRepName}", "HORECA Gurus Desk")
+    .replace("{salesRepName}", "MAHALE Distributors Desk")
     .replace("{potatoPrice}", "72")
     .replace("{tomatoPrice}", "85")
     .replace("{onionPrice}", "78")
@@ -758,7 +778,7 @@ window.viewPitchScript = (leadId) => {
     <div style="margin-bottom: 16px;">
       <h4 style="color: #059669; margin-bottom: 6px;">📞 Step 1: 60-Second Phone Pitch</h4>
       <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.5;">
-        <p style="margin-bottom: 8px;"><em>"Good morning Chef, this is HORECA Gurus Supply. I know kitchen prep is underway, so I'll be brief."</em></p>
+        <p style="margin-bottom: 8px;"><em>"Good morning Chef, this is MAHALE Distributors Supply. I know kitchen prep is underway, so I'll be brief."</em></p>
         <p style="margin-bottom: 8px;"><em>"We do direct 5:30 AM early morning deliveries of Nyandarua potatoes, Mwea tomatoes, coastal seafood (prawns, red snapper, calamari), aged Boran beef, and Lake Victoria fish to fine kitchens across ${lead.area}."</em></p>
         <p style="margin-bottom: 8px;"><em>"We fix your wholesale prices with a 100% zero-rejection guarantee and strict Advance or POD payment terms via M-Pesa Till before crate unsealing."</em></p>
         <p><strong>The Close:</strong> <em>"Can we drop off a free Chef's Tasting Basket this Thursday at 6:00 AM with 10kg Shangi potatoes, Mwea salad tomatoes, and fresh ocean prawns or Lake Tilapia fillets for your prep team to test?"</em></p>
@@ -779,7 +799,8 @@ window.viewPitchScript = (leadId) => {
 function handleAddLead(e) {
   e.preventDefault();
   const name = document.getElementById("new-lead-name").value.trim();
-  const area = document.getElementById("new-lead-area").value;
+  const region = document.getElementById("new-lead-region") ? document.getElementById("new-lead-region").value : "Nairobi";
+  const area = document.getElementById("new-lead-area-input") ? document.getElementById("new-lead-area-input").value.trim() : (document.getElementById("new-lead-area") ? document.getElementById("new-lead-area").value : "Nairobi");
   const exactLocation = document.getElementById("new-lead-location").value.trim();
   const cuisine = document.getElementById("new-lead-cuisine").value.trim();
   const decisionMaker = document.getElementById("new-lead-role").value.trim();
@@ -795,6 +816,7 @@ function handleAddLead(e) {
   const newLead = {
     id: `lead-custom-${Date.now()}`,
     name,
+    region,
     area,
     exactLocation,
     cuisine: cuisine || "Multi-cuisine / Cafe",
@@ -845,14 +867,16 @@ function renderCRM() {
 
   // 2. Filter Accounts
   const filtered = accounts.filter((acc) => {
+    const matchesRegion = store.crmRegionFilter === "all" || (acc.region || "Nairobi") === store.crmRegionFilter;
     const matchesStage = store.crmStageFilter === "all" || acc.accountStage === store.crmStageFilter;
     const matchesArea = store.crmAreaFilter === "all" || acc.area === store.crmAreaFilter;
     const matchesSearch =
       acc.restaurantName.toLowerCase().includes(store.crmSearchQuery) ||
       acc.contactPerson.toLowerCase().includes(store.crmSearchQuery) ||
       acc.activePoNumber.toLowerCase().includes(store.crmSearchQuery) ||
-      acc.area.toLowerCase().includes(store.crmSearchQuery);
-    return matchesStage && matchesArea && matchesSearch;
+      acc.area.toLowerCase().includes(store.crmSearchQuery) ||
+      (acc.region && acc.region.toLowerCase().includes(store.crmSearchQuery));
+    return matchesRegion && matchesStage && matchesArea && matchesSearch;
   });
 
   if (filtered.length === 0) {
@@ -888,7 +912,12 @@ function renderCRM() {
             <div style="font-size: 0.72rem; color: #64748b;">Orders Completed: ${acc.ordersCompleted}</div>
           </td>
           <td>
-            <span style="font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+            <div style="margin-bottom: 3px;">
+              <span style="font-size: 0.7rem; font-weight: 700; color: #0284c7; background: #f0f9ff; padding: 2px 6px; border-radius: 4px; border: 1px solid #bae6fd;">
+                ${acc.region || "Nairobi"}
+              </span>
+            </div>
+            <span style="font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0; display: inline-block;">
               📍 ${acc.area}
             </span>
           </td>
@@ -1039,7 +1068,7 @@ window.sendAccountWhatsApp = (accountId) => {
   const acc = store.crmAccounts.find((a) => a.id === accountId);
   if (!acc) return;
   const phoneClean = acc.phone.replace(/[^0-9]/g, "");
-  const message = `Hello ${acc.contactPerson}! 👋 This is HORECA Gurus Supply Kenya regarding your account for *${acc.restaurantName}*.
+  const message = `Hello ${acc.contactPerson}! 👋 This is MAHALE Distributors Supply Kenya regarding your account for *${acc.restaurantName}*.
 
 📄 *Active PO Number:* ${acc.activePoNumber}
 💰 *Remaining PO Balance:* KES ${acc.balanceInPo.toLocaleString()}
@@ -1070,7 +1099,7 @@ function handleLogCallSubmit(e) {
   const newLog = {
     id: `call-${Date.now()}`,
     restaurantName,
-    caller: "HORECA Gurus Sales Rep",
+    caller: "MAHALE Distributors Sales Rep",
     date: dateNow,
     type,
     contactPerson: person,
@@ -1157,6 +1186,7 @@ function handleUpdatePOSubmit(e) {
 function exportCRMToCSV() {
   const headers = [
     "Restaurant Name",
+    "Region",
     "Area Hub",
     "Chef / Contact Person",
     "Phone",
@@ -1172,6 +1202,7 @@ function exportCRMToCSV() {
 
   const rows = store.crmAccounts.map((a) => [
     `"${a.restaurantName}"`,
+    `"${a.region || "Nairobi"}"`,
     `"${a.area}"`,
     `"${a.contactPerson}"`,
     `"${a.phone}"`,
@@ -1189,7 +1220,7 @@ function exportCRMToCSV() {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `HorecaGurus_B2B_CRM_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute("download", `MAHALE_Distributors_B2B_CRM_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -1313,9 +1344,9 @@ function dispatchOrderViaWhatsApp() {
     })
     .join("\n");
 
-  const poNumber = `PO-HG-${Math.floor(100000 + Math.random() * 900000)}`;
+  const poNumber = `PO-MD-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  const message = `*HORECA GURUS B2B PURCHASE ORDER*
+  const message = `*MAHALE DISTRIBUTORS B2B PURCHASE ORDER*
 📄 *PO Number:* #${poNumber}
 🏨 *Kitchen / Client:* ${restaurantName}
 ⏰ *Scheduled Delivery:* ${deliverySlot}
@@ -1330,7 +1361,7 @@ ${lineItemsText}
 📝 *Kitchen Notes / Butcher & Seafood Prep:*
 "${instructions}"
 
-_Generated via HORECA Gurus Digital Kitchen Portal_`;
+_Generated via MAHALE Distributors Digital Kitchen Portal_`;
 
   const dispatchPhone = "254722841290";
   const url = `https://wa.me/${dispatchPhone}?text=${encodeURIComponent(message)}`;

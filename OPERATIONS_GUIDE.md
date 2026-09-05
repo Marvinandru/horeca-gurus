@@ -1,4 +1,4 @@
-# HORECA Gurus Kenya: Operations SOPs (Standard Operating Procedures)
+# MAHALE Distributors Kenya: Operations SOPs (Standard Operating Procedures)
 
 > **Mission**: Deliver farm-fresh produce, coastal seafood, and abattoir meats to Kenya's premier commercial kitchens with the speed, technology, and SLA discipline of an on-demand logistics network — operating under a **Strict Zero-Credit Policy**.
 
@@ -10,7 +10,7 @@ Commercial kitchens (hotels, fine dining, upscale cafes, catering commissaries) 
 1. **Unpredictable Deliveries**: Arriving at 9:30 AM after kitchen prep has already stalled.
 2. **Slow Emergency Restock**: If a kitchen experiences a sudden rush and runs out of Ribeye or Tiger Prawns on a Friday night, traditional vendors say: *"See you on Tuesday."*
 
-HORECA Gurus bridges this gap with a **Dual Fulfillment Architecture**:
+MAHALE Distributors bridges this gap with a **Dual Fulfillment Architecture**:
 
 ```
 ┌─────────────────────────────────────────┐      ┌─────────────────────────────────────────┐
@@ -30,7 +30,7 @@ HORECA Gurus bridges this gap with a **Dual Fulfillment Architecture**:
 
 ## 2. Standardized Color-Coded Euro-Crates & Cold Chain Telemetry
 
-HORECA Gurus bans dirty gunny bags and disintegrating cardboard cartons. All deliveries move inside sanitized, returnable, tamper-evident Euro-crates:
+MAHALE Distributors bans dirty gunny bags and disintegrating cardboard cartons. All deliveries move inside sanitized, returnable, tamper-evident Euro-crates:
 
 | Crate Type | Division | Packaging & Cold Chain Standards | Temperature Target |
 | :--- | :--- | :--- | :--- |
@@ -42,7 +42,7 @@ HORECA Gurus bans dirty gunny bags and disintegrating cardboard cartons. All del
 
 ## 3. Strict Zero-Credit Financial Execution (Cashflow Protection)
 
-Traditional food wholesalers in Kenya frequently collapse due to 60-to-90 day hotel invoice debts. **HORECA Gurus operates under an iron-clad Zero-Credit Policy**:
+Traditional food wholesalers in Kenya frequently collapse due to 60-to-90 day hotel invoice debts. **MAHALE Distributors operates under an iron-clad Zero-Credit Policy**:
 
 ### 1. 100% Advance PO Deposit (Drawdown Ledger)
 - Preferred by established hotel accounts (e.g. Seven Seafood, Fogo Gaucho, Kempinski, Carnivore).
@@ -52,7 +52,7 @@ Traditional food wholesalers in Kenya frequently collapse due to 60-to-90 day ho
 
 ### 2. Payment on Delivery (POD via M-Pesa Till)
 - Applicable to all standard, sampling, or first-time orders.
-- Payment is executed live via the **HORECA Gurus M-Pesa Buy Goods Till** before the delivery runner cuts the tamper seal on the Euro-crates.
+- Payment is executed live via the **MAHALE Distributors M-Pesa Buy Goods Till** before the delivery runner cuts the tamper seal on the Euro-crates.
 - If payment is not confirmed, goods are not offloaded.
 
 ### 3. Absolute Financial Rule
@@ -94,7 +94,7 @@ Head Chefs and F&B Managers receive 5–10 supplier calls daily. If you call try
 ```
 
 #### Step 1: The 60-Second Telephone Pitch (10:00 AM – 11:30 AM)
-> *"Good morning Chef [Name], this is [Your Name] from HORECA Gurus Supply. I know your kitchen is in the middle of prep, so I'll be very brief.
+> *"Good morning Chef [Name], this is [Your Name] from MAHALE Distributors Supply. I know your kitchen is in the middle of prep, so I'll be very brief.
 > We deliver graded Nyandarua potatoes, Mwea salad tomatoes, aged Boran beef, and overnight Lake Victoria catch directly to premier kitchens across [Westlands / Kilimani / CBD] before 6:00 AM.
 > We guarantee Grade 1 zero-rejection sorting with emergency 45-minute rush dispatch if you ever run short mid-service.
 > I'd like to drop off a complimentary Chef's Tasting Basket this Thursday morning at 6:00 AM—with 10kg of Nyandarua potatoes, 5kg Grade 1 Mwea tomatoes, and fresh ocean prawns or Lake Tilapia fillets for your prep team to test. Which morning works best for your receiving staff?"*
