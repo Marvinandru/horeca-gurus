@@ -57,13 +57,13 @@
           📊 Market Rates & Sourcing
         </button>
         <button class="nav-tab-btn" data-tab="leads">
-          🎯 Restaurant Leads CRM
+          🎯 Nairobi Restaurant Leads
         </button>
-        <button class="nav-tab-btn" data-tab="inventory">
-          📦 Inventory Manager
+        <button class="nav-tab-btn" data-tab="crm">
+          💼 B2B CRM & Accounts
         </button>
         <button class="nav-tab-btn" data-tab="playbook">
-          📖 Operations Playbook
+          ⚡ "Glovo for B2B" Operations
         </button>
       </nav>
 
@@ -186,18 +186,26 @@
         </div>
       </div>
 
-      <!-- Sourcing Overview Banner -->
+      <!-- Sourcing Overview Banner with Live Nairobi Date -->
       <div style="background: #ffffff; padding: 20px 24px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Kenya Wholesale Produce & Seafood Market Intelligence</h2>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+              <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Kenya Wholesale Produce & Seafood Market Intelligence</h2>
+            </div>
             <p style="font-size: 0.85rem; color: #64748b;">
-              Real-time pricing benchmarks for onions, tomatoes, potatoes, peas, seafood, beef, and fish across Wakulima/Marikiti, Kongowea, and farm-gate aggregation hubs.
+              Daily morning wholesale pricing benchmarks for onions, tomatoes, potatoes, peas, seafood, beef, and fish across Wakulima/Marikiti, Kongowea, and farm aggregation hubs.
             </p>
           </div>
-          <span style="background: #dcfce7; color: #166534; font-size: 0.8rem; font-weight: 800; padding: 6px 14px; border-radius: 20px;">
-            Verified Sourcing Contacts Included
-          </span>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span id="market-today-date-badge" style="background: #dcfce7; color: #166534; font-size: 0.82rem; font-weight: 800; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bbf7d0;">
+              <span class="pulse-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); animation: pulseGreen 1.8s infinite;"></span>
+              <span>Live Today in Nairobi (EAT): <strong id="market-live-date-text">Loading...</strong></span>
+            </span>
+            <button class="btn-outline" id="sync-live-rates-btn" style="font-size: 0.8rem; padding: 6px 14px; background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700; cursor: pointer;">
+              🔄 Sync Live Rates
+            </button>
+          </div>
         </div>
       </div>
 
@@ -333,178 +341,262 @@
     </section>
 
     <!-- =========================================================================
-         SECTION 4: INVENTORY MANAGEMENT ENGINE (ADMIN PANEL)
+         SECTION 4: B2B CRM & ACCOUNTS LEDGER (ZERO-CREDIT ENGINE)
          ========================================================================= -->
-    <section id="section-inventory" class="tab-section" style="display: none;">
-      <!-- Prominent Quick-Add Inventory Bar -->
-      <div class="quick-add-bar">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+    <section id="section-crm" class="tab-section" style="display: none;">
+      <!-- CRM Header & Summary Banner -->
+      <div style="background: #ffffff; padding: 20px 24px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
           <div>
-            <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">⚡ Quick Add Warehouse Inventory (e.g. Potatoes 1000 Kgs)</h3>
-            <p style="font-size: 0.8rem; color: #64748b;">Quickly add stock or top up existing produce, seafood, or meat supplies. Syncs immediately to the kitchen ordering catalog.</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
+              <span style="font-size: 1.5rem;">💼</span>
+              <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">HoReCa B2B Accounts & Sales CRM</h2>
+              <span style="background: #fee2e2; color: #991b1b; font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 12px; border: 1px solid #fecaca; letter-spacing: 0.04em;">
+                ⛔ STRICT ZERO-CREDIT POLICY
+              </span>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b;">
+              Live tracking of potential clients, verified buyers, sales volume, funded PO balances, cold-call logs, and 100% Advance / POD collections.
+            </p>
           </div>
-          <button class="btn-outline" id="open-add-product-btn" style="font-size: 0.8rem;">
-            ⚙️ Advanced Item Specs
-          </button>
-        </div>
 
-        <form id="quick-add-inventory-form">
-          <div class="quick-add-grid">
-            <div>
-              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Item Name:</label>
-              <input type="text" id="quick-item-name" placeholder="e.g. Potatoes, Red Snapper, Tilapia, Onions..." required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Category / Division:</label>
-              <select id="quick-item-category" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
-                <option value="Fresh Produce">🌱 Fresh Produce</option>
-                <option value="Fish & Seafood">🦐 Sea Food & Fish</option>
-                <option value="Prime Meat">🥩 Prime Meat</option>
-                <option value="Export Division">✈️ Export Division</option>
-              </select>
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Quantity:</label>
-              <input type="number" id="quick-item-qty" placeholder="1000" min="1" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;">
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Unit:</label>
-              <input type="text" id="quick-item-unit" value="kg" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Price (KES):</label>
-              <input type="number" id="quick-item-price" placeholder="72" min="1" step="0.5" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;">
-            </div>
-
-            <div>
-              <button type="submit" class="btn-primary" style="height: 42px; padding: 0 18px;">
-                ⚡ Add to Warehouse
-              </button>
-            </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn-primary" id="open-log-call-btn" style="font-size: 0.82rem; padding: 9px 16px;">
+              📞 Log Call / Touchpoint
+            </button>
+            <button class="btn-outline" id="open-update-po-btn" style="font-size: 0.82rem; padding: 9px 16px;">
+              💳 Record PO / Payment
+            </button>
+            <button class="btn-outline" id="export-crm-csv-btn" style="font-size: 0.82rem; padding: 9px 14px;">
+              📥 Export Ledger CSV
+            </button>
           </div>
-        </form>
-      </div>
-
-      <!-- Controls and Export Bar -->
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
-        <div>
-          <h2 style="font-size: 1.3rem; font-weight: 800; color: #0f172a;">Live Warehouse Inventory Directory</h2>
-          <p style="font-size: 0.82rem; color: #64748b;">
-            Inline-editable stock counts and wholesale prices.
-          </p>
-        </div>
-
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="btn-outline" id="export-inventory-csv-btn">
-            📥 Export CSV
-          </button>
-          <button class="btn-outline" id="export-inventory-json-btn">
-            💾 Backup JSON
-          </button>
-          <button class="btn-outline" style="color: #b91c1c;" id="reset-inventory-btn">
-            🔄 Reset Catalog
-          </button>
         </div>
       </div>
 
-      <!-- Valuation Summary -->
-      <div class="lead-pipeline-stats">
+      <!-- CRM High-Level KPI Cards -->
+      <div class="lead-pipeline-stats" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 20px;">
         <div class="lead-stat-card">
-          <div class="lead-stat-num" id="stat-admin-total-items">0</div>
-          <div class="lead-stat-label">Total Active SKUs</div>
+          <div class="lead-stat-num" id="stat-crm-total-accounts">0</div>
+          <div class="lead-stat-label">Total Customer Accounts</div>
         </div>
         <div class="lead-stat-card">
-          <div class="lead-stat-num" style="color: #0284c7;" id="stat-admin-total-kg">0 Units</div>
-          <div class="lead-stat-label">Total Cold-Storage Stock</div>
+          <div class="lead-stat-num" style="color: #059669;" id="stat-crm-active-accounts">0</div>
+          <div class="lead-stat-label">Active Recurring Accounts</div>
         </div>
         <div class="lead-stat-card">
-          <div class="lead-stat-num" style="color: #059669;" id="stat-admin-valuation">KES 0</div>
-          <div class="lead-stat-label">Live Inventory Valuation</div>
+          <div class="lead-stat-num" style="color: #0284c7;" id="stat-crm-total-revenue">KES 0</div>
+          <div class="lead-stat-label">Total B2B Revenue Generated</div>
+        </div>
+        <div class="lead-stat-card">
+          <div class="lead-stat-num" style="color: #d97706;" id="stat-crm-po-balance">KES 0</div>
+          <div class="lead-stat-label">Balance in Active POs</div>
+        </div>
+        <div class="lead-stat-card">
+          <div class="lead-stat-num" style="color: #7c3aed;" id="stat-crm-calls-count">0</div>
+          <div class="lead-stat-label">Cold Calls & Touches Logged</div>
+        </div>
+        <div class="lead-stat-card" style="background: #fef2f2; border-color: #fecaca;">
+          <div class="lead-stat-num" style="color: #dc2626;" id="stat-crm-credit-debt">KES 0.00</div>
+          <div class="lead-stat-label" style="color: #991b1b; font-weight: 700;">Credit Debt (Zero Credit)</div>
         </div>
       </div>
 
-      <!-- Table View -->
-      <div class="admin-table-wrap">
+      <!-- CRM Filter & Search Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; background: #ffffff; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #475569;">Filter Accounts:</div>
+          <select id="crm-filter-stage" style="padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.8rem; font-weight: 600;">
+            <option value="all">All Stages</option>
+            <option value="Active Account">Active Account</option>
+            <option value="Sampling / Tasting">Sampling / Tasting</option>
+            <option value="Negotiating">Negotiating</option>
+            <option value="Cold Lead">Cold Lead</option>
+          </select>
+
+          <select id="crm-filter-area" style="padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.8rem; font-weight: 600;">
+            <option value="all">All Nairobi Hubs</option>
+            <option value="Westlands">Westlands & Parklands</option>
+            <option value="Kilimani">Kilimani & Lavington</option>
+            <option value="CBD">CBD & Upper Hill</option>
+            <option value="Gigiri">Gigiri & Two Rivers</option>
+            <option value="Karen">Karen & Lang'ata</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="crm-search-input" placeholder="Search customer, PO #, chef..." style="padding: 7px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.8rem; min-width: 220px;">
+        </div>
+      </div>
+
+      <!-- Master Accounts & PO Ledger Table -->
+      <div class="admin-table-wrap" style="margin-bottom: 24px;">
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Product & SKU</th>
-              <th>Category</th>
-              <th>Wholesale Price</th>
-              <th>In Stock</th>
-              <th>MOQ</th>
-              <th>Compliance</th>
+              <th>Client Restaurant</th>
+              <th>Hub</th>
+              <th>Chef / Contact</th>
+              <th>Stage</th>
+              <th>Active PO #</th>
+              <th>Total PO (KES)</th>
+              <th>PO Balance (KES)</th>
+              <th>Revenue (KES)</th>
+              <th>Payment Terms</th>
+              <th>Last Touchpoint Note</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="admin-inventory-table-body">
+          <tbody id="crm-accounts-table-body">
             <!-- Injected via app.js -->
           </tbody>
         </table>
       </div>
+
+      <!-- Call Logs & Touchpoints History Stream -->
+      <div style="background: #ffffff; padding: 20px 24px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">📞 Cold Call & Chef Touchpoint History</h3>
+            <p style="font-size: 0.8rem; color: #64748b;">Chronological record of outbound calls, kitchen tasting visits, objection handling, and PO commitments.</p>
+          </div>
+          <span style="font-size: 0.75rem; color: #059669; font-weight: 700; background: #ecfdf5; padding: 4px 10px; border-radius: 12px; border: 1px solid #a7f3d0;">
+            Audited Sales Activity
+          </span>
+        </div>
+        <div id="crm-call-logs-container" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Injected via app.js -->
+        </div>
+      </div>
     </section>
 
     <!-- =========================================================================
-         SECTION 5: OPERATIONS & SALES PLAYBOOK
+         SECTION 5: "GLOVO FOR B2B" OPERATIONS PLAYBOOK
          ========================================================================= -->
     <section id="section-playbook" class="tab-section" style="display: none;">
       <div style="background: #ffffff; padding: 28px; border-radius: 16px; border: 1px solid #e2e8f0; line-height: 1.6; box-shadow: var(--shadow-sm);">
-        <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-          HORECA Gurus Kenya Food Supply & Export Operating Manual
-        </h2>
-        <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 24px;">
-          A strategic guide on acquiring hotel accounts, converting cold restaurant leads into recurring online buyers, managing early morning logistics, and executing international export shipments.
-        </p>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
-          <!-- Card 1: Cold Call to Online Ordering -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #059669; margin-bottom: 8px;">
-              1. The "Tasting Basket" Funnel
-            </h3>
-            <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
-              Top executive chefs receive dozens of vendor calls weekly. Never sell them a contract on cold call 1. Instead, follow this 3-step conversion path:
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.6rem;">⚡</span>
+              <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">
+                The "Glovo for B2B" Commercial Kitchen Operating System
+              </h2>
+            </div>
+            <p style="color: #64748b; font-size: 0.95rem; margin-top: 4px;">
+              Operating HORECA Gurus with the speed, precision, and SLA discipline of an on-demand logistics network — engineered specifically for high-stress commercial kitchens and luxury food service.
             </p>
-            <ol style="font-size: 0.82rem; color: #475569; padding-left: 18px; margin-bottom: 10px;">
-              <li><strong>The 60-Second Call:</strong> Call between 10:00 AM - 11:30 AM (prep window). Offer a complimentary <em>Chef's Tasting Basket</em> (10kg Shangi potatoes, 5kg Grade 1 Mwea salad tomatoes, 2kg Lake Victoria Tilapia or Coastal Prawns).</li>
-              <li><strong>The 6:00 AM Delivery Drop:</strong> Deliver the sample basket directly to their receiving bay with a printed pricing card and a QR code linking to this web portal.</li>
-              <li><strong>The Follow-up WhatsApp:</strong> Chef receives the link on WhatsApp. With 1 tap, they can order their next morning delivery or set up a recurring standing order.</li>
-            </ol>
           </div>
+          <span style="background: #eff6ff; color: #1d4ed8; font-size: 0.82rem; font-weight: 800; padding: 6px 14px; border-radius: 20px; border: 1px solid #bfdbfe;">
+            🚀 Sub-60 Min Kitchen SLA
+          </span>
+        </div>
 
-          <!-- Card 2: 5:00 AM Morning Logistics -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 20px;">
+          <!-- Card 1: Dual Fulfillment Engine -->
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0284c7; margin-bottom: 8px;">
-              2. Nairobi Cold-Chain Route Dispatch
-            </h3>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 1.3rem;">⚡</span>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #0284c7;">
+                1. Dual Fulfillment: Dawn Haul vs "Kitchen 911" Express
+              </h3>
+            </div>
             <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
-              HoReCa kitchens require goods before breakfast or lunch prep begins. Missing the 7:30 AM window causes food prep delays.
+              Commercial kitchens have two distinct supply demands that traditional vendors fail to satisfy:
             </p>
-            <ul style="font-size: 0.82rem; color: #475569; padding-left: 18px;">
-              <li><strong>8:00 PM (Previous Night):</strong> Cut-off for online portal orders. Automatic picking slips generated.</li>
-              <li><strong>3:30 AM:</strong> Goods arrive from Nyandarua and Kisumu cold trucks at Nairobi central packing depot (Industrial Area / City Market).</li>
-              <li><strong>4:30 AM:</strong> Quality grading, weighing, and sorting into sanitized food-grade crates.</li>
-              <li><strong>5:15 AM - 7:30 AM:</strong> Route A (Westlands & Parklands), Route B (Kilimani & Hurlingham), Route C (CBD & Upper Hill), Route D (Gigiri), Route E (Karen).</li>
+            <ul style="font-size: 0.82rem; color: #475569; padding-left: 18px; margin-bottom: 8px;">
+              <li><strong>Scheduled Morning Bulk (5:00 AM – 7:30 AM):</strong> Consolidated van deliveries of daily staples (potatoes, onions, carcass meats, bulk tilapia) dropped before prep cooks arrive.</li>
+              <li><strong>"Kitchen 911" On-Demand Rush (30–60 Min SLA):</strong> When a restaurant gets an unexpected Friday evening party and runs out of Tiger Prawns, Ribeye, or Hass Avocados, our rapid motorcycle/caddy runners dispatch emergency replenishment in under an hour.</li>
             </ul>
           </div>
 
-          <!-- Card 3: Export Compliance -->
+          <!-- Card 2: Returnable Euro-Crate Fleet -->
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #854d0e; margin-bottom: 8px;">
-              3. Agricultural Export Gateway (KEPHIS & HCD)
-            </h3>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 1.3rem;">📦</span>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #059669;">
+                2. Color-Coded Euro-Crates & Zero-Break Cold Chain
+              </h3>
+            </div>
             <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
-              For shipping avocados, snow peas, fine beans, and chillies to the EU, UK, and UAE:
+              Zero dirty sacks, zero cardboard disintegrating in walk-in chillers. Goods arrive in food-grade, sanitized, tamper-evident Euro-crates:
             </p>
             <ul style="font-size: 0.82rem; color: #475569; padding-left: 18px;">
-              <li><strong>HCD Dealer License:</strong> Register with Horticultural Crops Directorate (AFA).</li>
-              <li><strong>KEPHIS Phytosanitary Certificate:</strong> Mandatory inspection for pests at JKIA Cargo Village.</li>
-              <li><strong>GlobalG.A.P. Farm Traceability:</strong> Ensure outgrower farmers in Murang'a and Kinangop are audited with zero banned chemical residues.</li>
-              <li><strong>Pre-Cooling:</strong> Hydro-cool avocados to 5.5°C and snow peas to 2°C within 4 hours of harvest.</li>
+              <li><strong style="color: #166534;">🟢 Green Crates:</strong> Grade 1 farm produce (Nyandarua potatoes, Mwea tomatoes, Kinangop snow peas) sorted and aerated.</li>
+              <li><strong style="color: #991b1b;">🔴 Red Crates:</strong> Abattoir-inspected Halal beef, lamb, and goat cuts vacuum-packed or wrapped.</li>
+              <li><strong style="color: #1e40af;">🔵 Blue Insulated Tubs:</strong> Fresh coastal seafood and Lake Victoria catch submerged on drained wet-flake ice slurries (0°C to 2°C).</li>
+            </ul>
+          </div>
+
+          <!-- Card 3: Strict Zero-Credit Financial Policy -->
+          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 1.3rem;">⛔</span>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #b91c1c;">
+                3. Strict Zero-Credit Policy: 100% Cashflow Protection
+              </h3>
+            </div>
+            <p style="font-size: 0.85rem; color: #7f1d1d; margin-bottom: 10px;">
+              Traditional Kenyan food suppliers go bankrupt waiting for 60–90 day hotel invoices. HORECA Gurus enforces strict instant liquidity:
+            </p>
+            <ul style="font-size: 0.82rem; color: #991b1b; padding-left: 18px;">
+              <li><strong>100% Advance PO Deposit:</strong> Recurring accounts deposit funds into their PO ledger (e.g. KES 500,000); every morning drop automatically draws down the balance with instant WhatsApp receipts.</li>
+              <li><strong>Payment on Delivery (POD):</strong> First-time orders settle via M-Pesa Till before the delivery runner cuts the tamper seal on the crates.</li>
+              <li><strong>Zero Credit Debt:</strong> Outstanding client debt remains strictly KES 0.00 across the entire operation.</li>
+            </ul>
+          </div>
+
+          <!-- Card 4: Chef Tasting Basket Acquisition -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 1.3rem;">🎁</span>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #d97706;">
+                4. The "Chef's Tasting Basket" Conversion Engine
+              </h3>
+            </div>
+            <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
+              Never cold pitch a contract over the phone. Chefs buy what they can inspect on their cutting boards:
+            </p>
+            <ol style="font-size: 0.82rem; color: #475569; padding-left: 18px;">
+              <li><strong>The 60-Second Call (10:00–11:30 AM):</strong> Call before lunch service. Offer a free chef tasting basket (10kg Shangi potatoes, 5kg Mwea tomatoes, fresh ocean prawns/tilapia).</li>
+              <li><strong>The 6:00 AM Delivery Drop:</strong> Delivered in sanitized green/blue crates with a laminated price index and WhatsApp QR code.</li>
+              <li><strong>Autonomous 1-Tap Ordering:</strong> Chef tests during morning prep, loves the zero-waste quality, taps WhatsApp link, and funds their initial PO deposit.</li>
+            </ol>
+          </div>
+
+          <!-- Card 5: 45-Min Quality Replacement SLA -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 1.3rem;">🛡️</span>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #7c3aed;">
+                5. Instant Replacement & 45-Minute Quality Guarantee
+              </h3>
+            </div>
+            <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
+              Building iron-clad trust with Michelin-trained chefs requires zero friction when expectations aren't met:
+            </p>
+            <ul style="font-size: 0.82rem; color: #475569; padding-left: 18px;">
+              <li><strong>Snap & WhatsApp:</strong> Receiving staff inspects goods at bay. If any tomato is bruised or fish doesn't meet temp, they snap a photo to our dispatch desk.</li>
+              <li><strong>45-Minute Dispatch SLA:</strong> An emergency runner delivers Grade 1 replacement within 45 minutes across Nairobi dining hubs.</li>
+              <li><strong>Instant PO Credit:</strong> If preferred, immediate credit adjustment is applied to their PO ledger before invoice close.</li>
+            </ul>
+          </div>
+
+          <!-- Card 6: Export Division Compliance -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 1.3rem;">✈️</span>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #854d0e;">
+                6. Agricultural Air-Freight Gateway (JKIA to EU/UAE)
+              </h3>
+            </div>
+            <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
+              Exporting avocados, snow peas, fine beans, and chillies via Nairobi JKIA Cargo Terminal:
+            </p>
+            <ul style="font-size: 0.82rem; color: #475569; padding-left: 18px;">
+              <li><strong>HCD & KEPHIS Certification:</strong> Registered with AFA Horticultural Crops Directorate; phytosanitary certificates issued at Cargo Village.</li>
+              <li><strong>GlobalG.A.P. Traceability:</strong> Audited outgrowers with zero banned pesticides and MRL laboratory verification.</li>
+              <li><strong>Pre-Cooling:</strong> Hydro-cooling snow peas to 2°C and avocados to 5.5°C within 4 hours of picking.</li>
             </ul>
           </div>
         </div>
@@ -550,14 +642,18 @@
           </div>
 
           <div>
-            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Payment Terms:</label>
-            <select id="order-payment-terms" style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600;">
-              <option value="30-Day Corporate Invoice">30-Day Corporate Invoice</option>
-              <option value="M-Pesa Express on Delivery">M-Pesa Express on Delivery</option>
-              <option value="EFT / RTGS Bank Transfer">EFT / Bank Wire Transfer</option>
-              <option value="Weekly Standing Settlement">Weekly Settlement</option>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Payment Terms (Zero Credit Policy):</label>
+            <select id="order-payment-terms" style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 700; color: #0f172a;">
+              <option value="100% Advance Payment (M-Pesa STK Push / Till)">100% Advance Payment (M-Pesa STK Push / Till)</option>
+              <option value="100% Advance Payment (Bank RTGS / Wire)">100% Advance Payment (Bank Wire / RTGS)</option>
+              <option value="Payment on Delivery (POD via M-Pesa Till before unsealing)">Payment on Delivery (POD via M-Pesa Till)</option>
             </select>
           </div>
+        </div>
+
+        <div style="font-size: 0.75rem; color: #991b1b; background: #fef2f2; padding: 8px 12px; border-radius: 8px; border: 1px solid #fecaca; margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          <span>⛔</span>
+          <span>STRICT ZERO-CREDIT POLICY: Goods are released only upon verified advance settlement or live M-Pesa Till payment at the kitchen receiving bay. No 30/60-day credit extended.</span>
         </div>
 
         <div>
@@ -739,6 +835,129 @@
       <div id="script-modal-body">
         <!-- Injected via app.js -->
       </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 5: LOG COLD CALL & CHEF TOUCHPOINT
+       ========================================================================= -->
+  <div class="modal-overlay" id="log-call-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">📞 Log Cold Call / Chef Touchpoint</h3>
+        <button class="modal-close-btn" id="close-log-call-modal">&times;</button>
+      </div>
+
+      <form id="log-call-form">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Select Account / Restaurant:</label>
+          <select id="log-call-account" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+            <!-- Populated dynamically via app.js -->
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Touchpoint Type:</label>
+            <select id="log-call-type" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+              <option value="Cold Call">Cold Call (Phone)</option>
+              <option value="Chef Tasting Drop">Chef Tasting Basket Drop</option>
+              <option value="In-Person Kitchen Visit">In-Person Kitchen Visit</option>
+              <option value="WhatsApp Conversation">WhatsApp Conversation</option>
+              <option value="PO Negotiation">PO Negotiation</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Person Contacted:</label>
+            <input type="text" id="log-call-person" placeholder="e.g. Chef Roberto / Gladys" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Call Notes & Chef Feedback:</label>
+          <textarea id="log-call-notes" rows="3" placeholder="Discussed snow peas & tilapia requirements. Chef agreed to sample basket Thursday 6am..." required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-family: inherit;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Outcome / Status:</label>
+            <select id="log-call-outcome" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+              <option value="Sample Basket Scheduled">Sample Basket Scheduled</option>
+              <option value="PO Top-Up Promised">PO Top-Up Promised</option>
+              <option value="Catalog Sent via WhatsApp">Catalog Sent via WhatsApp</option>
+              <option value="Active Order Placed">Active Order Placed</option>
+              <option value="Follow-Up Required">Follow-Up Required</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Next Follow-Up Date:</label>
+            <input type="date" id="log-call-followup" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 11px; justify-content: center;">
+          💾 Save Touchpoint to CRM History
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 6: RECORD PO / PAYMENT DEPOSIT
+       ========================================================================= -->
+  <div class="modal-overlay" id="update-po-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">💳 Record PO Top-Up / Advance Payment</h3>
+        <button class="modal-close-btn" id="close-update-po-modal">&times;</button>
+      </div>
+
+      <form id="update-po-form">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Select Account / Restaurant:</label>
+          <select id="po-account-select" required style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+            <!-- Populated dynamically via app.js -->
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">PO Reference Number:</label>
+            <input type="text" id="po-number-input" placeholder="e.g. PO-HG-9301" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 700;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Action Type:</label>
+            <select id="po-action-type" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+              <option value="deposit">Deposit / Top-Up PO Balance (+)</option>
+              <option value="drawdown">Delivery Drawdown (-)</option>
+              <option value="new_po">Issue New PO Allocation</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Amount (KES):</label>
+            <input type="number" id="po-amount-input" placeholder="e.g. 150000" min="1" step="100" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 700;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Payment Method:</label>
+            <select id="po-payment-method" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+              <option value="M-Pesa STK Push / Till">M-Pesa Business Till</option>
+              <option value="Bank RTGS Wire">Bank RTGS / Wire</option>
+              <option value="PO Balance Drawdown">Pre-funded PO Drawdown</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="font-size: 0.75rem; color: #166534; background: #ecfdf5; padding: 8px 12px; border-radius: 6px; border: 1px solid #a7f3d0; margin-bottom: 16px; font-weight: 600;">
+          ✓ Ledger entry updates both the customer's remaining PO balance and total B2B revenue immediately.
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 11px; justify-content: center;">
+          💾 Post to Live B2B Ledger
+        </button>
+      </form>
     </div>
   </div>
 

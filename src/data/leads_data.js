@@ -1,26 +1,29 @@
 /**
- * HORECA Gurus Nairobi Restaurant Leads Database & Supply Engine
- * Verified dining establishments categorized by geographic hub with tailored supply requirements.
+ * HORECA Gurus Nairobi Restaurant Leads Database & B2B CRM Engine
+ * Comprehensive database of verified dining establishments across Nairobi's prime dining corridors,
+ * accompanied by active client accounts, sales performance metrics, PO balances, and cold-call logs.
  */
 
 export const RESTAURANT_LEADS = [
-  // --- 1. WESTLANDS & PARKLANDS CLUSTER ---
+  // =========================================================================
+  // 1. WESTLANDS & PARKLANDS CLUSTER
+  // =========================================================================
   {
     id: "lead-westlands-seven",
     name: "Seven Seafood & Grill",
     area: "Westlands",
     exactLocation: "ABC Place, Waiyaki Way, Westlands, Nairobi",
-    cuisine: "Gourmet Ocean Seafood & Steakhouse",
-    decisionMaker: "Executive Chef & Food Procurement Head",
+    cuisine: "Gourmet Ocean Seafood & Premium Steakhouse",
+    decisionMaker: "Executive Chef Kiran & Food Procurement Head",
     phone: "+254 737 776 677",
-    email: "info@experienceseven.com",
+    email: "procurement@experienceseven.com",
     estimatedWeeklyDemand: "Spiny Lobster Tails (40kg), Jumbo Tiger Prawns U-10 (60kg), Coastal Red Snapper Fillets (50kg), Prime Ribeye Steaks (120kg), Shangi Potatoes (250kg)",
     whatWeCanSupply: {
       seafood: "Spiny Lobster Tails, U-10 Jumbo Tiger Prawns, Coastal Red Snapper, Yellowfin Tuna Loins",
       meat: "Dry-Aged Boran Prime Ribeye & Tenderloin cuts",
       produce: "Grade 1 Shangi Potatoes for triple-cooked chips, Salad Tomatoes, Fine Snow Peas"
     },
-    currentStatus: "New Lead",
+    currentStatus: "Active Ordering Client",
     notes: "Top seafood destination in Westlands. Requires wet-flake ice deliveries at 0°C before 6:00 AM.",
     bestContactTime: "10:30 AM - 11:30 AM (Before lunch rush)",
     salesAngle: "Direct overnight coastal flight logistics from Kilifi and Malindi landings with zero odor and ice slurry packing."
@@ -40,7 +43,7 @@ export const RESTAURANT_LEADS = [
       meat: "Aged Beef Medallions & Wagyu/Boran cross steaks",
       produce: "Export-grade Hass Avocados, Stringless Snow Peas, Cherry Tomatoes, Fresh Herbs"
     },
-    currentStatus: "Cold Contacted",
+    currentStatus: "Sample Basket Delivered",
     notes: "Requires strict sushi-grade quality standards, zero blemish avocados, and calibrated snow pea lengths.",
     bestContactTime: "10:30 AM - 11:30 AM",
     salesAngle: "Guaranteed 0°C cold chain Yellowfin Tuna and export-grade Hass avocados with high oil content."
@@ -60,7 +63,7 @@ export const RESTAURANT_LEADS = [
       meat: "Whole Boran Steer Quarters, Prime Picanha cuts, Whole Mbuzi Carcasses (Kiamaiko)",
       produce: "Mwea Salad Tomatoes, Oloitokitok Red Onions, Salad Cucumbers, Shangi Potatoes"
     },
-    currentStatus: "Sample Basket Delivered",
+    currentStatus: "Active Ordering Client",
     notes: "Extremely high meat volume. Price stability and marbling consistency are their core drivers.",
     bestContactTime: "9:00 AM - 10:00 AM or 3:30 PM - 5:00 PM",
     salesAngle: "Direct pasture-fed Boran cattle carcasses portioned to churrasco specs at 12% below City Market retail."
@@ -71,193 +74,459 @@ export const RESTAURANT_LEADS = [
     area: "Westlands",
     exactLocation: "Westgate Shopping Mall, 2nd Floor, Westlands",
     cuisine: "Modern Japanese Sushi & Robata Grill",
-    decisionMaker: "Executive Chef",
+    decisionMaker: "Executive Chef Chen & Store General Manager",
     phone: "+254 799 444 888",
-    email: "info@akirarestaurant.co.ke",
+    email: "procurement@akirarestaurant.co.ke",
     estimatedWeeklyDemand: "Yellowfin Tuna (40kg), Tiger Prawns (30kg), Nile Perch Loins (30kg), Snow Peas (20kg), Spring Onions (20kg)",
     whatWeCanSupply: {
       seafood: "Sashimi-Grade Yellowfin Tuna, Cleaned Baby Squid/Calamari, Lake Nile Perch Loins",
       meat: "Prime Beef Tenderloin (Trimmed)",
       produce: "Highland Snow Peas, Mwea Salad Tomatoes, Spring Onions, Capsicums"
     },
-    currentStatus: "New Lead",
+    currentStatus: "Cold Contacted",
     notes: "High weekend mall traffic. Requires delivery between 8:30 AM - 9:30 AM before mall security lockdown.",
     bestContactTime: "11:00 AM - 12:00 PM",
     salesAngle: "Fresh line-caught tuna and peeled tiger prawns delivered in temperature-logged cool boxes."
   },
+  {
+    id: "lead-westlands-about-thyme",
+    name: "About Thyme Restaurant",
+    area: "Westlands",
+    exactLocation: "Eldama Ravine Road, Off Peponi Road, Westlands",
+    cuisine: "Eclectic European Garden Bistro & Brunch",
+    decisionMaker: "Owner-Chef & Kitchen Operations Lead",
+    phone: "+254 721 850 026",
+    email: "admin@about-thyme.com",
+    estimatedWeeklyDemand: "Fresh Herbs (Basil, Rosemary, Mint), Shangi Potatoes (150kg), Red Snapper (30kg), Tenderloin (40kg), Snow Peas (15kg)",
+    whatWeCanSupply: {
+      seafood: "Coastal Red Snapper Fillets & Ocean Tiger Prawns",
+      meat: "Trimmed Boran Beef Tenderloin & Herb-Fed Lamb Cuts",
+      produce: "Kinangop Snow Peas, Fresh Garden Minji, Hydroponic Herbs, Salad Tomatoes"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Popular rustic garden dining spot with loyal weekend brunch patronage. Focuses on farm freshness.",
+    bestContactTime: "2:30 PM - 4:00 PM",
+    salesAngle: "Same-day morning delivery of crisp garden herbs and Kinangop snow peas directly to kitchen."
+  },
+  {
+    id: "lead-westlands-urban-eatery",
+    name: "Urban Eatery",
+    area: "Westlands",
+    exactLocation: "Ground Floor, PwC Tower, Delta Corner Estate, Chiromo Rd",
+    cuisine: "Multi-Kitchen Concept (Asian, Mexican, Seafood, Grill)",
+    decisionMaker: "Central Executive Chef & Purchasing Director",
+    phone: "+254 790 999 149",
+    email: "info@urbaneatery.co.ke",
+    estimatedWeeklyDemand: "Tilapia Fillets (80kg), Beef Ribeye (100kg), Red Onions (120kg), Tomatoes (150kg), Potatoes (300kg)",
+    whatWeCanSupply: {
+      seafood: "Whole Lake Tilapia & Cleaned Calamari",
+      meat: "Prime Boran Chuck, Ribeye, and Halal Chicken",
+      produce: "Oloitokitok Onions, Mwea Tomatoes, Nyandarua Potatoes"
+    },
+    currentStatus: "Negotiating Contract",
+    notes: "Multiple internal kitchen brands under one roof; high aggregate purchasing volume.",
+    bestContactTime: "10:00 AM - 11:00 AM",
+    salesAngle: "Consolidated single-truck early delivery covering all four culinary stations at corporate discount."
+  },
+  {
+    id: "lead-westlands-mercado",
+    name: "Mercado - Mexican Kitchen & Cantina",
+    area: "Westlands",
+    exactLocation: "Kenrail Towers, Terrace Floor, South Wing, Ring Rd Parklands",
+    cuisine: "Authentic Mexican & Tequila Bar",
+    decisionMaker: "Head Chef & Bar Director",
+    phone: "+254 748 266 266",
+    email: "hola@mercado.co.ke",
+    estimatedWeeklyDemand: "Hass Avocados (100kg/wk for guacamole), Limes (50kg), Fresh Coriander, Red Onions (80kg), Flank Steak (60kg), Tiger Prawns (30kg)",
+    whatWeCanSupply: {
+      seafood: "Tiger Prawns and Red Snapper for Baja fish tacos",
+      meat: "Prime Flank and Skirt steaks for fajitas and carne asada",
+      produce: "High-oil Murang'a Hass Avocados, Fresh Limes, Birdseye Chillies, Cilantro"
+    },
+    currentStatus: "New Lead",
+    notes: "Avocados must be perfectly ripe without black stringiness. Guacamole is their top seller.",
+    bestContactTime: "11:30 AM - 12:30 PM",
+    salesAngle: "Guaranteed ripeness-calibrated Hass avocados and coastal limes delivered twice weekly."
+  },
+  {
+    id: "lead-westlands-open-house",
+    name: "Open House Restaurant",
+    area: "Westlands",
+    exactLocation: "Gallant Mall, Parklands Road, Nairobi",
+    cuisine: "Northern Indian Fine Dining & Tandoor",
+    decisionMaker: "Executive Tandoor Chef & General Manager",
+    phone: "+254 727 673 683",
+    email: "info@openhouse.co.ke",
+    estimatedWeeklyDemand: "Whole Halal Chicken & Bone-in Goat (200kg), Red Onions (150kg), Tomatoes (120kg), Ginger & Garlic (30kg), Paneer/Milk",
+    whatWeCanSupply: {
+      seafood: "Tiger Prawns and Lake Tilapia for curry specials",
+      meat: "Halal Broiler & Kienyeji Chicken, Kiamaiko Goat Chops and Carcass",
+      produce: "Grade 1 Oloitokitok Red Onions, Mwea Plum Tomatoes for gravies"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Requires deep red onions and acidic plum tomatoes to produce rich tandoori gravies.",
+    bestContactTime: "10:00 AM - 11:30 AM",
+    salesAngle: "Direct abattoir-stamped Halal goat meat and wholesale sacks of dry red onions."
+  },
+  {
+    id: "lead-westlands-kempinski",
+    name: "Villa Rosa Kempinski (Lucca & Tambourin)",
+    area: "Westlands",
+    exactLocation: "Chiromo Road, Westlands, Nairobi",
+    cuisine: "5-Star Luxury Italian & Levantine Dining",
+    decisionMaker: "Executive Sous Chef & Director of Procurement",
+    phone: "+254 703 049 000",
+    email: "procurement.nairobi@kempinski.com",
+    estimatedWeeklyDemand: "Sea Bass/Snapper (80kg), Lobster (40kg), Beef Tenderloin (150kg), Lamb Shanks (60kg), San Marzano type Plum Tomatoes (100kg), Snow Peas (30kg)",
+    whatWeCanSupply: {
+      seafood: "Daily Ocean Catch: Spiny Lobster, Red Snapper, Yellowfin Tuna, Calamari",
+      meat: "Certified Aged Boran Steer Primal Cuts, Halal Lamb Racks",
+      produce: "Firm Salad Tomatoes, Snow Peas, Sugar Snaps, Baby Spinach"
+    },
+    currentStatus: "Active Ordering Client",
+    notes: "5-star international hotel standard. Strict receiving bay temperature logs and HACCP protocol.",
+    bestContactTime: "8:30 AM - 10:00 AM",
+    salesAngle: "HACCP compliant refrigerated fleet with automated data-logger printouts upon bay delivery."
+  },
 
-  // --- 2. KILIMANI, HURLINGHAM & LAVINGTON CLUSTER ---
+  // =========================================================================
+  // 2. KILIMANI, HURLINGHAM & LAVINGTON CLUSTER
+  // =========================================================================
   {
     id: "lead-kilimani-mama-oliech",
     name: "Mama Oliech Restaurant",
     area: "Kilimani",
     exactLocation: "Marcus Garvey Road, Off Argwings Kodhek, Kilimani",
     cuisine: "Authentic Kenyan Lake Fish Specialists",
-    decisionMaker: "General Manager & Kitchen Head",
+    decisionMaker: "General Manager & Kitchen Operations Head",
     phone: "+254 722 795 628",
     email: "procurement@mamaoliech.com",
     estimatedWeeklyDemand: "Lake Victoria Whole Tilapia (700kg - 1,000kg/wk), Shangi Potatoes (300kg/wk), Tomatoes (200kg), Onions (150kg), Traditional Kienyeji Greens",
     whatWeCanSupply: {
-      seafood: "Lake Victoria Wild Nile Tilapia (400-600g & 700g-1kg) delivered with bright red gills daily",
-      meat: "Halal Stewing Beef and Kienyeji Chicken",
-      produce: "Shangi Potatoes for deep frying, Mwea Cooking Tomatoes, Oloitokitok Red Bulb Onions"
+      seafood: "Daily Fresh Lake Victoria Whole Tilapia (Medium 500-600g & Jumbo 800g+ sizes)",
+      meat: "Light local poultry requirements",
+      produce: "Nyandarua Shangi Potatoes for crispy chips, Mwea Cooking Tomatoes, Oloitokitok Red Onions"
     },
-    currentStatus: "Negotiating Contract",
-    notes: "The most famous fish restaurant in Kenya. Consumes massive crates of fresh Lake Victoria Tilapia daily.",
+    currentStatus: "Active Ordering Client",
+    notes: "Iconic Kenyan institution. Consumes highest single-restaurant volume of whole tilapia in Kilimani.",
     bestContactTime: "9:00 AM - 10:30 AM",
-    salesAngle: "Direct overnight lake transit from Kisumu Dunga Pier with zero ice melting on arrival at 5:00 AM."
+    salesAngle: "Direct overnight insulated haul from Dunga Pier Kisumu, landing at Kilimani door at 5:30 AM."
   },
   {
     id: "lead-kilimani-ankole",
     name: "Ankole Grill Kilimani",
     area: "Kilimani",
     exactLocation: "Senteu Plaza, Galana Road & Argwings Kodhek Junction",
-    cuisine: "African Continental Steakhouse",
-    decisionMaker: "Executive Chef & Purchasing Desk",
-    phone: "+254 710 202 020",
-    email: "admin@ankole.co.ke",
-    estimatedWeeklyDemand: "Prime Beef Ribeye & T-Bone (350kg), Lamb Chops (100kg), Mbuzi Chops, Shangi Potatoes (300kg), Garden Peas (50kg)",
+    cuisine: "African Fusion & Prime Steakhouse",
+    decisionMaker: "Executive Chef & Purchasing Director",
+    phone: "+254 710 265 653",
+    email: "chef@ankole.co.ke",
+    estimatedWeeklyDemand: "Dry-Aged T-Bone & Ribeye (250kg), Tomahawk Steaks (80kg), Tiger Prawns (50kg), Whole Tilapia (60kg), Shangi Potatoes (350kg)",
     whatWeCanSupply: {
-      seafood: "Lake Victoria Tilapia Fillets, Red Snapper Loins for fish specials",
-      meat: "21-Day Wet-Aged Boran Ribeye, Tenderloin, Lamb Racks, Goat Ribs",
-      produce: "Nyandarua Shangi Potatoes, Kinangop Green Minji, Salad Tomatoes, Tri-color Capsicums"
+      seafood: "Coastal Tiger Prawns, Lake Victoria Whole Tilapia, Ocean Snapper",
+      meat: "Dry-Aged Boran Ribeye, T-Bone, Short Ribs, Pasture-fed Steer Fillet",
+      produce: "Grade 1 Shangi Potatoes (Unwashed or Washed), Salad Tomatoes, Button Mushrooms"
     },
     currentStatus: "Active Ordering Client",
-    notes: "Requires dry-aged beef cuts and precise thickness slicing. Prompt payment on 14-day terms.",
+    notes: "High-end grill with heavy weekday executive lunches and weekend dining. Steaks must meet strict aging specs.",
     bestContactTime: "10:00 AM - 11:30 AM",
-    salesAngle: "Aged Halal beef cuts from grass-fed Kajiado steers vacuum-sealed in food-grade packs."
+    salesAngle: "Consistent 21-day dry-aged Boran beef carcass supply with uniform fat caps and deep marbling."
   },
   {
     id: "lead-kilimani-cjs",
-    name: "CJ's Kilimani",
+    name: "CJ's Restaurant (Kilimani)",
     area: "Kilimani",
     exactLocation: "Argwings Kodhek Road, Kilimani, Nairobi",
-    cuisine: "High-Volume Continental, American & Cafe",
-    decisionMaker: "Central Kitchen Procurement Manager",
-    phone: "+254 792 000 022",
-    email: "info@cjs.co.ke",
-    estimatedWeeklyDemand: "Irish Potatoes (800kg/wk), Tomatoes (600kg/wk), Onions (500kg/wk), Chicken Breast (400kg/wk), Tilapia Fillet (120kg/wk)",
+    cuisine: "High-Volume Continental, Coffee & Family Dining",
+    decisionMaker: "Central Kitchen Commissary Head & Kilimani Store Manager",
+    phone: "+254 792 000 055",
+    email: "procurement@cjs.co.ke",
+    estimatedWeeklyDemand: "Shangi Potatoes (1,200kg/wk), Salad Tomatoes (400kg/wk), Red Onions (300kg/wk), Beef Tenderloin (300kg), Tilapia Fillets (150kg)",
     whatWeCanSupply: {
-      seafood: "Boneless Lake Victoria Tilapia Fillets, Calamari Rings",
-      meat: "Lean Beef Mince for burger patties, Chicken Breast, Dressed Kienyeji Chicken",
-      produce: "Grade 1 Shangi Potatoes (40 bags/wk), Mwea Anna F1 Tomatoes, Oloitokitok Red Onions"
+      seafood: "Lake Tilapia Fillets & Peeled Prawns for sizzlers",
+      meat: "Prime Beef Chuck, Ground Beef, Minced Meat, Fillet Medallions",
+      produce: "Massive volume Shangi Potatoes calibrated 50-70mm for French fries, Mwea Tomatoes"
     },
     currentStatus: "Negotiating Contract",
-    notes: "Massive volume restaurant doing thousands of covers weekly. Demands guaranteed 6:00 AM drop 7 days a week.",
-    bestContactTime: "8:30 AM - 10:00 AM",
-    salesAngle: "Fixed wholesale price contracts that insulate CJ's from Marikiti rain spikes with buffer reserves."
+    notes: "Massive customer turnover from 7:00 AM to 11:00 PM. High demand for zero-blemish chip potatoes.",
+    bestContactTime: "9:00 AM - 10:30 AM",
+    salesAngle: "Pre-graded 50kg bags of high-dry-matter Shangi potatoes delivered on 30-day fixed price contracts."
   },
   {
-    id: "lead-kilimani-karai",
-    name: "Karai Swahili & Indian Cuisine",
+    id: "lead-kilimani-5senses",
+    name: "5 Senses Restaurant",
     area: "Kilimani",
-    exactLocation: "Kirichwa Road, Off Argwings Kodhek, Kilimani",
-    cuisine: "Coastal Swahili Seafood & Indian Curries",
-    decisionMaker: "Owner & Head Chef",
-    phone: "+254 703 111 222",
-    email: "info@karaicuisine.co.ke",
-    estimatedWeeklyDemand: "Tiger Prawns (50kg), Kingfish Steaks (40kg), Red Snapper (40kg), Whole Mbuzi (80kg), Onions (120kg), Tomatoes (100kg)",
+    exactLocation: "2nd Floor, Galana Plaza, Galana Road, Kilimani",
+    cuisine: "French Classical Fine Dining",
+    decisionMaker: "Chef-Patron & Purchasing Lead",
+    phone: "+254 701 320 000",
+    email: "dining@5senses.co.ke",
+    estimatedWeeklyDemand: "Duck Breast, Beef Tenderloin (40kg), Sea Bass/Red Snapper (30kg), Snow Peas (15kg), French Beans (20kg), Fresh Herbs",
     whatWeCanSupply: {
-      seafood: "Fresh Ocean Kingfish Steaks (Nguru), Jumbo Tiger Prawns, Coastal Red Snapper",
-      meat: "Goat Meat / Mbuzi Carcasses cut for Biryani & Curries, Stewing Beef",
-      produce: "Cooking Tomatoes for rich curry bases, Red Onions, Fresh Coriander/Dhania, Green Chillies"
+      seafood: "Ocean Snapper Fillets, Yellowfin Tuna, Coastal Crab Meat",
+      meat: "Aged Beef Tenderloin Medallions & Lamb Loins",
+      produce: "Extra-Fine French Beans, Sugar Snap Peas, Fresh Butter, Microgreens"
     },
-    currentStatus: "New Lead",
-    notes: "Focuses on genuine coastal and Swahili flavors. Demands rich, oily Kingfish steaks that don't crumble in curries.",
-    bestContactTime: "2:00 PM - 4:00 PM",
-    salesAngle: "Authentic coastal Shimoni catch delivered cold without freezing, maintaining peak curry flavor."
+    currentStatus: "Sample Basket Delivered",
+    notes: "Very high culinary precision. Chef evaluates produce under culinary magnifying glasses.",
+    bestContactTime: "2:00 PM - 3:30 PM",
+    salesAngle: "Calibrated 8-10cm stringless snow peas and extra-fine handpicked French beans."
   },
-
-  // --- 3. NAIROBI CBD & UPPER HILL CLUSTER ---
   {
-    id: "lead-cbd-mawimbi",
-    name: "Mawimbi Seafood Restaurant & Café",
-    area: "CBD",
-    exactLocation: "Kenyatta Avenue & Monrovia Street Junction, Nairobi CBD",
-    cuisine: "Luxury Award-Winning Fine Seafood",
-    decisionMaker: "Executive Seafood Chef & General Manager",
-    phone: "+254 758 956 861",
-    email: "reservations@mawimbirestaurant.com",
-    estimatedWeeklyDemand: "Rock Lobster Tails (60kg), Jumbo Tiger Prawns (80kg), Sashimi Tuna (50kg), Ocean Calamari (40kg), Mud Crabs (30kg), Snow Peas (30kg)",
+    id: "lead-kilimani-2grapes",
+    name: "2 Grapes Wine & Friends",
+    area: "Kilimani",
+    exactLocation: "George Padmore Road, Off Marcus Garvey, Kilimani",
+    cuisine: "Wine Bar, Tapas & Charcuterie Bistro",
+    decisionMaker: "Operations Director & Executive Chef",
+    phone: "+254 707 982 222",
+    email: "cheers@2grapes.co.ke",
+    estimatedWeeklyDemand: "Artisanal Cheeses, Smoked Meats, Tiger Prawns (20kg), Beef Sirloin (30kg), Cherry Tomatoes (25kg), Fresh Baguettes",
     whatWeCanSupply: {
-      seafood: "Spiny Rock Lobster Tails, U-10 Jumbo Prawns, Yellowfin Tuna Loins, Live Mud Crabs, Fresh Octopus",
-      meat: "Prime Beef Tenderloin for Surf & Turf platters",
-      produce: "Export-grade Snow Peas, Fine French Beans, Hass Avocados, Gourmet Salad Greens"
+      seafood: "Coastal Tiger Prawns and Calamari for tapas",
+      meat: "Aged Sirloin Strips & Halal cured beef cuts",
+      produce: "Sweet Cherry Tomatoes, Baby Rocket, Fresh Basil, Hass Avocados"
     },
     currentStatus: "Cold Contacted",
-    notes: "Kenya's most celebrated luxury seafood dining room. Demands pristine restaurant-ready seafood with certificate of origin.",
+    notes: "Intimate wine garden with discerning patrons. High cheese and tapas platter consumption.",
+    bestContactTime: "3:00 PM - 4:30 PM",
+    salesAngle: "Export-grade cherry tomatoes and ocean tiger prawns packed in small batch kitchen tubs."
+  },
+  {
+    id: "lead-kilimani-habesha",
+    name: "Habesha Ethiopian Restaurant",
+    area: "Kilimani",
+    exactLocation: "Argwings Kodhek Road, Hurlingham, Nairobi",
+    cuisine: "Traditional Ethiopian & Eritrean Cuisine",
+    decisionMaker: "General Manager & Head Cook",
+    phone: "+254 733 727 618",
+    email: "info@habesharestaurant.com",
+    estimatedWeeklyDemand: "Whole Goat (100kg), Lean Beef Topsides for Kitfo & Tibs (250kg), Red Onions (200kg), Tomatoes (150kg), Garlic (30kg)",
+    whatWeCanSupply: {
+      seafood: "N/A (Meat and Produce dominant)",
+      meat: "Fresh Daily Lean Boran Beef (Topsides, Knuckles) & Kiamaiko Mbuzi Carcasses",
+      produce: "Red Bulb Onions, Fresh Red Chillies, Garlic, Ripe Tomatoes for stews"
+    },
+    currentStatus: "New Lead",
+    notes: "Requires fresh, ultra-lean raw beef daily for traditional Kitfo preparation.",
+    bestContactTime: "10:30 AM - 11:30 AM",
+    salesAngle: "Veterinary-certified fresh lean beef delivered at 6:00 AM before daily Kitfo prep."
+  },
+  {
+    id: "lead-lavington-osteria",
+    name: "Osteria del Chianti",
+    area: "Kilimani",
+    exactLocation: "Lenana Road, Kilimani / Lavington border",
+    cuisine: "Authentic Italian Trattoria & Pizzeria",
+    decisionMaker: "Executive Italian Chef & Managing Partner",
+    phone: "+254 725 526 500",
+    email: "info@osteriadelchianti.com",
+    estimatedWeeklyDemand: "Coastal Calamari (40kg), Prawns (40kg), Red Snapper (30kg), Beef Tenderloin (60kg), Plum Tomatoes (180kg), Fresh Basil (15kg)",
+    whatWeCanSupply: {
+      seafood: "Fresh Coastal Calamari, Tiger Prawns, Whole Snapper",
+      meat: "Prime Boran Beef Tenderloin, Veal Medallions",
+      produce: "Mwea Plum Tomatoes for authentic marinara, Fresh Basil, Zucchini, Eggplants"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Legendary Italian restaurant in Nairobi. High consumption of plum tomatoes and seafood pastas.",
+    bestContactTime: "11:00 AM - 12:00 PM",
+    salesAngle: "Direct supply of high-pulp plum tomatoes from Kirinyaga farms at wholesale bulk savings."
+  },
+  {
+    id: "lead-lavington-for-you",
+    name: "For You Chinese Restaurant",
+    area: "Kilimani",
+    exactLocation: "Gitanga Road, Lavington, Nairobi",
+    cuisine: "Traditional Chinese & Family Banquet",
+    decisionMaker: "Head Wok Chef & Managing Director",
+    phone: "+254 722 721 680",
+    email: "foryourestaurant@gmail.com",
+    estimatedWeeklyDemand: "Whole Lake Tilapia (300kg), Tiger Prawns (60kg), Pork Ribs & Belly (150kg), Chicken (200kg), Snow Peas (40kg), Spring Onions (50kg)",
+    whatWeCanSupply: {
+      seafood: "Fresh Lake Tilapia (Live or Slush-ice chilled), Ocean Tiger Prawns, Calamari",
+      meat: "Pork Belly, Spare Ribs, Broiler Chicken",
+      produce: "Highland Snow Peas, Spring Onions, Bok Choy, Fresh Ginger, Garlic"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Very high volume family dining. Tilapia must be firm-fleshed for whole steamed fish dishes.",
     bestContactTime: "10:00 AM - 11:30 AM",
-    salesAngle: "Direct daily procurement from Malindi and Kilifi fishermen cooperatives with strict temperature verification."
+    salesAngle: "Guaranteed same-day Lake Victoria tilapia and fresh highland snow peas at wholesale crate rates."
+  },
+  {
+    id: "lead-lavington-arbor",
+    name: "The Arbor Eco Cafe",
+    area: "Kilimani",
+    exactLocation: "904 James Gichuru Road, Lavington, Nairobi",
+    cuisine: "Eco Garden Cafe, Brunch & Healthy Bowls",
+    decisionMaker: "Founder & Head of Kitchen",
+    phone: "+254 729 400 291",
+    email: "hello@thearbor.co.ke",
+    estimatedWeeklyDemand: "Hass Avocados (60kg), Salad Greens (30kg), Eggs, Chicken Breast (40kg), Strawberries, Potatoes (100kg)",
+    whatWeCanSupply: {
+      seafood: "Light smoked salmon and prawns for salads",
+      meat: "Free-range Kienyeji Chicken & Halal Chicken Breast",
+      produce: "Organic Hass Avocados, Hydroponic Salad Greens, Baby Spinach, Cherry Tomatoes"
+    },
+    currentStatus: "New Lead",
+    notes: "Health-focused clientele. Prefers pesticide-free, sustainably farmed produce.",
+    bestContactTime: "2:30 PM - 4:00 PM",
+    salesAngle: "GlobalG.A.P. compliant fresh greens and high-oil ripe Hass avocados."
+  },
+
+  // =========================================================================
+  // 3. NAIROBI CBD & UPPER HILL CLUSTER
+  // =========================================================================
+  {
+    id: "lead-cbd-sarova-stanley",
+    name: "Sarova Stanley Hotel (Thorn Tree Cafe)",
+    area: "CBD",
+    exactLocation: "Kenyatta Avenue & Kimathi Street, Nairobi CBD",
+    cuisine: "Heritage 5-Star Luxury Dining & Cafe",
+    decisionMaker: "Group Executive Chef & Materials Manager",
+    phone: "+254 719 048 000",
+    email: "stanleyprocurement@sarovahotels.com",
+    estimatedWeeklyDemand: "Prime Steer Ribeye (200kg), Red Snapper (80kg), Whole Tilapia (120kg), Shangi Potatoes (500kg), Salad Tomatoes (250kg), Export Snow Peas (50kg)",
+    whatWeCanSupply: {
+      seafood: "Coastal Red Snapper, Jumbo Tiger Prawns, Lake Tilapia Fillets",
+      meat: "Aged Boran Ribeye, Tenderloin, Lamb Carcasses",
+      produce: "Grade 1 Shangi Potatoes, Mwea Salad Tomatoes, Sugar Snap Peas"
+    },
+    currentStatus: "Active Ordering Client",
+    notes: "Nairobi's historic premier hotel. Requires 5:00 AM delivery before CBD morning traffic congestion.",
+    bestContactTime: "9:00 AM - 10:30 AM",
+    salesAngle: "Guaranteed 5:00 AM CBD dock delivery with sanitary certificates and refrigerated cold vans."
   },
   {
     id: "lead-cbd-serena",
-    name: "Nairobi Serena Hotel (Café Maghreb)",
+    name: "Nairobi Serena Hotel (Mandhari)",
     area: "CBD",
-    exactLocation: "Procession Way, Kenyatta Avenue, Nairobi CBD",
-    cuisine: "5-Star Hotel Buffet, Banqueting & North African",
-    decisionMaker: "Director of Food & Beverage & Executive Head Chef",
-    phone: "+254 20 282 2000",
+    exactLocation: "Kenyatta Avenue, Central Park, Nairobi",
+    cuisine: "5-Star Fine Dining, International Buffet & Seafood",
+    decisionMaker: "Executive Chef & Purchasing Manager",
+    phone: "+254 732 123 333",
     email: "nairobi@serenahotels.com",
-    estimatedWeeklyDemand: "Boran Steer Cuts (400kg), Whole Tilapia (200kg), Red Snapper (100kg), Potatoes (450kg), Tomatoes (350kg), Onions (300kg)",
+    estimatedWeeklyDemand: "Rock Lobster Tails (50kg), King Prawns (70kg), Tuna (40kg), Prime Beef (220kg), Nyandarua Potatoes (400kg)",
     whatWeCanSupply: {
-      seafood: "Lake Victoria Tilapia, Coastal Red Snapper Fillets, Ocean Prawns",
-      meat: "Halal Steer Beef Carcass, Aged Sirloin, Whole Goat Carcasses",
-      produce: "Nyandarua Shangi Potatoes, Mwea Tomatoes, Kinangop Sweet Minji, Fine Beans"
+      seafood: "Shimoni Spiny Lobster Tails, Coastal King Prawns, Sashimi Tuna, Snapper",
+      meat: "Certified Prime Beef Medallions & Boran Steer Primal Cuts",
+      produce: "Grade 1 Highland Snow Peas, Hand-sorted Plum Tomatoes, Shangi Potatoes"
     },
-    currentStatus: "Sample Basket Delivered",
-    notes: "Strict HACCP certification, temperature tracking on arrival, requires certified Halal meat slaughterhouse paperwork.",
-    bestContactTime: "9:30 AM - 11:00 AM",
-    salesAngle: "Veterinary-certified cold chain compliance with full traceability back to farm and lake landing site."
+    currentStatus: "Negotiating Contract",
+    notes: "Diplomatic and luxury traveler hub. Zero tolerance for cold-chain temperature violations.",
+    bestContactTime: "10:00 AM - 11:30 AM",
+    salesAngle: "Temperature-logged deliveries with digital probes verifying sub-2°C seafood temperatures."
   },
   {
     id: "lead-cbd-tamarind",
-    name: "Tamarind Restaurant CBD",
+    name: "Tamarind Restaurant (CBD)",
     area: "CBD",
     exactLocation: "National Bank Building, Harambee Avenue, Nairobi CBD",
-    cuisine: "Legendary Kenyan Seafood Pioneers",
-    decisionMaker: "Group Seafood Buyer & Kitchen Supervisor",
-    phone: "+254 733 217 990",
-    email: "central.reservations@tamarind.co.ke",
-    estimatedWeeklyDemand: "Lake Victoria Tilapia (300kg), Nile Perch Loins (250kg), Coastal Red Snapper (150kg), Tiger Prawns (80kg), Calamari (60kg)",
+    cuisine: "Legendary Kenyan Coastal Seafood Fine Dining",
+    decisionMaker: "Head Chef & Tamarind Group F&B Director",
+    phone: "+254 722 205 894",
+    email: "reservations.nairobi@tamarind.co.ke",
+    estimatedWeeklyDemand: "Spiny Lobster (80kg), Jumbo Prawns (100kg), Red Snapper (120kg), Calamari (80kg), Fresh Oysters, Shangi Potatoes (200kg)",
     whatWeCanSupply: {
-      seafood: "Lake Victoria Tilapia & Nile Perch (Mbuta), Red Snapper, Lobster, Jumbo Prawns, Octopus",
-      meat: "Aged Beef Steaks and Trimmed Beef Fillets",
-      produce: "French Beans, Snow Peas, Salad Tomatoes, Shangi Potatoes"
+      seafood: "Premier Coastal Ocean Catch: Spiny Lobster, U-10 Tiger Prawns, Coastal Red Snapper, Calamari",
+      meat: "Aged Beef Steaks",
+      produce: "Mwea Salad Tomatoes, Shangi Potatoes, Fine French Beans"
     },
-    currentStatus: "Negotiating Contract",
-    notes: "Kenya's most renowned seafood brand. Zero tolerance for thawed-and-refrozen fish. Requires ice packaging with melt drains.",
+    currentStatus: "Active Ordering Client",
+    notes: "The gold standard of seafood dining in Kenya. Requires uniform sizing and pristine freshness.",
+    bestContactTime: "10:30 AM - 11:30 AM",
+    salesAngle: "Direct overnight flights from Malindi and Kilifi fishermen cooperatives landing at Nairobi depot."
+  },
+  {
+    id: "lead-upperhill-radisson",
+    name: "Radisson Blu Hotel (Upper Hill)",
+    area: "CBD",
+    exactLocation: "Elgon Road, Upper Hill, Nairobi",
+    cuisine: "International Luxury Hotel, The Chop House & Larder",
+    decisionMaker: "Executive Chef & Central Purchasing Head",
+    phone: "+254 709 810 000",
+    email: "procurement.nairobi@radissonblu.com",
+    estimatedWeeklyDemand: "Dry-Aged Tomahawk & Ribeye (180kg), Prawns (60kg), Lake Tilapia (80kg), Shangi Potatoes (350kg), Salad Tomatoes (180kg)",
+    whatWeCanSupply: {
+      seafood: "Tiger Prawns, Lake Tilapia Fillets, Red Snapper",
+      meat: "Custom Dry-Aged Boran Tomahawk, T-Bone, and Tenderloin cuts",
+      produce: "Shangi Potatoes, Mwea Salad Tomatoes, Highland Fine Peas"
+    },
+    currentStatus: "Sample Basket Delivered",
+    notes: "Corporate executive dining and multinational conference center.",
+    bestContactTime: "9:30 AM - 11:00 AM",
+    salesAngle: "Dedicated dry-aging program for prime Boran beef with guaranteed delivery before 6:30 AM."
+  },
+  {
+    id: "lead-upperhill-crowne-plaza",
+    name: "Crowne Plaza Nairobi Airport & Upper Hill",
+    area: "CBD",
+    exactLocation: "Kenya Road, Upper Hill, Nairobi",
+    cuisine: "Business Hotel, Sikiyo Restaurant & Bar",
+    decisionMaker: "Executive Chef & Procurement Officer",
+    phone: "+254 719 096 000",
+    email: "info@cpupperhill.com",
+    estimatedWeeklyDemand: "Whole Tilapia (100kg), Beef Sirloin (150kg), Goat Meat (80kg), Potatoes (300kg), Onions (120kg)",
+    whatWeCanSupply: {
+      seafood: "Lake Victoria Fresh Tilapia & Ocean Fish",
+      meat: "Halal Boran Beef, Halal Mbuzi Carcass, Broiler Chicken",
+      produce: "Nyandarua Potatoes, Oloitokitok Onions, Salad Tomatoes"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "High corporate breakfast and buffet volume. Reliability of daily delivery time is essential.",
     bestContactTime: "10:00 AM - 11:30 AM",
-    salesAngle: "Night landing Lake Victoria catch transported with shaved ice, delivered to kitchen door at 5:30 AM."
+    salesAngle: "Consistent morning drop-off schedule with zero stockout tolerance."
+  },
+  {
+    id: "lead-cbd-kilimanjaro",
+    name: "Kilimanjaro Jamia Restaurant",
+    area: "CBD",
+    exactLocation: "Kimathi Street, Opposite Jamia Mosque, Nairobi CBD",
+    cuisine: "Swahili, Somali & Arabic High-Volume Dining",
+    decisionMaker: "General Manager & Head of Kitchen",
+    phone: "+254 722 000 111",
+    email: "kilimanjarorestaurant@gmail.com",
+    estimatedWeeklyDemand: "Whole Goat/Mbuzi (500kg/wk), Halal Beef (600kg/wk), Rice, Onions (400kg/wk), Tomatoes (300kg/wk), Bananas",
+    whatWeCanSupply: {
+      seafood: "Ocean Kingfish (Nguru) for Swahili fish biryani",
+      meat: "Kiamaiko Certified Halal Mbuzi Carcasses (14-16kg), Pasture Boran Steer Beef",
+      produce: "Bulk sacks of Oloitokitok Red Onions, Mwea Tomatoes for gravies"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "One of the busiest restaurants in East Africa. Exceptional meat and onion turnover for biryani.",
+    bestContactTime: "8:30 AM - 9:30 AM",
+    salesAngle: "Direct abattoir wholesale carcasses at 10-15% below City Market prices on cash/advance terms."
   },
 
-  // --- 4. GIGIRI, RUNDA & VILLAGE MARKET CLUSTER ---
+  // =========================================================================
+  // 4. GIGIRI, RUNDA, VILLAGE MARKET & TWO RIVERS CLUSTER
+  // =========================================================================
   {
-    id: "lead-gigiri-local-grill",
-    name: "The Local Grill",
+    id: "lead-gigiri-lord-erroll",
+    name: "The Lord Erroll Gourmet Restaurant",
     area: "Gigiri",
-    exactLocation: "Village Market, New Wing, Limuru Road, Gigiri, Nairobi",
-    cuisine: "Boutique Steakhouse & Surf-and-Turf",
-    decisionMaker: "Executive Grill Master & General Manager",
-    phone: "+254 700 334 455",
-    email: "info@thelocalgrill.co.ke",
-    estimatedWeeklyDemand: "Prime Beef Ribeye & T-Bone (250kg), Jumbo Tiger Prawns (50kg), Lobster Tails (30kg), Shangi Potatoes (200kg), Salad Greens",
+    exactLocation: "89 Ruaka Road, Runda Estate, Nairobi",
+    cuisine: "Award-Winning French & International Fine Dining",
+    decisionMaker: "Executive Chef & General Manager",
+    phone: "+254 721 920 820",
+    email: "reservations@sceniclorderroll.com",
+    estimatedWeeklyDemand: "Lobster Tails (30kg), Yellowfin Tuna (30kg), Ribeye Steaks (80kg), Lamb Loins (40kg), Snow Peas (25kg), Fine French Beans (30kg)",
     whatWeCanSupply: {
-      seafood: "U-10 Jumbo Tiger Prawns, Rock Lobster Tails for premium surf-and-turf",
-      meat: "Dry-Aged Boran Prime Ribeye, T-Bone, Striploin, Lamb Racks",
-      produce: "Hand-picked Jumbo Shangi Potatoes for triple-cooked steak chips, Gourmet Greens"
+      seafood: "Spiny Lobster Tails, Sashimi Grade Tuna, Coastal Snapper",
+      meat: "Aged Boran Prime Ribeye, Rack of Lamb, Beef Tenderloin",
+      produce: "Export-grade Snow Peas, Fine French Beans, Salad Greens, Cherry Tomatoes"
     },
-    currentStatus: "New Lead",
+    currentStatus: "Active Ordering Client",
     notes: "Serves diplomatic and expat community (UN Gigiri & US Embassy). Premium quality is non-negotiable.",
     bestContactTime: "11:00 AM - 12:30 PM",
-    salesAngle: "Artisanal dry-aged beef cuts paired with coastal jumbo prawns on single weekly invoice."
+    salesAngle: "Artisanal dry-aged beef cuts paired with coastal jumbo prawns on reliable early morning drops."
   },
   {
     id: "lead-gigiri-ocean-basket",
     name: "Ocean Basket (Village Market)",
     area: "Gigiri",
     exactLocation: "Food Court Wing, Village Market, Gigiri, Nairobi",
-    cuisine: "Mediterranean Family Seafood",
-    decisionMaker: "Store Manager & Kitchen Lead",
+    cuisine: "Mediterranean Family Seafood & Grill",
+    decisionMaker: "Store General Manager & Kitchen Lead",
     phone: "+254 711 889 900",
     email: "vm@oceanbasket.co.ke",
     estimatedWeeklyDemand: "Tiger Prawns (120kg), Calamari Rings (100kg), White Fish Fillets (150kg), Shangi Potatoes (400kg), Lemon & Garlic",
@@ -271,8 +540,110 @@ export const RESTAURANT_LEADS = [
     bestContactTime: "9:00 AM - 10:30 AM",
     salesAngle: "Standardized weight calibration on calamari and prawns to minimize kitchen portioning loss."
   },
+  {
+    id: "lead-gigiri-harvest",
+    name: "Harvest Restaurant (Village Market)",
+    area: "Gigiri",
+    exactLocation: "Trademark Hotel, Village Market, Gigiri",
+    cuisine: "Farm-to-Table Open Grill & Charcuterie",
+    decisionMaker: "Executive Chef & F&B Operations Manager",
+    phone: "+254 730 810 000",
+    email: "harvest@trademark-hotel.com",
+    estimatedWeeklyDemand: "Prime Beef Cuts (120kg), Sea Bass/Snapper (50kg), Heirloom Tomatoes (40kg), Fresh Herbs, Snow Peas (20kg)",
+    whatWeCanSupply: {
+      seafood: "Coastal Red Snapper, Tiger Prawns, Yellowfin Tuna",
+      meat: "Pasture-Raised Boran Beef, Smoked Cuts, Lamb Chops",
+      produce: "Heirloom Salad Tomatoes, Kinangop Snow Peas, Fresh Thyme, Rocket"
+    },
+    currentStatus: "Sample Basket Delivered",
+    notes: "Farm-to-table ethos. Prioritizes local Kenyan provenance and transparent grower traceability.",
+    bestContactTime: "10:00 AM - 11:30 AM",
+    salesAngle: "100% farm traceability with Nyandarua and Kirinyaga grower stories on every delivery batch."
+  },
+  {
+    id: "lead-gigiri-tribe-jiko",
+    name: "Tribe Hotel (Jiko Restaurant)",
+    area: "Gigiri",
+    exactLocation: "The Village Market, Limuru Road, Gigiri",
+    cuisine: "Contemporary African & Organic Grill",
+    decisionMaker: "Executive Chef & Procurement Director",
+    phone: "+254 732 186 000",
+    email: "jiko@tribehotel-kenya.com",
+    estimatedWeeklyDemand: "Ocean Prawns (40kg), Tilapia (50kg), Prime Steer Tenderloin (80kg), Organic Greens (30kg), Hass Avocados (40kg)",
+    whatWeCanSupply: {
+      seafood: "Lamu Jumbo Prawns, Lake Tilapia Fillets, Red Snapper",
+      meat: "Certified Aged Boran Steer Beef & Organic Mbuzi",
+      produce: "Organic Salad Tomatoes, Hass Avocados, Baby Carrots, Snow Peas"
+    },
+    currentStatus: "Negotiating Contract",
+    notes: "High-profile international diplomats and celebrities stay here. Requires absolute highest grade.",
+    bestContactTime: "9:00 AM - 10:30 AM",
+    salesAngle: "Exclusive access to coastal wild-caught seafood and organic highland vegetables."
+  },
+  {
+    id: "lead-tworivers-artcaffe",
+    name: "Artcaffe (Two Rivers Mall)",
+    area: "Gigiri",
+    exactLocation: "Ground Floor, Two Rivers Mall, Limuru Road",
+    cuisine: "All-Day Bistro, Bakery & Coffee Bar",
+    decisionMaker: "Central Commissary Purchasing Manager & Branch Chef",
+    phone: "+254 709 202 026",
+    email: "procurement@artcaffe.co.ke",
+    estimatedWeeklyDemand: "Potatoes (500kg), Salad Tomatoes (200kg), Red Onions (150kg), Beef Mince & Steak (200kg), Tilapia (60kg)",
+    whatWeCanSupply: {
+      seafood: "Fresh Lake Tilapia Fillets & Peeled Prawns",
+      meat: "Halal Beef Chuck, Mince, and Ribeye",
+      produce: "Grade 1 Shangi Potatoes, Mwea Salad Tomatoes, Crisp Salad Greens"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Major brand in Kenya. Branch requires continuous early morning drops before mall opening.",
+    bestContactTime: "8:30 AM - 9:30 AM",
+    salesAngle: "High-volume bulk potato and tomato supply meeting central kitchen standardization specs."
+  },
+  {
+    id: "lead-tworivers-aldar",
+    name: "Aldar Lebanese Restaurant",
+    area: "Gigiri",
+    exactLocation: "Riverfront Wing, Two Rivers Mall, Ruaka / Limuru Rd",
+    cuisine: "Authentic Lebanese & Middle Eastern Grill",
+    decisionMaker: "Head Lebanese Chef & Operations Manager",
+    phone: "+254 742 111 222",
+    email: "info@aldar.co.ke",
+    estimatedWeeklyDemand: "Whole Halal Mbuzi (120kg), Chicken (150kg), Red Onions (100kg), Tomatoes (120kg), Cucumbers, Mint & Parsley (40kg)",
+    whatWeCanSupply: {
+      seafood: "Ocean Fish for Lebanese baked fish dishes",
+      meat: "Certified Halal Goat Chops and Carcass, Lean Minced Beef for kebabs",
+      produce: "Fresh Mint, Italian Flat Parsley, Salad Cucumbers, Tomatoes"
+    },
+    currentStatus: "New Lead",
+    notes: "Very high herb consumption for tabbouleh and fattoush. Herbs must be vibrant green with zero wilt.",
+    bestContactTime: "10:30 AM - 11:30 AM",
+    salesAngle: "Daily dawn harvest of fresh parsley and mint from Limuru highland growers."
+  },
+  {
+    id: "lead-springvalley-zen-garden",
+    name: "Zen Garden (Bamboo & Jade)",
+    area: "Gigiri",
+    exactLocation: "Lower Kabete Road, Spring Valley, Nairobi",
+    cuisine: "Pan-Asian Fine Dining, Dim Sum & Patisserie",
+    decisionMaker: "Executive Chef & Managing Director",
+    phone: "+254 714 744 231",
+    email: "info@zengarden.co.ke",
+    estimatedWeeklyDemand: "Yellowfin Tuna (40kg), Tiger Prawns (70kg), Duck, Pork Belly, Snow Peas (35kg), Asian Greens (40kg)",
+    whatWeCanSupply: {
+      seafood: "Tiger Prawns, Sashimi Tuna, Cleaned Baby Squid",
+      meat: "Pork Belly, Duck, Aged Beef Striploin",
+      produce: "Stringless Snow Peas, Bok Choy, Fresh Ginger, Lemongrass, Salad Tomatoes"
+    },
+    currentStatus: "Sample Basket Delivered",
+    notes: "Renowned venue for weddings and luxury events. Dim sum requires precise prawn calibration.",
+    bestContactTime: "2:30 PM - 4:00 PM",
+    salesAngle: "Calibrated U-10 and U-15 jumbo tiger prawns with translucent flesh and sweet coastal brine."
+  },
 
-  // --- 5. KAREN & LANGATA CLUSTER ---
+  // =========================================================================
+  // 5. KAREN & LANGATA CLUSTER
+  // =========================================================================
   {
     id: "lead-karen-carnivore",
     name: "Carnivore Restaurant",
@@ -308,10 +679,381 @@ export const RESTAURANT_LEADS = [
       meat: "Prime Boran Beef Fillets, Herb-Fed Lamb Racks",
       produce: "Organic Salad Tomatoes, Kinangop Snow Peas, Fresh Minji, Exotic Greens"
     },
-    currentStatus: "Sample Basket Delivered",
+    currentStatus: "Active Ordering Client",
     notes: "High table-turn restaurant with discerning clientele. Demands pristine visual appeal on seafood and greens.",
     bestContactTime: "3:00 PM - 5:00 PM",
     salesAngle: "Direct morning drops from Kinangop and Lake Victoria with customized kitchen prep packaging."
+  },
+  {
+    id: "lead-karen-cultiva",
+    name: "Cultiva Kenya",
+    area: "Karen",
+    exactLocation: "Pofu Road, Sanctuary Farm, Karen, Nairobi",
+    cuisine: "Farm-to-Table, South American & Rustic Fine Dining",
+    decisionMaker: "Chef Ariel Moss & Procurement Lead",
+    phone: "+254 795 726 622",
+    email: "hola@cultivakenya.com",
+    estimatedWeeklyDemand: "Coastal Seafood Catch (60kg), Boran Beef (80kg), Heritage Vegetables, Microgreens, Local Berries",
+    whatWeCanSupply: {
+      seafood: "Wild Coastal Red Snapper, Octopus (Pweza), Lobster, Yellowfin Tuna",
+      meat: "Pasture-Fed Boran Steer Beef & Free-Range Poultry",
+      produce: "Heirloom Tomatoes, Kinangop Peas, Organic Greens"
+    },
+    currentStatus: "Sample Basket Delivered",
+    notes: "Celebrated farm-to-table kitchen. Rejects factory-farmed products; requires true artisanal sourcing.",
+    bestContactTime: "11:00 AM - 12:30 PM",
+    salesAngle: "Direct line-caught coastal seafood and sustainable mountain produce with complete farm traceability."
+  },
+  {
+    id: "lead-karen-boho",
+    name: "Boho Eatery",
+    area: "Karen",
+    exactLocation: "118 Diani Close, Off Ndovoini Road, Karen",
+    cuisine: "Wholesome Plant-Forward & Conscious Dining",
+    decisionMaker: "Founder & Head Chef",
+    phone: "+254 727 502 416",
+    email: "info@bohoeatery.co.ke",
+    estimatedWeeklyDemand: "Organic Avocados (50kg), Fresh Tofu/Mushrooms, Highland Peas (30kg), Salad Tomatoes (60kg), Microgreens",
+    whatWeCanSupply: {
+      seafood: "Sustainable line-caught Snapper and Tilapia",
+      meat: "Free-range chicken breast",
+      produce: "Export-grade Hass Avocados, Kinangop Snow Peas, Sweet Salad Tomatoes, Herbs"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Focuses on organic, healthy living, vegetarian and pescatarian options.",
+    bestContactTime: "2:00 PM - 3:30 PM",
+    salesAngle: "Pesticide-free certified produce from audited outgrowers in Kinangop and Mwea."
+  },
+  {
+    id: "lead-karen-tamambo",
+    name: "Tamambo Karen Blixen",
+    area: "Karen",
+    exactLocation: "Karen Road, Next to Karen Blixen Museum, Karen",
+    cuisine: "Historic Garden Dining, Seafood & Continental",
+    decisionMaker: "General Manager & Executive Chef",
+    phone: "+254 719 345 345",
+    email: "tamambokaren@tamarind.co.ke",
+    estimatedWeeklyDemand: "Coastal Red Snapper (50kg), Tiger Prawns (40kg), Prime Beef Steaks (100kg), Shangi Potatoes (200kg), Snow Peas (20kg)",
+    whatWeCanSupply: {
+      seafood: "Ocean Snapper, Coastal Prawns, Fresh Lake Tilapia",
+      meat: "Dry-Aged Boran Ribeye & Sirloin Steaks",
+      produce: "Shangi Potatoes for roasts, Mwea Salad Tomatoes, Highland Peas"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Part of Tamarind Group. Popular for outdoor garden lunches and tourist groups.",
+    bestContactTime: "10:00 AM - 11:30 AM",
+    salesAngle: "Same Tamarind-grade seafood standards with localized early morning drops in Karen."
+  },
+
+  // =========================================================================
+  // 6. MOMBASA ROAD & AIRPORT CORRIDOR
+  // =========================================================================
+  {
+    id: "lead-mombasa-ole-sereni",
+    name: "Ole Sereni Hotel (Eagle's The Steakhouse)",
+    area: "CBD",
+    exactLocation: "Mombasa Road, Off Southern Bypass, Nairobi",
+    cuisine: "Luxury Park-View Steakhouse & Big Five Buffet",
+    decisionMaker: "Executive Chef & Purchasing Manager",
+    phone: "+254 713 001 400",
+    email: "purchasing@ole-serenihotel.com",
+    estimatedWeeklyDemand: "Prime Boran Beef Steaks (200kg), Tiger Prawns (60kg), Lake Tilapia (100kg), Shangi Potatoes (400kg), Salad Tomatoes (180kg)",
+    whatWeCanSupply: {
+      seafood: "Jumbo Ocean Tiger Prawns, Coastal Red Snapper, Lake Tilapia Fillets",
+      meat: "Dry-Aged Boran Ribeye, T-Bone, Pasture Beef Fillet Medallions",
+      produce: "Grade 1 Shangi Potatoes, Mwea Salad Tomatoes, Highland Fine Vegetables"
+    },
+    currentStatus: "Negotiating Contract",
+    notes: "Views Nairobi National Park. High tourist and corporate dinner traffic.",
+    bestContactTime: "9:00 AM - 10:30 AM",
+    salesAngle: "Direct abattoir-aged beef program and coastal prawns delivered via Southern Bypass before 6:30 AM."
+  },
+  {
+    id: "lead-mombasa-panari",
+    name: "The Panari Hotel (Black Gold)",
+    area: "CBD",
+    exactLocation: "Mombasa Road, Nairobi",
+    cuisine: "Hotel Buffet, Continental & Indian Fine Dining",
+    decisionMaker: "Food & Beverage Director & Purchasing Officer",
+    phone: "+254 711 091 000",
+    email: "procurement@panarihotels.com",
+    estimatedWeeklyDemand: "Chicken & Mutton (250kg), Beef (180kg), Whole Fish (80kg), Potatoes (350kg), Onions (150kg), Tomatoes (150kg)",
+    whatWeCanSupply: {
+      seafood: "Fresh Lake Victoria Tilapia & Marine Fish",
+      meat: "Halal Boran Beef, Halal Mbuzi Carcasses, Broiler Chicken",
+      produce: "Nyandarua Potatoes, Oloitokitok Red Onions, Salad Tomatoes"
+    },
+    currentStatus: "Cold Contacted",
+    notes: "Large hotel and ice-skating facility. Demands certified Halal slaughtered meats.",
+    bestContactTime: "10:00 AM - 11:30 AM",
+    salesAngle: "Veterinary-certified Halal meats and graded produce delivered on scheduled morning run."
+  },
+  {
+    id: "lead-mombasa-four-points-jkia",
+    name: "Four Points by Sheraton JKIA",
+    area: "CBD",
+    exactLocation: "90489 Airport Road, JKIA, Nairobi",
+    cuisine: "International Airport Luxury & Tazama Rooftop Bar",
+    decisionMaker: "Executive Chef & Purchasing Lead",
+    phone: "+254 709 760 000",
+    email: "purchasing@fourpointsnairobi.com",
+    estimatedWeeklyDemand: "Tiger Prawns (50kg), Red Snapper (40kg), Prime Steaks (120kg), Shangi Potatoes (300kg), Salad Greens (50kg)",
+    whatWeCanSupply: {
+      seafood: "Coastal Tiger Prawns, Coastal Red Snapper, Calamari",
+      meat: "Aged Boran Prime Ribeye & Halal Steaks",
+      produce: "Grade 1 Shangi Potatoes, Mwea Plum Tomatoes, Fresh Salad Greens"
+    },
+    currentStatus: "Active Ordering Client",
+    notes: "Located inside JKIA airport perimeter. Strict security clearance and early morning delivery.",
+    bestContactTime: "9:00 AM - 10:30 AM",
+    salesAngle: "Pre-cleared logistics driver with security badges for seamless airside hotel delivery."
+  }
+];
+
+// =========================================================================
+// B2B CRM ACCOUNTS & PO PERFORMANCE LEDGER (ZERO-CREDIT POLICY)
+// =========================================================================
+export const INITIAL_CRM_ACCOUNTS = [
+  {
+    id: "crm-acc-seven",
+    restaurantId: "lead-westlands-seven",
+    restaurantName: "Seven Seafood & Grill",
+    area: "Westlands",
+    contactPerson: "Executive Chef Kiran",
+    phone: "+254 737 776 677",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-8842",
+    totalPoValue: 550000,
+    balanceInPo: 184500,
+    revenueGenerated: 1420000,
+    ordersCompleted: 16,
+    coldCallsLogged: 4,
+    lastInteraction: "2026-09-04: Confirmed morning flake-ice lobster tails & snapper drop. Next PO deposit scheduled Monday.",
+    paymentTerms: "100% Advance PO Deposit (Drawdown)",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-ankole",
+    restaurantId: "lead-kilimani-ankole",
+    restaurantName: "Ankole Grill Kilimani",
+    area: "Kilimani",
+    contactPerson: "Chef Patrick (Head of Butchery)",
+    phone: "+254 710 265 653",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-9012",
+    totalPoValue: 480000,
+    balanceInPo: 212000,
+    revenueGenerated: 1180000,
+    ordersCompleted: 12,
+    coldCallsLogged: 3,
+    lastInteraction: "2026-09-03: 150kg dry-aged Boran ribeye delivered at 5:45 AM. Chef logged zero trimming waste.",
+    paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-mama-oliech",
+    restaurantId: "lead-kilimani-mama-oliech",
+    restaurantName: "Mama Oliech Restaurant",
+    area: "Kilimani",
+    contactPerson: "Gladys Oliech (General Manager)",
+    phone: "+254 722 795 628",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-8730",
+    totalPoValue: 350000,
+    balanceInPo: 94000,
+    revenueGenerated: 1890000,
+    ordersCompleted: 24,
+    coldCallsLogged: 2,
+    lastInteraction: "2026-09-05: Standing daily delivery of 120kg Lake Victoria tilapia received at 5:30 AM on slush ice.",
+    paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-carnivore",
+    restaurantId: "lead-karen-carnivore",
+    restaurantName: "Carnivore Restaurant",
+    area: "Karen",
+    contactPerson: "Master Carver Joseph & Head of Receiving",
+    phone: "+254 722 204 647",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-9150",
+    totalPoValue: 750000,
+    balanceInPo: 320000,
+    revenueGenerated: 2650000,
+    ordersCompleted: 18,
+    coldCallsLogged: 5,
+    lastInteraction: "2026-09-04: Delivered 25 Kiamaiko whole goat carcasses (15kg avg) with veterinary health certificate.",
+    paymentTerms: "100% Advance Bank RTGS per Batch",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-talisman",
+    restaurantId: "lead-karen-talisman",
+    restaurantName: "The Talisman Restaurant",
+    area: "Karen",
+    contactPerson: "Executive Chef Ian",
+    phone: "+254 705 999 997",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-8924",
+    totalPoValue: 380000,
+    balanceInPo: 145000,
+    revenueGenerated: 940000,
+    ordersCompleted: 10,
+    coldCallsLogged: 3,
+    lastInteraction: "2026-09-02: Delivered 40kg sashimi tuna loins and 50kg Kinangop snow peas; pristine rating from kitchen.",
+    paymentTerms: "100% Advance PO Deposit (Drawdown)",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-kempinski",
+    restaurantId: "lead-westlands-kempinski",
+    restaurantName: "Villa Rosa Kempinski",
+    area: "Westlands",
+    contactPerson: "Sous Chef Alessandro (Lucca)",
+    phone: "+254 703 049 000",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-9204",
+    totalPoValue: 600000,
+    balanceInPo: 275000,
+    revenueGenerated: 1560000,
+    ordersCompleted: 14,
+    coldCallsLogged: 4,
+    lastInteraction: "2026-09-05: 6:00 AM delivery of ocean snapper & rack of lamb. Logged probe temperature 1.2°C at receiving bay.",
+    paymentTerms: "100% Advance Wire per Consignment",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-fourpoints",
+    restaurantId: "lead-mombasa-four-points-jkia",
+    restaurantName: "Four Points by Sheraton JKIA",
+    area: "CBD",
+    contactPerson: "Chef Brian (Executive Chef)",
+    phone: "+254 709 760 000",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-8977",
+    totalPoValue: 320000,
+    balanceInPo: 110000,
+    revenueGenerated: 780000,
+    ordersCompleted: 8,
+    coldCallsLogged: 2,
+    lastInteraction: "2026-09-04: Delivered 50kg tiger prawns and 300kg Shangi potatoes. Verified POD payment on M-Pesa Till.",
+    paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-inti",
+    restaurantId: "lead-westlands-inti",
+    restaurantName: "INTI – A Nikkei Experience",
+    area: "Westlands",
+    contactPerson: "Head Sushi Chef Roberto",
+    phone: "+254 734 845 845",
+    accountStage: "Sampling / Tasting",
+    activePoNumber: "PENDING-PO",
+    totalPoValue: 0,
+    balanceInPo: 0,
+    revenueGenerated: 0,
+    ordersCompleted: 0,
+    coldCallsLogged: 3,
+    lastInteraction: "2026-09-04: Chef received tasting box (tuna loin, Hass avocados). Feedback positive; PO being prepared for 100% advance deposit.",
+    paymentTerms: "100% Advance PO Deposit (Required)",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-fogo",
+    restaurantId: "lead-westlands-fogo",
+    restaurantName: "Fogo Gaucho Westlands",
+    area: "Westlands",
+    contactPerson: "Master Carver Paulo",
+    phone: "+254 712 123 456",
+    accountStage: "Active Account",
+    activePoNumber: "PO-HG-9080",
+    totalPoValue: 620000,
+    balanceInPo: 240000,
+    revenueGenerated: 1650000,
+    ordersCompleted: 15,
+    coldCallsLogged: 3,
+    lastInteraction: "2026-09-03: Delivered 400kg Boran steer quarters. Balance drawdown updated to KES 240,000.",
+    paymentTerms: "100% Advance PO Deposit (Drawdown)",
+    creditOutstanding: 0
+  },
+  {
+    id: "crm-acc-cjs",
+    restaurantId: "lead-kilimani-cjs",
+    restaurantName: "CJ's Restaurant (Kilimani)",
+    area: "Kilimani",
+    contactPerson: "Commissary Head Hassan",
+    phone: "+254 792 000 055",
+    accountStage: "Negotiating",
+    activePoNumber: "DRAFT-PO-01",
+    totalPoValue: 0,
+    balanceInPo: 0,
+    revenueGenerated: 0,
+    ordersCompleted: 0,
+    coldCallsLogged: 4,
+    lastInteraction: "2026-09-05: Finalizing 50kg bag potato trial. Enforcing strict Advance / POD policy; commissary accepted M-Pesa Till on drop.",
+    paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
+    creditOutstanding: 0
+  }
+];
+
+// =========================================================================
+// CALL & TOUCHPOINT LOGS
+// =========================================================================
+export const INITIAL_CALL_LOGS = [
+  {
+    id: "call-101",
+    restaurantName: "INTI – A Nikkei Experience",
+    caller: "HORECA Gurus Sales Desk",
+    date: "2026-09-04 11:15 AM",
+    type: "Cold Call",
+    contactPerson: "Chef Roberto (Head Sushi Chef)",
+    notes: "Pitched sashimi-grade Yellowfin Tuna & Hass avocados. Chef agreed to receive a 6:00 AM sample box of tuna loins on Tuesday.",
+    outcome: "Sample Box Scheduled",
+    followUpDate: "2026-09-08"
+  },
+  {
+    id: "call-102",
+    restaurantName: "CJ's Restaurant (Kilimani)",
+    caller: "HORECA Gurus Sales Desk",
+    date: "2026-09-05 09:40 AM",
+    type: "In-Person Commissary Meeting",
+    contactPerson: "Commissary Head Hassan",
+    notes: "Reviewed 1,200kg/wk Shangi potato requirement. Explained strict POD terms via corporate M-Pesa Till. Hassan confirmed receiving team has till authorization.",
+    outcome: "Terms Agreed (POD)",
+    followUpDate: "2026-09-07"
+  },
+  {
+    id: "call-103",
+    restaurantName: "Cultiva Kenya",
+    caller: "HORECA Gurus Sales Desk",
+    date: "2026-09-03 02:15 PM",
+    type: "Phone Follow-Up",
+    contactPerson: "Chef Ariel Moss",
+    notes: "Followed up on line-caught red snapper sample. Chef praised the flesh firmness and absence of foul fish odor. Preparing initial KES 150k advance PO.",
+    outcome: "PO Issuance Expected",
+    followUpDate: "2026-09-06"
+  },
+  {
+    id: "call-104",
+    restaurantName: "Ole Sereni Hotel",
+    caller: "HORECA Gurus Sales Desk",
+    date: "2026-09-02 10:00 AM",
+    type: "Cold Call",
+    contactPerson: "Executive Chef & Purchasing Lead",
+    notes: "Introduced our 5:30 AM early morning route via Southern Bypass. Emphasized dry-aged Boran ribeye for Eagle's Steakhouse. Sent WhatsApp digital catalog.",
+    outcome: "Catalog Sent via WhatsApp",
+    followUpDate: "2026-09-09"
+  },
+  {
+    id: "call-105",
+    restaurantName: "Seven Seafood & Grill",
+    caller: "HORECA Gurus Account Manager",
+    date: "2026-09-04 04:30 PM",
+    type: "Account Check-In",
+    contactPerson: "Executive Chef Kiran",
+    notes: "Confirmed weekend lobster tail and tiger prawn allocation. Notified chef that PO-HG-8842 balance has KES 184,500 remaining. Top-up invoice sent.",
+    outcome: "PO Top-Up Scheduled",
+    followUpDate: "2026-09-08"
   }
 ];
 
@@ -337,6 +1079,8 @@ This is {salesRepName} from *HORECA Gurus Supply Kenya*. We deliver farm-fresh p
 🦐 Jumbo Ocean Tiger Prawns (U-10) - KES {prawnsPrice}/kg
 🐟 Fresh Lake Victoria Tilapia Fillet - KES {fishPrice}/kg
 🥩 Aged Boran Beef Tenderloin - KES {beefPrice}/kg
+
+💳 *Payment Terms:* Strict 100% Advance or Payment on Delivery (POD) via M-Pesa Till. Zero credit terms extended.
 
 📲 *Browse Our Live Kitchen Catalog & Order Online:*
 {portalLink}

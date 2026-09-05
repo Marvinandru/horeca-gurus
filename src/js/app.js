@@ -1,10 +1,21 @@
 /**
  * HORECA Gurus Supply Platform Controller
- * Manages reactive state, digital ordering, market pricing, CRM leads, and admin inventory.
+ * Manages reactive state, digital ordering, dynamic daily market pricing,
+ * Nairobi restaurant leads directory, and B2B Accounts CRM with Zero-Credit enforcement.
  */
 
-import { KENYA_COMMODITY_RATES, SOURCING_CALENDAR } from "../data/market_data.js";
-import { RESTAURANT_LEADS, SALES_SCRIPTS } from "../data/leads_data.js";
+import {
+  KENYA_COMMODITY_RATES,
+  SOURCING_CALENDAR,
+  getDailyMarketRates,
+  getNairobiDate
+} from "../data/market_data.js";
+import {
+  RESTAURANT_LEADS,
+  INITIAL_CRM_ACCOUNTS,
+  INITIAL_CALL_LOGS,
+  SALES_SCRIPTS
+} from "../data/leads_data.js";
 import { DEFAULT_INVENTORY } from "../data/default_inventory.js";
 
 // --- PERSISTENT STATE MANAGEMENT ---
@@ -12,12 +23,20 @@ class Store {
   constructor() {
     this.inventory = this.loadInventory();
     this.leads = this.loadState("horecagurus_leads", RESTAURANT_LEADS);
+    this.crmAccounts = this.loadState("horecagurus_crm_accounts", INITIAL_CRM_ACCOUNTS);
+    this.crmCallLogs = this.loadState("horecagurus_crm_logs", INITIAL_CALL_LOGS);
     this.cart = this.loadState("horecagurus_cart", {});
+
     this.activeTab = "storefront";
     this.categoryFilter = "all";
     this.searchQuery = "";
+
     this.leadsAreaFilter = "all";
     this.leadsStatusFilter = "all";
+
+    this.crmStageFilter = "all";
+    this.crmAreaFilter = "all";
+    this.crmSearchQuery = "";
   }
 
   loadInventory() {
@@ -25,9 +44,8 @@ class Store {
       const saved = localStorage.getItem("horecagurus_inventory_v4");
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Synchronize default items with verified local images
-        const defaultMap = new Map(DEFAULT_INVENTORY.map(item => [item.id, item]));
-        return parsed.map(item => {
+        const defaultMap = new Map(DEFAULT_INVENTORY.map((item) => [item.id, item]));
+        return parsed.map((item) => {
           if (defaultMap.has(item.id)) {
             const def = defaultMap.get(item.id);
             return { ...item, image: def.image, name: def.name, category: def.category };
@@ -35,10 +53,6 @@ class Store {
           return item;
         });
       }
-      // Migrate from previous cache keys
-      localStorage.removeItem("horecagurus_inventory");
-      localStorage.removeItem("horecagurus_inventory_v2");
-      localStorage.removeItem("horecagurus_inventory_v3");
       localStorage.setItem("horecagurus_inventory_v4", JSON.stringify(DEFAULT_INVENTORY));
       return DEFAULT_INVENTORY;
     } catch (e) {
@@ -73,6 +87,16 @@ class Store {
   updateLeads(newLeads) {
     this.leads = newLeads;
     this.saveState("horecagurus_leads", this.leads);
+  }
+
+  updateCRMAccounts(newAccounts) {
+    this.crmAccounts = newAccounts;
+    this.saveState("horecagurus_crm_accounts", this.crmAccounts);
+  }
+
+  updateCRMCallLogs(newLogs) {
+    this.crmCallLogs = newLogs;
+    this.saveState("horecagurus_crm_logs", this.crmCallLogs);
   }
 
   updateCart(newCart) {
@@ -157,30 +181,13 @@ function setupEventListeners() {
     });
   }
 
-  // Quick Add Inventory Form (Prominent bar at top of Inventory tab)
-  const quickAddForm = document.getElementById("quick-add-inventory-form");
-  if (quickAddForm) {
-    quickAddForm.addEventListener("submit", handleQuickAddInventory);
-  }
-
-  // Advanced Add Product Modal Triggers
-  const openAddProductBtn = document.getElementById("open-add-product-btn");
-  if (openAddProductBtn) {
-    openAddProductBtn.addEventListener("click", () => {
-      document.getElementById("add-product-modal").classList.add("open");
+  // Sync Live Rates Button
+  const syncRatesBtn = document.getElementById("sync-live-rates-btn");
+  if (syncRatesBtn) {
+    syncRatesBtn.addEventListener("click", () => {
+      renderMarketRates();
+      showToast(`Refreshed live Kenya terminal benchmark rates for ${getNairobiDate()}!`);
     });
-  }
-  const closeAddProductBtn = document.getElementById("close-add-product-modal");
-  if (closeAddProductBtn) {
-    closeAddProductBtn.addEventListener("click", () => {
-      document.getElementById("add-product-modal").classList.remove("open");
-    });
-  }
-
-  // Add Product Form Submission
-  const addProductForm = document.getElementById("add-product-form");
-  if (addProductForm) {
-    addProductForm.addEventListener("submit", handleAddProduct);
   }
 
   // Leads Filter Triggers
@@ -241,23 +248,64 @@ function setupEventListeners() {
     if (el) el.addEventListener("input", computeMargin);
   });
 
-  // Admin Export / Reset Buttons
-  const exportCsvBtn = document.getElementById("export-inventory-csv-btn");
-  if (exportCsvBtn) exportCsvBtn.addEventListener("click", exportInventoryToCSV);
-
-  const exportJsonBtn = document.getElementById("export-inventory-json-btn");
-  if (exportJsonBtn) exportJsonBtn.addEventListener("click", exportInventoryToJSON);
-
-  const resetInventoryBtn = document.getElementById("reset-inventory-btn");
-  if (resetInventoryBtn) {
-    resetInventoryBtn.addEventListener("click", () => {
-      if (confirm("Reset inventory to original default catalog? Any custom added items will be replaced.")) {
-        store.updateInventory(DEFAULT_INVENTORY);
-        renderStorefront();
-        renderInventoryAdmin();
-        showToast("Inventory reset to default catalog.");
-      }
+  // ==========================================
+  // CRM MODAL & FILTER EVENT LISTENERS
+  // ==========================================
+  const openLogCallBtn = document.getElementById("open-log-call-btn");
+  if (openLogCallBtn) {
+    openLogCallBtn.addEventListener("click", () => window.openLogCallModal());
+  }
+  const closeLogCallBtn = document.getElementById("close-log-call-modal");
+  if (closeLogCallBtn) {
+    closeLogCallBtn.addEventListener("click", () => {
+      document.getElementById("log-call-modal")?.classList.remove("open");
     });
+  }
+  const logCallForm = document.getElementById("log-call-form");
+  if (logCallForm) {
+    logCallForm.addEventListener("submit", handleLogCallSubmit);
+  }
+
+  const openUpdatePOBtn = document.getElementById("open-update-po-btn");
+  if (openUpdatePOBtn) {
+    openUpdatePOBtn.addEventListener("click", () => window.openUpdatePOModal());
+  }
+  const closeUpdatePOBtn = document.getElementById("close-update-po-modal");
+  if (closeUpdatePOBtn) {
+    closeUpdatePOBtn.addEventListener("click", () => {
+      document.getElementById("update-po-modal")?.classList.remove("open");
+    });
+  }
+  const updatePOForm = document.getElementById("update-po-form");
+  if (updatePOForm) {
+    updatePOForm.addEventListener("submit", handleUpdatePOSubmit);
+  }
+
+  const crmStageSelect = document.getElementById("crm-filter-stage");
+  if (crmStageSelect) {
+    crmStageSelect.addEventListener("change", (e) => {
+      store.crmStageFilter = e.target.value;
+      renderCRM();
+    });
+  }
+  const crmAreaSelect = document.getElementById("crm-filter-area");
+  if (crmAreaSelect) {
+    crmAreaSelect.addEventListener("change", (e) => {
+      store.crmAreaFilter = e.target.value;
+      renderCRM();
+    });
+  }
+  const crmSearchInput = document.getElementById("crm-search-input");
+  if (crmSearchInput) {
+    crmSearchInput.addEventListener("input", (e) => {
+      store.crmSearchQuery = e.target.value.toLowerCase().trim();
+      renderCRM();
+    });
+  }
+
+  const exportCrmCsvBtn = document.getElementById("export-crm-csv-btn");
+  if (exportCrmCsvBtn) {
+    exportCrmCsvBtn.addEventListener("click", exportCRMToCSV);
   }
 
   // Checkout Actions
@@ -273,7 +321,7 @@ export function renderAll() {
   renderMarketRates();
   renderMarginCalculator();
   renderLeadsCRM();
-  renderInventoryAdmin();
+  renderCRM();
   updateCartBadge();
 }
 
@@ -328,13 +376,13 @@ function renderStorefront() {
             <div class="bulk-subtext">${item.bulkOption || `MOQ: ${item.moq} ${item.unit}`}</div>
           </div>
           <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">
-            ❄️ Storage: ${item.coldStorage} | In Stock: <strong>${item.inStock} ${item.unit}</strong>
+            ❄️ Storage: <strong>${item.coldStorage}</strong>
           </div>
-          <div class="card-footer">
+          <div class="card-actions">
             <div class="qty-control">
-              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', -1)">-</button>
-              <input type="number" class="qty-input" id="qty-input-${item.id}" value="${item.moq}" min="${item.moq}" step="1">
-              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', 1)">+</button>
+              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', -5)">-</button>
+              <input type="number" id="qty-input-${item.id}" class="qty-input" value="${item.moq}" min="${item.moq}" step="5">
+              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', 5)">+</button>
             </div>
             <button class="add-order-btn" onclick="window.addToOrder('${item.id}')">
               🛒 Add to Order
@@ -382,28 +430,41 @@ window.addToOrder = (itemId) => {
 };
 
 // =========================================================================
-// 2. KENYA MARKET RATES & SOURCING HUB
+// 2. KENYA MARKET RATES & SOURCING HUB (DYNAMIC DAILY AUTO-REFRESH)
 // =========================================================================
 function renderMarketRates() {
   const container = document.getElementById("market-rates-grid");
+  const dateTextEl = document.getElementById("market-live-date-text");
+  if (dateTextEl) {
+    dateTextEl.textContent = getNairobiDate();
+  }
+
   if (!container) return;
 
-  container.innerHTML = KENYA_COMMODITY_RATES.map((commodity) => {
-    return `
+  const dailyRates = getDailyMarketRates();
+
+  container.innerHTML = dailyRates
+    .map((commodity) => {
+      return `
       <div class="market-card">
         <div class="market-card-header">
           <div>
             <h3 class="commodity-title">${commodity.name}</h3>
             <div class="swahili-badge">🇰🇪 ${commodity.swahiliName}</div>
           </div>
-          <span style="background: #e2e8f0; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;">
-            ${commodity.category}
-          </span>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <span style="background: #e2e8f0; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px;">
+              ${commodity.category}
+            </span>
+            <span style="font-size: 0.68rem; background: #ecfdf5; color: #065f46; padding: 2px 6px; border-radius: 10px; font-weight: 700;">
+              🟢 ${commodity.dailyTrend}
+            </span>
+          </div>
         </div>
 
         <div class="rate-highlights">
           <div>
-            <div class="rate-stat-label">Nairobi Wholesale Benchmark</div>
+            <div class="rate-stat-label">Nairobi Benchmark (${commodity.todayDate.split(",")[0]})</div>
             <div class="rate-stat-value">${commodity.wholesaleRange}</div>
           </div>
           <div>
@@ -429,7 +490,7 @@ function renderMarketRates() {
                 <tr>
                   <td><strong>${m.name}</strong></td>
                   <td>${m.price}</td>
-                  <td><span style="font-weight: 600; color: ${m.trend.includes("High") ? "#b91c1c" : "#047857"};">${m.trend}</span></td>
+                  <td><span style="font-weight: 600; color: ${m.trend.includes("High") || m.trend.includes("Volatile") ? "#b91c1c" : "#047857"};">${m.trend}</span></td>
                 </tr>
               `
                 )
@@ -439,7 +500,7 @@ function renderMarketRates() {
         </div>
 
         <div class="sourcing-hubs-box">
-          <div class="hub-title">🚜 Primary Farm-Gate Sourcing Hubs & Contacts:</div>
+          <div class="hub-title">🚜 Verified Sourcing Aggregators & Direct Contacts:</div>
           ${commodity.sourcingHubs
             .map(
               (hub) => `
@@ -453,7 +514,7 @@ function renderMarketRates() {
                 <span>👤 <strong>${hub.contactPerson}</strong></span>
                 <a href="tel:${hub.phone}" class="hub-contact-link">📞 ${hub.phone}</a>
               </div>
-              <div style="font-size: 0.72rem; color: #047857; margin-top: 2px;">⚡ Peak: ${hub.peakHarvest}</div>
+              <div style="font-size: 0.72rem; color: #047857; margin-top: 2px;">⚡ Peak Inflow: ${hub.peakHarvest}</div>
             </div>
           `
             )
@@ -461,7 +522,8 @@ function renderMarketRates() {
         </div>
       </div>
     `;
-  }).join("");
+    })
+    .join("");
 }
 
 // Profit Margin Calculator Logic
@@ -532,13 +594,12 @@ function computeMargin() {
 }
 
 // =========================================================================
-// 3. RESTAURANT SALES LEADS & CRM (WITH LOCATION-BASED SUPPLY BREAKDOWN)
+// 3. NAIROBI RESTAURANT SALES LEADS DIRECTORY
 // =========================================================================
 function renderLeadsCRM() {
   const container = document.getElementById("leads-card-grid");
   if (!container) return;
 
-  // Pipeline Counters
   const leads = store.leads;
   document.getElementById("stat-total-leads").textContent = leads.length;
   document.getElementById("stat-contacted-leads").textContent = leads.filter(
@@ -551,7 +612,6 @@ function renderLeadsCRM() {
     (l) => l.currentStatus === "Active Ordering Client"
   ).length;
 
-  // Filtered Leads
   const filtered = leads.filter((lead) => {
     const matchesArea = store.leadsAreaFilter === "all" || lead.area === store.leadsAreaFilter;
     const matchesStatus = store.leadsStatusFilter === "all" || lead.currentStatus === store.leadsStatusFilter;
@@ -700,7 +760,7 @@ window.viewPitchScript = (leadId) => {
       <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.5;">
         <p style="margin-bottom: 8px;"><em>"Good morning Chef, this is HORECA Gurus Supply. I know kitchen prep is underway, so I'll be brief."</em></p>
         <p style="margin-bottom: 8px;"><em>"We do direct 5:30 AM early morning deliveries of Nyandarua potatoes, Mwea tomatoes, coastal seafood (prawns, red snapper, calamari), aged Boran beef, and Lake Victoria fish to fine kitchens across ${lead.area}."</em></p>
-        <p style="margin-bottom: 8px;"><em>"We fix your wholesale prices on 30-day contracts so you avoid Marikiti rainy season price shocks, with a 100% zero-rejection guarantee."</em></p>
+        <p style="margin-bottom: 8px;"><em>"We fix your wholesale prices with a 100% zero-rejection guarantee and strict Advance or POD payment terms via M-Pesa Till before crate unsealing."</em></p>
         <p><strong>The Close:</strong> <em>"Can we drop off a free Chef's Tasting Basket this Thursday at 6:00 AM with 10kg Shangi potatoes, Mwea salad tomatoes, and fresh ocean prawns or Lake Tilapia fillets for your prep team to test?"</em></p>
       </div>
     </div>
@@ -761,258 +821,382 @@ function handleAddLead(e) {
 }
 
 // =========================================================================
-// 4. INVENTORY MANAGEMENT (ADMIN TOOL & QUICK ADD)
+// 4. B2B SALES & ACCOUNTS CRM (ZERO-CREDIT ENGINE & PO BALANCE LEDGER)
 // =========================================================================
-function handleQuickAddInventory(e) {
-  e.preventDefault();
-  const name = document.getElementById("quick-item-name")?.value.trim();
-  const qty = parseInt(document.getElementById("quick-item-qty")?.value) || 0;
-  const unit = document.getElementById("quick-item-unit")?.value || "kg";
-  const price = parseFloat(document.getElementById("quick-item-price")?.value) || 0;
-  const category = document.getElementById("quick-item-category")?.value || "Fresh Produce";
+function renderCRM() {
+  const tableBody = document.getElementById("crm-accounts-table-body");
+  if (!tableBody) return;
 
-  if (!name || qty <= 0 || price <= 0) {
-    alert("Please enter the item name, quantity (e.g. 1000), and wholesale price.");
+  const accounts = store.crmAccounts;
+
+  // 1. Update High-Level Metric Cards
+  const totalAccounts = accounts.length;
+  const activeAccounts = accounts.filter((a) => a.accountStage === "Active Account").length;
+  const totalRevenue = accounts.reduce((acc, curr) => acc + (curr.revenueGenerated || 0), 0);
+  const totalPoBalance = accounts.reduce((acc, curr) => acc + (curr.balanceInPo || 0), 0);
+  const totalCalls = store.crmCallLogs.length;
+
+  document.getElementById("stat-crm-total-accounts").textContent = totalAccounts;
+  document.getElementById("stat-crm-active-accounts").textContent = activeAccounts;
+  document.getElementById("stat-crm-total-revenue").textContent = `KES ${totalRevenue.toLocaleString()}`;
+  document.getElementById("stat-crm-po-balance").textContent = `KES ${totalPoBalance.toLocaleString()}`;
+  document.getElementById("stat-crm-calls-count").textContent = totalCalls;
+  document.getElementById("stat-crm-credit-debt").textContent = "KES 0.00";
+
+  // 2. Filter Accounts
+  const filtered = accounts.filter((acc) => {
+    const matchesStage = store.crmStageFilter === "all" || acc.accountStage === store.crmStageFilter;
+    const matchesArea = store.crmAreaFilter === "all" || acc.area === store.crmAreaFilter;
+    const matchesSearch =
+      acc.restaurantName.toLowerCase().includes(store.crmSearchQuery) ||
+      acc.contactPerson.toLowerCase().includes(store.crmSearchQuery) ||
+      acc.activePoNumber.toLowerCase().includes(store.crmSearchQuery) ||
+      acc.area.toLowerCase().includes(store.crmSearchQuery);
+    return matchesStage && matchesArea && matchesSearch;
+  });
+
+  if (filtered.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="11" style="text-align: center; padding: 32px; color: #64748b;">
+          No customer accounts found matching your filter criteria.
+        </td>
+      </tr>
+    `;
+  } else {
+    tableBody.innerHTML = filtered
+      .map((acc) => {
+        let stageColor = "#64748b";
+        let stageBg = "#f1f5f9";
+        if (acc.accountStage === "Active Account") {
+          stageColor = "#166534";
+          stageBg = "#dcfce7";
+        } else if (acc.accountStage === "Sampling / Tasting") {
+          stageColor = "#854d0e";
+          stageBg = "#fef9c3";
+        } else if (acc.accountStage === "Negotiating") {
+          stageColor = "#1e40af";
+          stageBg = "#dbeafe";
+        }
+
+        const poBalanceColor = acc.balanceInPo > 0 ? "#059669" : "#64748b";
+
+        return `
+        <tr>
+          <td>
+            <div style="font-weight: 800; color: #0f172a;">${acc.restaurantName}</div>
+            <div style="font-size: 0.72rem; color: #64748b;">Orders Completed: ${acc.ordersCompleted}</div>
+          </td>
+          <td>
+            <span style="font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+              📍 ${acc.area}
+            </span>
+          </td>
+          <td>
+            <div style="font-weight: 600; font-size: 0.8rem;">${acc.contactPerson}</div>
+            <a href="tel:${acc.phone}" style="font-size: 0.72rem; color: #0284c7; text-decoration: none;">${acc.phone}</a>
+          </td>
+          <td>
+            <span style="font-size: 0.72rem; font-weight: 800; color: ${stageColor}; background: ${stageBg}; padding: 3px 8px; border-radius: 10px;">
+              ${acc.accountStage}
+            </span>
+          </td>
+          <td>
+            <span style="font-family: monospace; font-size: 0.78rem; font-weight: 700; color: #0369a1; background: #f0f9ff; padding: 2px 6px; border-radius: 4px; border: 1px solid #bae6fd;">
+              ${acc.activePoNumber}
+            </span>
+          </td>
+          <td style="font-weight: 700; color: #334155;">
+            KES ${acc.totalPoValue.toLocaleString()}
+          </td>
+          <td style="font-weight: 800; color: ${poBalanceColor}; font-size: 0.88rem;">
+            KES ${acc.balanceInPo.toLocaleString()}
+          </td>
+          <td style="font-weight: 800; color: #0f172a;">
+            KES ${acc.revenueGenerated.toLocaleString()}
+          </td>
+          <td>
+            <span style="font-size: 0.72rem; font-weight: 700; color: #991b1b; background: #fef2f2; padding: 2px 6px; border-radius: 4px; border: 1px solid #fecaca; white-space: nowrap;">
+              ${acc.paymentTerms}
+            </span>
+          </td>
+          <td style="max-width: 220px; font-size: 0.75rem; color: #475569; line-height: 1.3;">
+            ${acc.lastInteraction}
+          </td>
+          <td>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+              <button style="background: #e0f2fe; color: #0369a1; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700;" onclick="window.openLogCallModal('${acc.id}')">
+                📞 Call
+              </button>
+              <button style="background: #dcfce7; color: #166534; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700;" onclick="window.openUpdatePOModal('${acc.id}')">
+                💳 PO
+              </button>
+              <button style="background: #25d366; color: #ffffff; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700;" onclick="window.sendAccountWhatsApp('${acc.id}')">
+                💬 WA
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+      })
+      .join("");
+  }
+
+  // 3. Render Call Logs History Feed
+  renderCallLogs();
+
+  // 4. Update Select Options in Modals
+  populateCRMModalsSelects();
+}
+
+function renderCallLogs() {
+  const container = document.getElementById("crm-call-logs-container");
+  if (!container) return;
+
+  const logs = [...store.crmCallLogs].reverse();
+
+  if (logs.length === 0) {
+    container.innerHTML = `<p style="color: #94a3b8; font-size: 0.85rem;">No customer interaction calls logged yet.</p>`;
     return;
   }
 
-  // Check if item already exists in inventory (e.g. "potatoes")
-  const existingIndex = store.inventory.findIndex(
-    (i) => i.name.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(i.name.toLowerCase())
-  );
+  container.innerHTML = logs
+    .map((log) => {
+      let outcomeColor = "#059669";
+      if (log.outcome.includes("Follow")) outcomeColor = "#d97706";
+      if (log.outcome.includes("Catalog")) outcomeColor = "#0284c7";
 
-  if (existingIndex >= 0) {
-    // Increment existing stock
-    const updated = [...store.inventory];
-    updated[existingIndex].inStock += qty;
-    if (price > 0) updated[existingIndex].price = price;
-    store.updateInventory(updated);
-    showToast(`Updated ${updated[existingIndex].name}: +${qty} ${unit} (Total: ${updated[existingIndex].inStock} ${unit})`);
-  } else {
-    // Create new inventory item
-    const newItem = {
-      id: `prod-${Date.now()}`,
-      sku: `SKU-${category.substring(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
-      name,
-      category,
-      price,
-      currency: "KES",
-      unit,
-      bulkOption: `Standard bulk ${unit}`,
-      inStock: qty,
-      moq: Math.min(25, Math.floor(qty / 10)) || 10,
-      origin: "Kenya Farms / Coast Landing",
-      grade: "Grade 1 Select",
-      coldStorage: category.includes("Fish") || category.includes("Sea") ? "Flake Ice (0°C)" : "Chilled (2-4°C)",
-      description: `Fresh warehouse stock of ${name} ready for immediate kitchen delivery.`,
-      isExportGrade: false,
-      image: getPlaceholderImage(category, name)
-    };
-    store.updateInventory([newItem, ...store.inventory]);
-    showToast(`Added ${qty} ${unit} of ${name} to live inventory and storefront!`);
-  }
-
-  renderStorefront();
-  renderInventoryAdmin();
-  e.target.reset();
-}
-
-function getPlaceholderImage(category, name) {
-  const lower = name.toLowerCase();
-  if (lower.includes("snow pea") || lower.includes("sugar snap")) return "src/assets/products/snow_peas.jpg";
-  if (lower.includes("bean") || lower.includes("haricot") || lower.includes("mishiri")) return "src/assets/products/french_beans.jpg";
-  if (lower.includes("pea") || lower.includes("minji")) return "src/assets/products/green_peas.jpg";
-  if (lower.includes("potato") || lower.includes("shangi")) return "src/assets/products/potatoes.jpg";
-  if (lower.includes("onion")) return "src/assets/products/onions.jpg";
-  if (lower.includes("tomato")) return "src/assets/products/tomatoes.jpg";
-  if (lower.includes("pepper") || lower.includes("capsicum")) return "src/assets/products/bell_peppers.jpg";
-  if (lower.includes("prawn") || lower.includes("shrimp")) return "src/assets/products/tiger_prawns.jpg";
-  if (lower.includes("lobster")) return "src/assets/products/lobster_tails.jpg";
-  if (lower.includes("snapper")) return "src/assets/products/red_snapper.jpg";
-  if (lower.includes("kingfish") || lower.includes("nguru")) return "src/assets/products/kingfish_steaks.png";
-  if (lower.includes("calamari") || lower.includes("squid")) return "src/assets/products/calamari.jpg";
-  if (lower.includes("octopus") || lower.includes("pweza")) return "src/assets/products/octopus.jpg";
-  if (lower.includes("tilapia") || lower.includes("ngege")) return "src/assets/products/tilapia_whole.jpg";
-  if (lower.includes("tuna")) return "src/assets/products/tuna_yellowfin.jpg";
-  if (lower.includes("perch") || lower.includes("fish")) return "src/assets/products/red_snapper.jpg";
-  if (lower.includes("stew") || lower.includes("mince") || lower.includes("chunk")) return "src/assets/products/stewing_beef.jpg";
-  if (lower.includes("ribeye") || lower.includes("tenderloin") || lower.includes("steak") || lower.includes("fillet mignon")) return "src/assets/products/beef_ribeye.jpg";
-  if (lower.includes("chicken") || lower.includes("kuku") || lower.includes("poultry")) return "src/assets/products/kienyeji_chicken.jpg";
-  if (lower.includes("goat") || lower.includes("mbuzi") || category.includes("Meat")) return "src/assets/products/goat_carcass.jpg";
-  if (lower.includes("avocado") || lower.includes("hass")) return "src/assets/products/avocado_hass.jpg";
-  if (lower.includes("chilli") || lower.includes("chili")) return "src/assets/products/birdseye_chillies.jpg";
-  return "src/assets/products/tomatoes.jpg";
-}
-
-function renderInventoryAdmin() {
-  const tableBody = document.getElementById("admin-inventory-table-body");
-  if (!tableBody) return;
-
-  const inventory = store.inventory;
-
-  // Stats Counters
-  document.getElementById("stat-admin-total-items").textContent = inventory.length;
-  const totalStockKg = inventory.reduce((acc, curr) => acc + (curr.inStock || 0), 0);
-  document.getElementById("stat-admin-total-kg").textContent = `${totalStockKg.toLocaleString()} Units`;
-  const totalInventoryVal = inventory.reduce((acc, curr) => acc + curr.price * curr.inStock, 0);
-  document.getElementById("stat-admin-valuation").textContent = `KES ${Math.round(totalInventoryVal).toLocaleString()}`;
-
-  tableBody.innerHTML = inventory
-    .map((item) => {
       return `
-      <tr>
-        <td>
-          <div style="font-weight: 700; color: #0f172a;">${item.name}</div>
-          <div style="font-size: 0.72rem; color: #64748b;">SKU: ${item.sku} | 📍 ${item.origin}</div>
-        </td>
-        <td>
-          <span style="font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f1f5f9;">
-            ${item.category}
-          </span>
-        </td>
-        <td>
-          <div style="display: flex; align-items: center; gap: 4px;">
-            KES <input type="number" class="price-input-inline" value="${item.price}" onchange="window.updateItemPrice('${item.id}', this.value)">
-            <span style="font-size: 0.75rem; color: #64748b;">/${item.unit}</span>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;">
+          <div>
+            <strong style="color: #0f172a; font-size: 0.88rem;">${log.restaurantName}</strong>
+            <span style="font-size: 0.75rem; color: #64748b; margin-left: 6px;">(${log.type})</span>
           </div>
-        </td>
-        <td>
-          <div style="display: flex; align-items: center; gap: 4px;">
-            <input type="number" class="stock-input-inline" value="${item.inStock}" onchange="window.updateItemStock('${item.id}', this.value)">
-            <span style="font-size: 0.75rem; color: #64748b;">${item.unit}</span>
-          </div>
-        </td>
-        <td>${item.moq} ${item.unit}</td>
-        <td>
-          <span style="font-size: 0.72rem; color: ${item.isExportGrade ? "#854d0e" : "#475569"}; font-weight: 600;">
-            ${item.isExportGrade ? "🌍 GlobalG.A.P. Export" : "🍽️ HoReCa Kenya"}
+          <span style="font-size: 0.72rem; color: #64748b; background: #ffffff; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            📅 ${log.date}
           </span>
-        </td>
-        <td>
-          <button style="background: #fee2e2; color: #991b1b; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;" onclick="window.deleteInventoryItem('${item.id}')">
-            🗑️ Delete
-          </button>
-        </td>
-      </tr>
+        </div>
+        <div style="font-size: 0.8rem; color: #334155; margin-bottom: 6px;">
+          👤 <strong>Contact:</strong> ${log.contactPerson} | <em>By: ${log.caller}</em>
+        </div>
+        <p style="font-size: 0.82rem; color: #475569; margin-bottom: 6px; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+          "${log.notes}"
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+          <span style="color: ${outcomeColor}; font-weight: 700;">✓ Outcome: ${log.outcome}</span>
+          ${log.followUpDate ? `<span style="color: #0284c7; font-weight: 600;">⏰ Next Follow-Up: ${log.followUpDate}</span>` : ""}
+        </div>
+      </div>
     `;
     })
     .join("");
 }
 
-window.updateItemPrice = (id, newPrice) => {
-  const price = parseFloat(newPrice);
-  if (isNaN(price) || price < 0) return;
-  const updated = store.inventory.map((item) => (item.id === id ? { ...item, price } : item));
-  store.updateInventory(updated);
-  renderStorefront();
-  renderInventoryAdmin();
-  showToast("Updated wholesale price!");
-};
+function populateCRMModalsSelects() {
+  const logAccountSelect = document.getElementById("log-call-account");
+  const poAccountSelect = document.getElementById("po-account-select");
 
-window.updateItemStock = (id, newStock) => {
-  const inStock = parseInt(newStock);
-  if (isNaN(inStock) || inStock < 0) return;
-  const updated = store.inventory.map((item) => (item.id === id ? { ...item, inStock } : item));
-  store.updateInventory(updated);
-  renderStorefront();
-  renderInventoryAdmin();
-  showToast("Updated warehouse stock level!");
-};
+  const optionsHtml = store.crmAccounts
+    .map((acc) => `<option value="${acc.id}">${acc.restaurantName} (${acc.area} - ${acc.activePoNumber})</option>`)
+    .join("");
 
-window.deleteInventoryItem = (id) => {
-  if (confirm("Are you sure you want to remove this item from your supply inventory?")) {
-    const updated = store.inventory.filter((item) => item.id !== id);
-    store.updateInventory(updated);
-    renderStorefront();
-    renderInventoryAdmin();
-    showToast("Product deleted from catalog.");
+  if (logAccountSelect) logAccountSelect.innerHTML = optionsHtml;
+  if (poAccountSelect) poAccountSelect.innerHTML = optionsHtml;
+}
+
+window.openLogCallModal = (accountId) => {
+  const modal = document.getElementById("log-call-modal");
+  if (!modal) return;
+  populateCRMModalsSelects();
+  if (accountId) {
+    const select = document.getElementById("log-call-account");
+    if (select) select.value = accountId;
+    const acc = store.crmAccounts.find((a) => a.id === accountId);
+    if (acc) {
+      document.getElementById("log-call-person").value = acc.contactPerson;
+    }
   }
+  modal.classList.add("open");
 };
 
-function handleAddProduct(e) {
-  e.preventDefault();
-  const name = document.getElementById("new-prod-name").value.trim();
-  const category = document.getElementById("new-prod-category").value;
-  const price = parseFloat(document.getElementById("new-prod-price").value) || 0;
-  const unit = document.getElementById("new-prod-unit").value.trim() || "kg";
-  const stock = parseInt(document.getElementById("new-prod-stock").value) || 0;
-  const moq = parseInt(document.getElementById("new-prod-moq").value) || 10;
-  const origin = document.getElementById("new-prod-origin").value.trim() || "Kenya Highland Farms / Coast Landing";
-  const grade = document.getElementById("new-prod-grade").value.trim() || "Grade 1 Select";
-  const coldStorage = document.getElementById("new-prod-storage").value.trim() || "Cold Chain 2-4°C";
-  const isExport = document.getElementById("new-prod-export").checked;
-  const description = document.getElementById("new-prod-desc").value.trim() || "Fresh kitchen food supply.";
-  const image = document.getElementById("new-prod-img").value.trim() || getPlaceholderImage(category, name);
+window.openUpdatePOModal = (accountId) => {
+  const modal = document.getElementById("update-po-modal");
+  if (!modal) return;
+  populateCRMModalsSelects();
+  if (accountId) {
+    const select = document.getElementById("po-account-select");
+    if (select) select.value = accountId;
+    const acc = store.crmAccounts.find((a) => a.id === accountId);
+    if (acc) {
+      document.getElementById("po-number-input").value = acc.activePoNumber;
+    }
+  }
+  modal.classList.add("open");
+};
 
-  if (!name || price <= 0) {
-    alert("Please enter a valid product name and wholesale price.");
+window.sendAccountWhatsApp = (accountId) => {
+  const acc = store.crmAccounts.find((a) => a.id === accountId);
+  if (!acc) return;
+  const phoneClean = acc.phone.replace(/[^0-9]/g, "");
+  const message = `Hello ${acc.contactPerson}! 👋 This is HORECA Gurus Supply Kenya regarding your account for *${acc.restaurantName}*.
+
+📄 *Active PO Number:* ${acc.activePoNumber}
+💰 *Remaining PO Balance:* KES ${acc.balanceInPo.toLocaleString()}
+💳 *Payment Terms:* ${acc.paymentTerms}
+
+We are preparing tomorrow morning's 5:30 AM dispatch routes. Would you like to confirm your standard delivery or place an on-demand restock?
+
+📲 *Online Kitchen Portal:* ${window.location.href}`;
+
+  const url = `https://wa.me/${phoneClean}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+};
+
+function handleLogCallSubmit(e) {
+  e.preventDefault();
+  const accountId = document.getElementById("log-call-account").value;
+  const type = document.getElementById("log-call-type").value;
+  const person = document.getElementById("log-call-person").value.trim();
+  const notes = document.getElementById("log-call-notes").value.trim();
+  const outcome = document.getElementById("log-call-outcome").value;
+  const followUp = document.getElementById("log-call-followup").value;
+
+  const acc = store.crmAccounts.find((a) => a.id === accountId);
+  const restaurantName = acc ? acc.restaurantName : "Client Restaurant";
+
+  const dateNow = new Date().toISOString().replace("T", " ").substring(0, 16);
+
+  const newLog = {
+    id: `call-${Date.now()}`,
+    restaurantName,
+    caller: "HORECA Gurus Sales Rep",
+    date: dateNow,
+    type,
+    contactPerson: person,
+    notes,
+    outcome,
+    followUpDate: followUp || null
+  };
+
+  // Update touchpoint history
+  store.updateCRMCallLogs([newLog, ...store.crmCallLogs]);
+
+  // Update account ledger
+  const updatedAccounts = store.crmAccounts.map((a) => {
+    if (a.id === accountId) {
+      return {
+        ...a,
+        coldCallsLogged: (a.coldCallsLogged || 0) + 1,
+        lastInteraction: `${dateNow}: ${notes.substring(0, 75)}... (${outcome})`
+      };
+    }
+    return a;
+  });
+
+  store.updateCRMAccounts(updatedAccounts);
+  renderCRM();
+  document.getElementById("log-call-modal").classList.remove("open");
+  e.target.reset();
+  showToast(`Logged touchpoint with ${restaurantName}!`);
+}
+
+function handleUpdatePOSubmit(e) {
+  e.preventDefault();
+  const accountId = document.getElementById("po-account-select").value;
+  const poNumber = document.getElementById("po-number-input").value.trim();
+  const actionType = document.getElementById("po-action-type").value;
+  const amount = parseFloat(document.getElementById("po-amount-input").value) || 0;
+  const method = document.getElementById("po-payment-method").value;
+
+  if (amount <= 0) {
+    alert("Please enter a valid amount in KES.");
     return;
   }
 
-  const newProduct = {
-    id: `prod-${Date.now()}`,
-    sku: `SKU-${category.substring(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
-    name,
-    category,
-    price,
-    currency: "KES",
-    unit,
-    bulkOption: `Standard bulk ${unit}`,
-    inStock: stock,
-    moq,
-    origin,
-    grade,
-    coldStorage,
-    description,
-    isExportGrade: isExport,
-    image
-  };
+  const updatedAccounts = store.crmAccounts.map((a) => {
+    if (a.id === accountId) {
+      let balance = a.balanceInPo;
+      let total = a.totalPoValue;
+      let rev = a.revenueGenerated;
+      let orders = a.ordersCompleted;
 
-  store.updateInventory([newProduct, ...store.inventory]);
-  renderStorefront();
-  renderInventoryAdmin();
-  document.getElementById("add-product-modal").classList.remove("open");
+      if (actionType === "deposit") {
+        balance += amount;
+        total += amount;
+        rev += amount;
+      } else if (actionType === "drawdown") {
+        balance = Math.max(0, balance - amount);
+        orders += 1;
+      } else if (actionType === "new_po") {
+        balance = amount;
+        total = amount;
+        rev += amount;
+      }
+
+      return {
+        ...a,
+        activePoNumber: poNumber || a.activePoNumber,
+        totalPoValue: total,
+        balanceInPo: balance,
+        revenueGenerated: rev,
+        ordersCompleted: orders,
+        lastInteraction: `Posted ${actionType} of KES ${amount.toLocaleString()} via ${method}. Balance now KES ${balance.toLocaleString()}.`
+      };
+    }
+    return a;
+  });
+
+  store.updateCRMAccounts(updatedAccounts);
+  renderCRM();
+  document.getElementById("update-po-modal").classList.remove("open");
   e.target.reset();
-  showToast(`Added ${name} to live inventory and online store!`);
+  showToast(`Updated PO & Balance ledger for account!`);
 }
 
-function exportInventoryToCSV() {
-  const headers = ["SKU", "Name", "Category", "Wholesale Price (KES)", "Unit", "In Stock", "MOQ", "Origin", "Grade", "Export Ready"];
-  const rows = store.inventory.map((i) => [
-    i.sku,
-    `"${i.name}"`,
-    i.category,
-    i.price,
-    i.unit,
-    i.inStock,
-    i.moq,
-    `"${i.origin}"`,
-    `"${i.grade}"`,
-    i.isExportGrade ? "Yes" : "No"
+function exportCRMToCSV() {
+  const headers = [
+    "Restaurant Name",
+    "Area Hub",
+    "Chef / Contact Person",
+    "Phone",
+    "Account Stage",
+    "Active PO Number",
+    "Total PO Value (KES)",
+    "Balance in PO (KES)",
+    "Revenue Generated (KES)",
+    "Orders Completed",
+    "Payment Terms",
+    "Last Touchpoint"
+  ];
+
+  const rows = store.crmAccounts.map((a) => [
+    `"${a.restaurantName}"`,
+    `"${a.area}"`,
+    `"${a.contactPerson}"`,
+    `"${a.phone}"`,
+    `"${a.accountStage}"`,
+    `"${a.activePoNumber}"`,
+    a.totalPoValue,
+    a.balanceInPo,
+    a.revenueGenerated,
+    a.ordersCompleted,
+    `"${a.paymentTerms}"`,
+    `"${(a.lastInteraction || "").replace(/"/g, '""')}"`
   ]);
 
   const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `HorecaGurus_Inventory_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute("download", `HorecaGurus_B2B_CRM_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 }
 
-function exportInventoryToJSON() {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store.inventory, null, 2));
-  const downloadAnchor = document.createElement("a");
-  downloadAnchor.setAttribute("href", dataStr);
-  downloadAnchor.setAttribute("download", `HorecaGurus_Inventory_Backup_${new Date().toISOString().slice(0, 10)}.json`);
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  downloadAnchor.remove();
-}
-
 // =========================================================================
-// 5. B2B CART & ORDER CHECKOUT
+// 5. B2B CART & ZERO-CREDIT ORDER CHECKOUT
 // =========================================================================
 function updateCartBadge() {
   const badge = document.getElementById("header-cart-count");
@@ -1111,10 +1295,14 @@ function dispatchOrderViaWhatsApp() {
     return;
   }
 
-  const restaurantName = document.getElementById("order-restaurant-name")?.value.trim() || "Client Restaurant";
+  const restaurantName = document.getElementById("order-restaurant-name")?.value.trim() || "Client Kitchen";
   const deliverySlot = document.getElementById("order-delivery-slot")?.value || "Morning 5:30 AM - 7:30 AM";
-  const paymentTerm = document.getElementById("order-payment-terms")?.value || "30-Day Corporate Invoice";
-  const instructions = document.getElementById("order-instructions")?.value.trim() || "Standard cold-chain packing on flake ice.";
+  const paymentTerm =
+    document.getElementById("order-payment-terms")?.value ||
+    "Payment on Delivery (POD via M-Pesa Till before unsealing)";
+  const instructions =
+    document.getElementById("order-instructions")?.value.trim() ||
+    "Standard cold-chain packing on flake ice in food-grade Euro-crates.";
 
   let totalKes = 0;
   const lineItemsText = items
@@ -1125,13 +1313,14 @@ function dispatchOrderViaWhatsApp() {
     })
     .join("\n");
 
-  const poNumber = `PO-${Math.floor(100000 + Math.random() * 900000)}`;
+  const poNumber = `PO-HG-${Math.floor(100000 + Math.random() * 900000)}`;
 
   const message = `*HORECA GURUS B2B PURCHASE ORDER*
 📄 *PO Number:* #${poNumber}
 🏨 *Kitchen / Client:* ${restaurantName}
 ⏰ *Scheduled Delivery:* ${deliverySlot}
 💳 *Payment Terms:* ${paymentTerm}
+⛔ *STRICT ZERO-CREDIT POLICY:* Goods released only upon verified advance settlement or live M-Pesa Till payment at receiving bay.
 
 📋 *ORDERED LINE ITEMS:*
 ${lineItemsText}
@@ -1143,12 +1332,31 @@ ${lineItemsText}
 
 _Generated via HORECA Gurus Digital Kitchen Portal_`;
 
-  // Pre-fill WhatsApp dispatch line (+254 722 000 000 or custom)
   const dispatchPhone = "254722841290";
   const url = `https://wa.me/${dispatchPhone}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
 
-  showToast(`Purchase order #${poNumber} generated and sent to dispatch!`);
+  // If this restaurant matches an account in CRM, automatically record the activity
+  const matchedAcc = store.crmAccounts.find((a) =>
+    a.restaurantName.toLowerCase().includes(restaurantName.toLowerCase())
+  );
+  if (matchedAcc) {
+    const updated = store.crmAccounts.map((a) => {
+      if (a.id === matchedAcc.id) {
+        return {
+          ...a,
+          ordersCompleted: a.ordersCompleted + 1,
+          revenueGenerated: a.revenueGenerated + totalKes,
+          lastInteraction: `PO #${poNumber} dispatched via WhatsApp for KES ${totalKes.toLocaleString()}.`
+        };
+      }
+      return a;
+    });
+    store.updateCRMAccounts(updated);
+    renderCRM();
+  }
+
+  showToast(`Purchase order #${poNumber} generated and sent to dispatch desk!`);
   store.updateCart({});
   updateCartBadge();
   closeCartModal();
