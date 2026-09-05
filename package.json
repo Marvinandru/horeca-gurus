@@ -1,0 +1,25 @@
+{
+  "name": "horeca-gurus",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "HORECA Gurus - Kenya Produce, Meat, and Fish Supply Platform & Operations Tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "serve:py": "python3 server.py"
+  },
+  "keywords": [
+    "horeca-gurus",
+    "kenya",
+    "horeca",
+    "produce",
+    "meat",
+    "fish",
+    "export",
+    "market-rates",
+    "b2b-supply",
+    "nairobi-restaurants"
+  ],
+  "author": "HORECA Gurus Kenya",
+  "license": "ISC"
+}
