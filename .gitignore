@@ -18,6 +18,7 @@ pids
 # Directory for instrumented code
 lib-cov
 coverage
+dist/
 
 # Dependency directories
 node_modules/
