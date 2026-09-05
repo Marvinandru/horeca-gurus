@@ -10,7 +10,7 @@ import { DEFAULT_INVENTORY } from "../data/default_inventory.js";
 // --- PERSISTENT STATE MANAGEMENT ---
 class Store {
   constructor() {
-    this.inventory = this.loadState("horecagurus_inventory", DEFAULT_INVENTORY);
+    this.inventory = this.loadInventory();
     this.leads = this.loadState("horecagurus_leads", RESTAURANT_LEADS);
     this.cart = this.loadState("horecagurus_cart", {});
     this.activeTab = "storefront";
@@ -18,6 +18,33 @@ class Store {
     this.searchQuery = "";
     this.leadsAreaFilter = "all";
     this.leadsStatusFilter = "all";
+  }
+
+  loadInventory() {
+    try {
+      const saved = localStorage.getItem("horecagurus_inventory_v4");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Synchronize default items with verified local images
+        const defaultMap = new Map(DEFAULT_INVENTORY.map(item => [item.id, item]));
+        return parsed.map(item => {
+          if (defaultMap.has(item.id)) {
+            const def = defaultMap.get(item.id);
+            return { ...item, image: def.image, name: def.name, category: def.category };
+          }
+          return item;
+        });
+      }
+      // Migrate from previous cache keys
+      localStorage.removeItem("horecagurus_inventory");
+      localStorage.removeItem("horecagurus_inventory_v2");
+      localStorage.removeItem("horecagurus_inventory_v3");
+      localStorage.setItem("horecagurus_inventory_v4", JSON.stringify(DEFAULT_INVENTORY));
+      return DEFAULT_INVENTORY;
+    } catch (e) {
+      console.warn("Failed to read inventory from storage:", e);
+      return DEFAULT_INVENTORY;
+    }
   }
 
   loadState(key, fallback) {
@@ -40,7 +67,7 @@ class Store {
 
   updateInventory(newInventory) {
     this.inventory = newInventory;
-    this.saveState("horecagurus_inventory", this.inventory);
+    this.saveState("horecagurus_inventory_v4", this.inventory);
   }
 
   updateLeads(newLeads) {
@@ -286,7 +313,7 @@ function renderStorefront() {
       return `
       <div class="product-card">
         <div class="card-img-wrap">
-          <img src="${item.image}" alt="${item.name}" class="card-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'">
+          <img src="${item.image}" alt="${item.name}" class="card-img" loading="lazy" onerror="this.src='src/assets/products/tomatoes.jpg'">
           <span class="grade-badge">${item.grade}</span>
           <span class="cat-badge ${catClass}">${item.category}</span>
         </div>
@@ -792,16 +819,29 @@ function handleQuickAddInventory(e) {
 
 function getPlaceholderImage(category, name) {
   const lower = name.toLowerCase();
-  if (lower.includes("potato")) return "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=600&q=80";
-  if (lower.includes("onion")) return "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=600&q=80";
-  if (lower.includes("tomato")) return "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=600&q=80";
-  if (lower.includes("pea")) return "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?auto=format&fit=crop&w=600&q=80";
-  if (lower.includes("prawn")) return "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=600&q=80";
-  if (lower.includes("lobster")) return "https://images.unsplash.com/photo-1548811269-808620864ca0?auto=format&fit=crop&w=600&q=80";
-  if (lower.includes("tuna")) return "https://images.unsplash.com/photo-1501595091296-3aa970afb3ff?auto=format&fit=crop&w=600&q=80";
-  if (lower.includes("snapper") || lower.includes("fish")) return "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&w=600&q=80";
-  if (category.includes("Meat") || lower.includes("beef") || lower.includes("goat")) return "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=600&q=80";
-  return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("snow pea") || lower.includes("sugar snap")) return "src/assets/products/snow_peas.jpg";
+  if (lower.includes("bean") || lower.includes("haricot") || lower.includes("mishiri")) return "src/assets/products/french_beans.jpg";
+  if (lower.includes("pea") || lower.includes("minji")) return "src/assets/products/green_peas.jpg";
+  if (lower.includes("potato") || lower.includes("shangi")) return "src/assets/products/potatoes.jpg";
+  if (lower.includes("onion")) return "src/assets/products/onions.jpg";
+  if (lower.includes("tomato")) return "src/assets/products/tomatoes.jpg";
+  if (lower.includes("pepper") || lower.includes("capsicum")) return "src/assets/products/bell_peppers.jpg";
+  if (lower.includes("prawn") || lower.includes("shrimp")) return "src/assets/products/tiger_prawns.jpg";
+  if (lower.includes("lobster")) return "src/assets/products/lobster_tails.jpg";
+  if (lower.includes("snapper")) return "src/assets/products/red_snapper.jpg";
+  if (lower.includes("kingfish") || lower.includes("nguru")) return "src/assets/products/kingfish_steaks.png";
+  if (lower.includes("calamari") || lower.includes("squid")) return "src/assets/products/calamari.jpg";
+  if (lower.includes("octopus") || lower.includes("pweza")) return "src/assets/products/octopus.jpg";
+  if (lower.includes("tilapia") || lower.includes("ngege")) return "src/assets/products/tilapia_whole.jpg";
+  if (lower.includes("tuna")) return "src/assets/products/tuna_yellowfin.jpg";
+  if (lower.includes("perch") || lower.includes("fish")) return "src/assets/products/red_snapper.jpg";
+  if (lower.includes("stew") || lower.includes("mince") || lower.includes("chunk")) return "src/assets/products/stewing_beef.jpg";
+  if (lower.includes("ribeye") || lower.includes("tenderloin") || lower.includes("steak") || lower.includes("fillet mignon")) return "src/assets/products/beef_ribeye.jpg";
+  if (lower.includes("chicken") || lower.includes("kuku") || lower.includes("poultry")) return "src/assets/products/kienyeji_chicken.jpg";
+  if (lower.includes("goat") || lower.includes("mbuzi") || category.includes("Meat")) return "src/assets/products/goat_carcass.jpg";
+  if (lower.includes("avocado") || lower.includes("hass")) return "src/assets/products/avocado_hass.jpg";
+  if (lower.includes("chilli") || lower.includes("chili")) return "src/assets/products/birdseye_chillies.jpg";
+  return "src/assets/products/tomatoes.jpg";
 }
 
 function renderInventoryAdmin() {

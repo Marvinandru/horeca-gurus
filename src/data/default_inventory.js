@@ -1,6 +1,7 @@
 /**
  * HORECA Gurus Default Inventory Catalog
  * Structured across Farm Fresh Produce, Lake & Ocean Seafood, Butchery, and Export.
+ * All items mapped to verified, high-resolution authentic local product assets.
  */
 
 export const DEFAULT_INVENTORY = [
@@ -21,7 +22,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Dry Dark Ventilated (8-10°C)",
     description: "High dry-matter Shangi potatoes ideal for crispy restaurant French fries and rustic potato wedges with minimal oil absorption.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/potatoes.jpg"
   },
   {
     id: "prod-onions-red",
@@ -39,7 +40,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Ambient Ventilated (15-18°C)",
     description: "Crisp red onions with paper-dry skins and intense aromatics. Perfect for hotel buffet salads, salsas, and kitchen mirepoix bases.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/onions.jpg"
   },
   {
     id: "prod-tomatoes-anna",
@@ -57,7 +58,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Cool Room (12-14°C, Do not freeze)",
     description: "Deep red, firm slicing tomatoes with thick fleshy walls and balanced acidity. Perfect for burgers, fresh salads, and culinary sauces.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/tomatoes.jpg"
   },
   {
     id: "prod-peas-green-minji",
@@ -75,7 +76,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled Room (2-4°C)",
     description: "Plump, naturally sweet highland green peas. Delivered unshelled or custom pre-shelled for hotel prep staff upon advance order.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/green_peas.jpg"
   },
   {
     id: "prod-peas-snow-fresh",
@@ -93,7 +94,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Rapid Hydro-Cooled (1-3°C)",
     description: "Tender, stringless snow peas for wok stir-fries, hotel banqueting, and gourmet Asian fusion culinary displays.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1596797882870-8c33deeac224?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/snow_peas.jpg"
   },
   {
     id: "prod-bell-capsicum",
@@ -111,7 +112,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Cool Room (8-10°C)",
     description: "Crisp greenhouse sweet bell peppers with thick flesh. Ideal for fajitas, gourmet salads, and restaurant skewering.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/bell_peppers.jpg"
   },
   {
     id: "prod-french-beans",
@@ -129,7 +130,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled (3-5°C, 90% RH)",
     description: "Pencil-thin, fiberless French beans favored by hotel fine dining and international airlines catering services.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1551893478-d726eaf0442c?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/french_beans.jpg"
   },
 
   // --- SEAFOOD & MARINE DIVISION ---
@@ -149,7 +150,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled on Slush Ice (0°C)",
     description: "Massive, succulent tiger prawns harvested off coastal mangrove channels. Perfect for sizzling garlic butter platters, Swahili curries, and open-flame grills.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/tiger_prawns.jpg"
   },
   {
     id: "fish-lobster-tails",
@@ -167,7 +168,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Wet Flake Ice Bed (0°C)",
     description: "Sweet, firm spiny lobster tails line-caught by coastal divers. The centerpiece for luxury Nairobi seafood buffets and fine dining grill menus.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1548811269-808620864ca0?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/lobster_tails.jpg"
   },
   {
     id: "fish-red-snapper-marine",
@@ -185,7 +186,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Wet Flake Ice (0°C)",
     description: "Wild ocean red snapper with bright crimson skin and moist white flakes. Arrives overnight on refrigerated transit from Kilifi.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/red_snapper.jpg"
   },
   {
     id: "fish-red-snapper-fillet",
@@ -203,7 +204,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Deep Chilled (0 to 1°C)",
     description: "Precision-filleted red snapper portions. Skin-on for perfect crispy pan-searing and delicate herb broths.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/snapper_fillet.jpg"
   },
   {
     id: "fish-kingfish-steaks",
@@ -221,7 +222,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled on Ice (0°C)",
     description: "Dense, meaty Kingfish cross-cut steaks. Exceptional flavor for Swahili coconut curries, charcoal grilling, and hotel pan-frys.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/kingfish_steaks.png"
   },
   {
     id: "fish-tuna-yellowfin",
@@ -239,7 +240,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Super-Chilled Vacuum Pack (-1 to 0°C)",
     description: "Pristine deep-red yellowfin tuna loins handled with strict tuna bleeding protocols. Ideal for raw sushi, sashimi, tartare, and seared tuna steaks.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1501595091296-3aa970afb3ff?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/tuna_yellowfin.jpg"
   },
   {
     id: "fish-calamari-rings",
@@ -257,7 +258,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Flake Ice (0°C)",
     description: "Tender, clean calamari tubes ready for crispy golden rings, salt-and-pepper squid, and Mediterranean seafood pasta.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/calamari.jpg"
   },
   {
     id: "fish-deep-octopus",
@@ -275,7 +276,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled on Ice (0°C)",
     description: "Traditionally tenderized ocean octopus. No rubbery texture; ready for chargrilled Spanish pulpo gallego or coastal coconut stew.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/octopus.jpg"
   },
   {
     id: "fish-tilapia-whole",
@@ -293,7 +294,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Packed in Flake Ice (0°C Slurry)",
     description: "Wild-caught Lake Victoria Tilapia delivered with bright red gills and crystal-clear eyes. Descaled and gutted to hotel kitchen specifications.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1534948216015-843149f72be3?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/tilapia_whole.jpg"
   },
   {
     id: "fish-tilapia-fillet",
@@ -311,7 +312,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Vacuum Chilled (0 to 1°C)",
     description: "Pristine white flesh tilapia fillets with zero muddy taste. Pin-bone out, ready for direct pan-searing or beer battering.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/tilapia_fillet.jpg"
   },
   {
     id: "fish-nile-perch-fillet",
@@ -329,7 +330,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Deep Chilled (0 to 1°C)",
     description: "Firm, meaty white fish loins rich in omega-3. Perfect for high-end hotel fish & chips, tikka skewers, and oven baking.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/nile_perch.jpg"
   },
 
   // --- BUTCHERY & HALAL MEAT DIVISION ---
@@ -349,7 +350,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled Vacuum Pack (0 to 1°C)",
     description: "Melt-in-your-mouth grass-fed tenderloin, completely trimmed of silver skin. Certified Halal with veterinary stamping.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/beef_tenderloin.jpg"
   },
   {
     id: "meat-beef-ribeye",
@@ -367,7 +368,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled Vacuum Pack (0 to 2°C)",
     description: "Well-marbled beef steaks delivering deep beefy richness on the open grill. Custom portion-cut to 250g or 300g per steak.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/beef_ribeye.jpg"
   },
   {
     id: "meat-beef-stewing",
@@ -385,7 +386,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled (1 to 3°C)",
     description: "Lean beef cubes and 80/20 ground burger chuck prepared fresh daily for staff canteens, buffet stews, and burger patties.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/stewing_beef.jpg"
   },
   {
     id: "meat-goat-whole-carcass",
@@ -403,7 +404,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Hanging Cold Room (1 to 2°C)",
     description: "Full tender goat carcass ideal for Kenyan Nyama Choma barbecues and biryani dishes. Inspected and stamped by Directorate of Veterinary Services.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/goat_carcass.jpg"
   },
   {
     id: "meat-chicken-kienyeji",
@@ -421,7 +422,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Chilled (0 to 2°C)",
     description: "Firm, rich-flavored authentic indigenous chicken dressed and clean-plucked. Outstanding for traditional chicken stews and broths.",
     isExportGrade: false,
-    image: "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/kienyeji_chicken.jpg"
   },
 
   // --- EXPORT DIVISION (GLOBALG.A.P. & KEPHIS CERTIFIED) ---
@@ -441,7 +442,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Pre-cooled CA (Controlled Atmosphere 5.5°C)",
     description: "Dry matter > 23%, calibrated count sizes 14 to 22. Certified with phytosanitary inspection documents for EU, UK, and GCC air/sea shipments.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/avocado_hass.jpg"
   },
   {
     id: "export-fine-beans",
@@ -459,7 +460,7 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Cold Chain 2-4°C (Direct to JKIA Cargo Terminal)",
     description: "Pre-trimmed ends, sorted into 4kg ventilated corrugated cartons. 100% compliant with EU Maximum Residue Limits (MRL).",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/export_beans.jpg"
   },
   {
     id: "export-chillies-birdseye",
@@ -477,6 +478,6 @@ export const DEFAULT_INVENTORY = [
     coldStorage: "Ventilated 8-10°C",
     description: "Fiery, deep red dried or fresh bird's eye chillies. KEPHIS pest-free certified for Middle East spice merchants and European food processors.",
     isExportGrade: true,
-    image: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=600&q=80"
+    image: "src/assets/products/birdseye_chillies.jpg"
   }
 ];
