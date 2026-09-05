@@ -118,7 +118,25 @@ function setupEventListeners() {
     closeCartBtn.addEventListener("click", closeCartModal);
   }
 
-  // Add Product Modal Triggers
+  // Market Ticker Dropdown Accordion Toggle
+  const tickerToggle = document.getElementById("market-ticker-toggle-btn");
+  const tickerContent = document.getElementById("market-ticker-dropdown-content");
+  if (tickerToggle && tickerContent) {
+    tickerToggle.addEventListener("click", () => {
+      const isHidden = tickerContent.style.display === "none";
+      tickerContent.style.display = isHidden ? "block" : "none";
+      const icon = document.getElementById("ticker-toggle-icon");
+      if (icon) icon.textContent = isHidden ? "▲" : "▼";
+    });
+  }
+
+  // Quick Add Inventory Form (Prominent bar at top of Inventory tab)
+  const quickAddForm = document.getElementById("quick-add-inventory-form");
+  if (quickAddForm) {
+    quickAddForm.addEventListener("submit", handleQuickAddInventory);
+  }
+
+  // Advanced Add Product Modal Triggers
   const openAddProductBtn = document.getElementById("open-add-product-btn");
   if (openAddProductBtn) {
     openAddProductBtn.addEventListener("click", () => {
@@ -250,8 +268,8 @@ function renderStorefront() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 48px; background: #fff; border-radius: 12px;">
-        <h3 style="color: #475569; margin-bottom: 8px;">No produce or food items match your criteria</h3>
+      <div style="grid-column: 1 / -1; text-align: center; padding: 48px; background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;">
+        <h3 style="color: #475569; margin-bottom: 8px; font-weight: 700; font-size: 1.1rem;">No produce, meat or seafood items match your criteria</h3>
         <p style="color: #94a3b8; font-size: 0.9rem;">Try selecting another division or clearing your search query.</p>
       </div>
     `;
@@ -262,7 +280,7 @@ function renderStorefront() {
     .map((item) => {
       let catClass = "produce";
       if (item.category.includes("Meat")) catClass = "meat";
-      if (item.category.includes("Fish")) catClass = "fish";
+      if (item.category.includes("Fish") || item.category.includes("Sea")) catClass = "fish";
       if (item.category.includes("Export")) catClass = "export";
 
       return `
@@ -454,6 +472,10 @@ function updateCalculatorDefaults() {
     farmGateInput.value = 480;
     transportInput.value = 25;
     salePriceInput.value = 650;
+  } else if (selected === "prawns") {
+    farmGateInput.value = 1600;
+    transportInput.value = 150;
+    salePriceInput.value = 2400;
   } else if (selected === "fish") {
     farmGateInput.value = 380;
     transportInput.value = 35;
@@ -483,7 +505,7 @@ function computeMargin() {
 }
 
 // =========================================================================
-// 3. RESTAURANT SALES LEADS & CRM
+// 3. RESTAURANT SALES LEADS & CRM (WITH LOCATION-BASED SUPPLY BREAKDOWN)
 // =========================================================================
 function renderLeadsCRM() {
   const container = document.getElementById("leads-card-grid");
@@ -511,8 +533,9 @@ function renderLeadsCRM() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fff; border-radius: 12px;">
-        <h3 style="color: #475569;">No restaurants match this filter</h3>
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;">
+        <h3 style="color: #475569; font-weight: 700;">No restaurants match this filter</h3>
+        <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 4px;">Try selecting another Nairobi location hub or resetting the pipeline status.</p>
       </div>
     `;
     return;
@@ -525,6 +548,12 @@ function renderLeadsCRM() {
       if (lead.currentStatus === "Negotiating Contract") statusColor = "#0284c7";
       if (lead.currentStatus === "Sample Basket Delivered") statusColor = "#d97706";
 
+      const supply = lead.whatWeCanSupply || {
+        seafood: "Lake Tilapia & Nile Perch Fillets",
+        meat: "Prime Boran Beef Steaks & Goat Cuts",
+        produce: "Shangi Potatoes, Mwea Tomatoes & Onions"
+      };
+
       return `
       <div class="lead-card">
         <div>
@@ -533,17 +562,31 @@ function renderLeadsCRM() {
             <span class="lead-area-tag">📍 ${lead.area}</span>
           </div>
           <div class="lead-cuisine">${lead.cuisine}</div>
-          <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 6px;">
+          <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">
             🏢 ${lead.exactLocation}
           </div>
+
+          <!-- Tailored Supply Breakdown -->
+          <div class="supply-box" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.78rem;">
+            <div style="font-weight: 800; color: #0f172a; margin-bottom: 6px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;">
+              📦 What HORECA Gurus Supplies (${lead.area}):
+            </div>
+            <div style="margin-bottom: 3px; color: #1e40af;">
+              🦐 <strong>Sea Food & Lake Fish:</strong> ${supply.seafood}
+            </div>
+            <div style="margin-bottom: 3px; color: #991b1b;">
+              🥩 <strong>Meats & Poultry:</strong> ${supply.meat}
+            </div>
+            <div style="color: #166534;">
+              🥔 <strong>Fresh Farm Produce:</strong> ${supply.produce}
+            </div>
+          </div>
+
           <div class="lead-details">
             <div>👤 <strong>Decision Maker:</strong> ${lead.decisionMaker}</div>
-            <div>📞 <strong>Phone:</strong> <a href="tel:${lead.phone}" style="color: #0284c7; text-decoration: none;">${lead.phone}</a></div>
+            <div>📞 <strong>Phone:</strong> <a href="tel:${lead.phone}" style="color: #0284c7; text-decoration: none; font-weight: 600;">${lead.phone}</a></div>
             <div>✉️ <strong>Email:</strong> ${lead.email}</div>
-            <div style="margin-top: 6px; background: #f8fafc; padding: 6px 8px; border-radius: 6px;">
-              📦 <strong>Weekly Need:</strong> ${lead.estimatedWeeklyDemand}
-            </div>
-            <div style="font-size: 0.72rem; color: #047857; margin-top: 4px;">
+            <div style="font-size: 0.72rem; color: #047857; margin-top: 6px; background: #ecfdf5; padding: 4px 6px; border-radius: 4px;">
               💡 <em>Pitch Angle:</em> ${lead.salesAngle}
             </div>
           </div>
@@ -603,6 +646,7 @@ window.sendChefWhatsApp = (leadId) => {
     .replace("{tomatoPrice}", "85")
     .replace("{onionPrice}", "78")
     .replace("{peasPrice}", "145")
+    .replace("{prawnsPrice}", "2,400")
     .replace("{fishPrice}", "1,100")
     .replace("{beefPrice}", "1,150")
     .replace("{portalLink}", window.location.href);
@@ -628,9 +672,9 @@ window.viewPitchScript = (leadId) => {
       <h4 style="color: #059669; margin-bottom: 6px;">📞 Step 1: 60-Second Phone Pitch</h4>
       <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.5;">
         <p style="margin-bottom: 8px;"><em>"Good morning Chef, this is HORECA Gurus Supply. I know kitchen prep is underway, so I'll be brief."</em></p>
-        <p style="margin-bottom: 8px;"><em>"We do direct 5:30 AM early morning deliveries of Nyandarua potatoes, Mwea tomatoes, aged Boran beef, and Lake Victoria fish to fine kitchens across ${lead.area}."</em></p>
+        <p style="margin-bottom: 8px;"><em>"We do direct 5:30 AM early morning deliveries of Nyandarua potatoes, Mwea tomatoes, coastal seafood (prawns, red snapper, calamari), aged Boran beef, and Lake Victoria fish to fine kitchens across ${lead.area}."</em></p>
         <p style="margin-bottom: 8px;"><em>"We fix your wholesale prices on 30-day contracts so you avoid Marikiti rainy season price shocks, with a 100% zero-rejection guarantee."</em></p>
-        <p><strong>The Close:</strong> <em>"Can we drop off a free Chef's Tasting Basket this Thursday at 6:00 AM with 10kg Shangi potatoes and Tilapia fillets for your prep team to test?"</em></p>
+        <p><strong>The Close:</strong> <em>"Can we drop off a free Chef's Tasting Basket this Thursday at 6:00 AM with 10kg Shangi potatoes, Mwea salad tomatoes, and fresh ocean prawns or Lake Tilapia fillets for your prep team to test?"</em></p>
       </div>
     </div>
 
@@ -670,7 +714,12 @@ function handleAddLead(e) {
     decisionMaker: decisionMaker || "Head Chef / Procurement",
     phone,
     email: email || "procurement@hotel.co.ke",
-    estimatedWeeklyDemand: demand || "General produce and meat supplies",
+    estimatedWeeklyDemand: demand || "General produce, meat, and seafood supplies",
+    whatWeCanSupply: {
+      seafood: "Lake Tilapia & Coastal Seafood",
+      meat: "Prime Boran Steer Cuts & Mbuzi",
+      produce: "Shangi Potatoes & Fresh Vegetables"
+    },
     currentStatus: "New Lead",
     notes: "Added via sales lead manager",
     bestContactTime: "10:00 AM - 11:30 AM",
@@ -685,8 +734,76 @@ function handleAddLead(e) {
 }
 
 // =========================================================================
-// 4. INVENTORY MANAGEMENT (ADMIN TOOL)
+// 4. INVENTORY MANAGEMENT (ADMIN TOOL & QUICK ADD)
 // =========================================================================
+function handleQuickAddInventory(e) {
+  e.preventDefault();
+  const name = document.getElementById("quick-item-name")?.value.trim();
+  const qty = parseInt(document.getElementById("quick-item-qty")?.value) || 0;
+  const unit = document.getElementById("quick-item-unit")?.value || "kg";
+  const price = parseFloat(document.getElementById("quick-item-price")?.value) || 0;
+  const category = document.getElementById("quick-item-category")?.value || "Fresh Produce";
+
+  if (!name || qty <= 0 || price <= 0) {
+    alert("Please enter the item name, quantity (e.g. 1000), and wholesale price.");
+    return;
+  }
+
+  // Check if item already exists in inventory (e.g. "potatoes")
+  const existingIndex = store.inventory.findIndex(
+    (i) => i.name.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(i.name.toLowerCase())
+  );
+
+  if (existingIndex >= 0) {
+    // Increment existing stock
+    const updated = [...store.inventory];
+    updated[existingIndex].inStock += qty;
+    if (price > 0) updated[existingIndex].price = price;
+    store.updateInventory(updated);
+    showToast(`Updated ${updated[existingIndex].name}: +${qty} ${unit} (Total: ${updated[existingIndex].inStock} ${unit})`);
+  } else {
+    // Create new inventory item
+    const newItem = {
+      id: `prod-${Date.now()}`,
+      sku: `SKU-${category.substring(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
+      name,
+      category,
+      price,
+      currency: "KES",
+      unit,
+      bulkOption: `Standard bulk ${unit}`,
+      inStock: qty,
+      moq: Math.min(25, Math.floor(qty / 10)) || 10,
+      origin: "Kenya Farms / Coast Landing",
+      grade: "Grade 1 Select",
+      coldStorage: category.includes("Fish") || category.includes("Sea") ? "Flake Ice (0°C)" : "Chilled (2-4°C)",
+      description: `Fresh warehouse stock of ${name} ready for immediate kitchen delivery.`,
+      isExportGrade: false,
+      image: getPlaceholderImage(category, name)
+    };
+    store.updateInventory([newItem, ...store.inventory]);
+    showToast(`Added ${qty} ${unit} of ${name} to live inventory and storefront!`);
+  }
+
+  renderStorefront();
+  renderInventoryAdmin();
+  e.target.reset();
+}
+
+function getPlaceholderImage(category, name) {
+  const lower = name.toLowerCase();
+  if (lower.includes("potato")) return "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("onion")) return "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("tomato")) return "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("pea")) return "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("prawn")) return "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("lobster")) return "https://images.unsplash.com/photo-1548811269-808620864ca0?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("tuna")) return "https://images.unsplash.com/photo-1501595091296-3aa970afb3ff?auto=format&fit=crop&w=600&q=80";
+  if (lower.includes("snapper") || lower.includes("fish")) return "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&w=600&q=80";
+  if (category.includes("Meat") || lower.includes("beef") || lower.includes("goat")) return "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=600&q=80";
+  return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80";
+}
+
 function renderInventoryAdmin() {
   const tableBody = document.getElementById("admin-inventory-table-body");
   if (!tableBody) return;
@@ -780,12 +897,12 @@ function handleAddProduct(e) {
   const unit = document.getElementById("new-prod-unit").value.trim() || "kg";
   const stock = parseInt(document.getElementById("new-prod-stock").value) || 0;
   const moq = parseInt(document.getElementById("new-prod-moq").value) || 10;
-  const origin = document.getElementById("new-prod-origin").value.trim() || "Kenya Highland Farms";
+  const origin = document.getElementById("new-prod-origin").value.trim() || "Kenya Highland Farms / Coast Landing";
   const grade = document.getElementById("new-prod-grade").value.trim() || "Grade 1 Select";
   const coldStorage = document.getElementById("new-prod-storage").value.trim() || "Cold Chain 2-4°C";
   const isExport = document.getElementById("new-prod-export").checked;
-  const description = document.getElementById("new-prod-desc").value.trim() || "Fresh farm food supply.";
-  const image = document.getElementById("new-prod-img").value.trim() || "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80";
+  const description = document.getElementById("new-prod-desc").value.trim() || "Fresh kitchen food supply.";
+  const image = document.getElementById("new-prod-img").value.trim() || getPlaceholderImage(category, name);
 
   if (!name || price <= 0) {
     alert("Please enter a valid product name and wholesale price.");
@@ -887,7 +1004,7 @@ function renderCartContents() {
     container.innerHTML = `
       <div style="text-align: center; padding: 32px 16px; color: #64748b;">
         <p style="font-size: 1.1rem; margin-bottom: 8px;">🛒 Your Kitchen Order is empty</p>
-        <p style="font-size: 0.85rem;">Browse produce, meat cuts, or seafood above to add items to your scheduled delivery.</p>
+        <p style="font-size: 0.85rem;">Browse produce, seafood, or meat cuts above to add items to your scheduled delivery.</p>
       </div>
     `;
     totalEl.textContent = "KES 0";
@@ -957,7 +1074,7 @@ function dispatchOrderViaWhatsApp() {
   const restaurantName = document.getElementById("order-restaurant-name")?.value.trim() || "Client Restaurant";
   const deliverySlot = document.getElementById("order-delivery-slot")?.value || "Morning 5:30 AM - 7:30 AM";
   const paymentTerm = document.getElementById("order-payment-terms")?.value || "30-Day Corporate Invoice";
-  const instructions = document.getElementById("order-instructions")?.value.trim() || "Standard packaging on flake ice.";
+  const instructions = document.getElementById("order-instructions")?.value.trim() || "Standard cold-chain packing on flake ice.";
 
   let totalKes = 0;
   const lineItemsText = items
@@ -981,7 +1098,7 @@ ${lineItemsText}
 
 💰 *ESTIMATED TOTAL:* KES ${totalKes.toLocaleString()}
 
-📝 *Kitchen Notes / Butcher Prep:*
+📝 *Kitchen Notes / Butcher & Seafood Prep:*
 "${instructions}"
 
 _Generated via HORECA Gurus Digital Kitchen Portal_`;

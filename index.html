@@ -4,21 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HORECA Gurus | Kenya HoReCa & Export Food Supply Suite</title>
+  
+  <!-- Modern Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS Engine for instant modern design -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- External Stylesheet -->
   <link rel="stylesheet" href="./src/css/styles.css">
 </head>
-<body>
-
-  <!-- Top Real-Time Price Ticker -->
-  <div class="price-ticker-bar">
-    <span style="font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">🇰🇪 LIVE MARKET TICKER:</span>
-    <div class="ticker-item">🥔 <span>Shangi Potatoes (Nyandarua):</span> <span class="val">KES 72/kg</span> (50kg: KES 3,600)</div>
-    <div class="ticker-item">🧅 <span>Bombay Red Onions (Oloitokitok):</span> <span class="val">KES 78/kg</span> (50kg: KES 3,900)</div>
-    <div class="ticker-item">🍅 <span>Anna F1 Salad Tomatoes (Mwea):</span> <span class="val">KES 85/kg</span> (Crate: KES 5,200)</div>
-    <div class="ticker-item">🫛 <span>Snow Peas & Minji (Kinangop):</span> <span class="val">KES 145 - 190/kg</span></div>
-    <div class="ticker-item">🥩 <span>Halal Boran Beef Steer:</span> <span class="val">KES 620/kg</span> (Fillet: KES 1,150)</div>
-    <div class="ticker-item">🐟 <span>L. Victoria Fresh Tilapia:</span> <span class="val">KES 540/kg</span> (Fillet: KES 1,100)</div>
-    <div class="ticker-item">🥑 <span>Hass Avocados (Export Class 1):</span> <span class="val">KES 180/kg</span></div>
-  </div>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
 
   <!-- Main App Header -->
   <header class="main-header">
@@ -70,9 +87,9 @@
       <!-- Hero Banner -->
       <div class="hero-banner">
         <div class="hero-tag">⚡ Nairobi Direct Kitchen Supply & Air-Freight Export</div>
-        <h2 class="hero-title">Farm-Fresh Produce, Aged Halal Meats & Daily Lake Fish for Kenya’s Premier Kitchens</h2>
+        <h2 class="hero-title">Farm-Fresh Produce, Coastal Seafood & Aged Halal Meats for Kenya’s Premier Kitchens</h2>
         <p class="hero-desc">
-          Supplying hotels, fine-dining restaurants, and cafes with zero cold-chain breaks. Direct from Nyandarua, Mwea, Oloitokitok, Lake Victoria, and Athi River straight to your prep station before 7:00 AM.
+          Supplying hotels, fine-dining restaurants, and cafes with zero cold-chain breaks. Direct from Nyandarua, Mwea, Kilifi Ocean waters, Lake Victoria, and Athi River straight to your prep station before 7:00 AM.
         </p>
         <div class="hero-features">
           <div class="hero-feature-item">
@@ -99,14 +116,14 @@
         <div class="pill-group">
           <button class="filter-pill active" data-category="all">All Divisions</button>
           <button class="filter-pill" data-category="Fresh Produce">🌱 Fresh Farm Produce</button>
+          <button class="filter-pill" data-category="Fish & Seafood">🦐 Sea Food & Lake Fish</button>
           <button class="filter-pill" data-category="Prime Meat">🥩 Butchery & Halal Meat</button>
-          <button class="filter-pill" data-category="Fish & Seafood">🐟 Lake & Ocean Fish</button>
           <button class="filter-pill" data-category="Export Division">✈️ Export Ready Crops</button>
         </div>
 
         <div class="search-input-wrap">
           <span class="search-icon">🔍</span>
-          <input type="text" id="storefront-search" placeholder="Search potatoes, tilapia, onions, ribeye...">
+          <input type="text" id="storefront-search" placeholder="Search potatoes, tiger prawns, tilapia, ribeye...">
         </div>
       </div>
 
@@ -120,15 +137,65 @@
          SECTION 2: KENYA MARKET RATES & SOURCING HUB
          ========================================================================= -->
     <section id="section-market" class="tab-section" style="display: none;">
-      <div style="background: #ffffff; padding: 20px 24px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 24px;">
+      <!-- Collapsible Live Market Ticker Dropdown -->
+      <div class="market-ticker-accordion">
+        <div class="market-ticker-header" id="market-ticker-toggle-btn">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2rem;">📈</span>
+            <span>Kenya Live Wholesale Commodity Ticker (Tap to expand/collapse live terminal rates)</span>
+          </div>
+          <span id="ticker-toggle-icon" style="color: #059669; font-size: 0.9rem;">▲</span>
+        </div>
+        
+        <div class="market-ticker-dropdown-body" id="market-ticker-dropdown-content">
+          <div class="ticker-pill-box">
+            <div class="title">🥔 Shangi Potatoes (Nyandarua)</div>
+            <div class="price">KES 72 / kg</div>
+            <div class="sub">50kg Bag: KES 3,600 | Terminal: Wakulima</div>
+          </div>
+          <div class="ticker-pill-box">
+            <div class="title">🧅 Bombay Red Onions (Oloitokitok)</div>
+            <div class="price">KES 78 / kg</div>
+            <div class="sub">50kg Net: KES 3,900 | Sourcing: Loitokitok</div>
+          </div>
+          <div class="ticker-pill-box">
+            <div class="title">🍅 Anna F1 Salad Tomatoes (Mwea)</div>
+            <div class="price">KES 85 / kg</div>
+            <div class="sub">64kg Crate: KES 5,200 | Sourcing: Kirinyaga</div>
+          </div>
+          <div class="ticker-pill-box">
+            <div class="title">🫛 Crisp Snow Peas & Minji (Kinangop)</div>
+            <div class="price">KES 145 - 190 / kg</div>
+            <div class="sub">Highland Outgrowers | GlobalG.A.P.</div>
+          </div>
+          <div class="ticker-pill-box">
+            <div class="title">🦐 Jumbo Tiger Prawns (U-10 Coastal)</div>
+            <div class="price">KES 2,400 / kg</div>
+            <div class="sub">Shimoni & Lamu Mangrove Catch</div>
+          </div>
+          <div class="ticker-pill-box">
+            <div class="title">🥩 Halal Boran Beef Steer</div>
+            <div class="price">KES 620 / kg</div>
+            <div class="sub">Fillet: KES 1,150 | Neema Abattoir</div>
+          </div>
+          <div class="ticker-pill-box">
+            <div class="title">🐟 L. Victoria Fresh Tilapia</div>
+            <div class="price">KES 540 / kg</div>
+            <div class="sub">Fillet: KES 1,100 | Kisumu Dunga Pier</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sourcing Overview Banner -->
+      <div style="background: #ffffff; padding: 20px 24px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Kenya Wholesale Produce & Meat Market Intelligence</h2>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Kenya Wholesale Produce & Seafood Market Intelligence</h2>
             <p style="font-size: 0.85rem; color: #64748b;">
-              Live pricing benchmarks for onions, tomatoes, potatoes, peas, beef, and fish across Wakulima/Marikiti, Kongowea, and primary farm-gate aggregation hubs.
+              Real-time pricing benchmarks for onions, tomatoes, potatoes, peas, seafood, beef, and fish across Wakulima/Marikiti, Kongowea, and farm-gate aggregation hubs.
             </p>
           </div>
-          <span style="background: #dcfce7; color: #166534; font-size: 0.8rem; font-weight: 700; padding: 6px 12px; border-radius: 20px;">
+          <span style="background: #dcfce7; color: #166534; font-size: 0.8rem; font-weight: 800; padding: 6px 14px; border-radius: 20px;">
             Verified Sourcing Contacts Included
           </span>
         </div>
@@ -142,11 +209,11 @@
       <!-- Interactive Wholesale Margin & Arbitrage Calculator -->
       <div class="calc-container">
         <div style="margin-bottom: 16px;">
-          <h3 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
             🧮 Farm-Gate to HoReCa Gross Margin Calculator
           </h3>
           <p style="font-size: 0.85rem; color: #64748b;">
-            Calculate your wholesale profit margins when aggregating from source farms in Nyandarua, Mwea, or Loitokitok and delivering to Nairobi hotels & restaurants.
+            Calculate your wholesale profit margins when aggregating from source farms in Nyandarua, Mwea, or Loitokitok and coastal seafood landing sites, delivering directly to Nairobi kitchens.
           </p>
         </div>
 
@@ -158,13 +225,14 @@
               <option value="tomatoes">Salad Tomatoes (Mwea Scheme)</option>
               <option value="potatoes" selected>Shangi Potatoes (Nyandarua)</option>
               <option value="peas">Garden Peas / Minji (Kinangop)</option>
+              <option value="prawns">Jumbo Tiger Prawns (Shimoni/Kilifi)</option>
               <option value="beef">Prime Steer Carcass (Athi River)</option>
               <option value="fish">Fresh Lake Tilapia (Kisumu)</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="calc-farm-gate">Farm-Gate Buy Price (KES/kg):</label>
+            <label for="calc-farm-gate">Farm-Gate / Landing Buy Price (KES/kg):</label>
             <input type="number" id="calc-farm-gate" value="42" step="0.5">
           </div>
 
@@ -209,20 +277,21 @@
         <div>
           <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Nairobi HoReCa Sales Leads & Outreach Pipeline</h2>
           <p style="font-size: 0.85rem; color: #64748b;">
-            High-consumption hotels, restaurants, and cafes with verified contacts, chef roles, weekly demand profiles, and 1-click WhatsApp pitch links.
+            Researched high-consumption restaurants, luxury hotels, and seafood specialists with verified contacts, tailored supply categories, and 1-click WhatsApp pitch links.
           </p>
         </div>
 
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <select id="leads-area-filter" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600;">
+          <select id="leads-area-filter" style="padding: 9px 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 700;">
             <option value="all">📍 All Nairobi Areas</option>
             <option value="Westlands">Westlands & Parklands</option>
-            <option value="Kilimani">Kilimani & Hurlingham</option>
+            <option value="Kilimani">Kilimani, Hurlingham & Lavington</option>
             <option value="CBD">Nairobi CBD & Upper Hill</option>
-            <option value="Karen">Karen & Lavington</option>
+            <option value="Gigiri">Gigiri & Runda (Village Market)</option>
+            <option value="Karen">Karen & Lang'ata</option>
           </select>
 
-          <select id="leads-status-filter" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600;">
+          <select id="leads-status-filter" style="padding: 9px 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 700;">
             <option value="all">📊 All Pipeline Stages</option>
             <option value="New Lead">New Lead</option>
             <option value="Cold Contacted">Cold Contacted</option>
@@ -267,18 +336,69 @@
          SECTION 4: INVENTORY MANAGEMENT ENGINE (ADMIN PANEL)
          ========================================================================= -->
     <section id="section-inventory" class="tab-section" style="display: none;">
+      <!-- Prominent Quick-Add Inventory Bar -->
+      <div class="quick-add-bar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">⚡ Quick Add Warehouse Inventory (e.g. Potatoes 1000 Kgs)</h3>
+            <p style="font-size: 0.8rem; color: #64748b;">Quickly add stock or top up existing produce, seafood, or meat supplies. Syncs immediately to the kitchen ordering catalog.</p>
+          </div>
+          <button class="btn-outline" id="open-add-product-btn" style="font-size: 0.8rem;">
+            ⚙️ Advanced Item Specs
+          </button>
+        </div>
+
+        <form id="quick-add-inventory-form">
+          <div class="quick-add-grid">
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Item Name:</label>
+              <input type="text" id="quick-item-name" placeholder="e.g. Potatoes, Red Snapper, Tilapia, Onions..." required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Category / Division:</label>
+              <select id="quick-item-category" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
+                <option value="Fresh Produce">🌱 Fresh Produce</option>
+                <option value="Fish & Seafood">🦐 Sea Food & Fish</option>
+                <option value="Prime Meat">🥩 Prime Meat</option>
+                <option value="Export Division">✈️ Export Division</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Quantity:</label>
+              <input type="number" id="quick-item-qty" placeholder="1000" min="1" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;">
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Unit:</label>
+              <input type="text" id="quick-item-unit" value="kg" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Price (KES):</label>
+              <input type="number" id="quick-item-price" placeholder="72" min="1" step="0.5" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;">
+            </div>
+
+            <div>
+              <button type="submit" class="btn-primary" style="height: 42px; padding: 0 18px;">
+                ⚡ Add to Warehouse
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Controls and Export Bar -->
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
         <div>
-          <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Live Warehouse & Inventory Manager</h2>
-          <p style="font-size: 0.85rem; color: #64748b;">
-            Add new produce, adjust cold-storage stock levels, modify wholesale prices, and sync changes live to the kitchen ordering catalog.
+          <h2 style="font-size: 1.3rem; font-weight: 800; color: #0f172a;">Live Warehouse Inventory Directory</h2>
+          <p style="font-size: 0.82rem; color: #64748b;">
+            Inline-editable stock counts and wholesale prices.
           </p>
         </div>
 
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="btn-primary" id="open-add-product-btn">
-            ➕ Add Product / Stock
-          </button>
           <button class="btn-outline" id="export-inventory-csv-btn">
             📥 Export CSV
           </button>
@@ -332,9 +452,9 @@
          SECTION 5: OPERATIONS & SALES PLAYBOOK
          ========================================================================= -->
     <section id="section-playbook" class="tab-section" style="display: none;">
-      <div style="background: #ffffff; padding: 28px; border-radius: 14px; border: 1px solid #e2e8f0; line-height: 1.6;">
+      <div style="background: #ffffff; padding: 28px; border-radius: 16px; border: 1px solid #e2e8f0; line-height: 1.6; box-shadow: var(--shadow-sm);">
         <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-          Kenya HoReCa Supply & Export Operating Manual
+          HORECA Gurus Kenya Food Supply & Export Operating Manual
         </h2>
         <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 24px;">
           A strategic guide on acquiring hotel accounts, converting cold restaurant leads into recurring online buyers, managing early morning logistics, and executing international export shipments.
@@ -342,23 +462,23 @@
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
           <!-- Card 1: Cold Call to Online Ordering -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px;">
-            <h3 style="font-size: 1.1rem; font-weight: 700; color: #059669; margin-bottom: 8px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #059669; margin-bottom: 8px;">
               1. The "Tasting Basket" Funnel
             </h3>
             <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
-              Top executive chefs receive dozens of calls weekly. Never sell them a contract on cold call 1. Instead, follow this 3-step conversion path:
+              Top executive chefs receive dozens of vendor calls weekly. Never sell them a contract on cold call 1. Instead, follow this 3-step conversion path:
             </p>
             <ol style="font-size: 0.82rem; color: #475569; padding-left: 18px; margin-bottom: 10px;">
-              <li><strong>The 60-Second Call:</strong> Call between 10:00 AM - 11:30 AM (prep window). Offer a complimentary <em>Chef's Tasting Basket</em> (10kg Shangi potatoes, 5kg Grade 1 Mwea salad tomatoes, 2kg Lake Victoria Tilapia).</li>
+              <li><strong>The 60-Second Call:</strong> Call between 10:00 AM - 11:30 AM (prep window). Offer a complimentary <em>Chef's Tasting Basket</em> (10kg Shangi potatoes, 5kg Grade 1 Mwea salad tomatoes, 2kg Lake Victoria Tilapia or Coastal Prawns).</li>
               <li><strong>The 6:00 AM Delivery Drop:</strong> Deliver the sample basket directly to their receiving bay with a printed pricing card and a QR code linking to this web portal.</li>
               <li><strong>The Follow-up WhatsApp:</strong> Chef receives the link on WhatsApp. With 1 tap, they can order their next morning delivery or set up a recurring standing order.</li>
             </ol>
           </div>
 
           <!-- Card 2: 5:00 AM Morning Logistics -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px;">
-            <h3 style="font-size: 1.1rem; font-weight: 700; color: #0284c7; margin-bottom: 8px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0284c7; margin-bottom: 8px;">
               2. Nairobi Cold-Chain Route Dispatch
             </h3>
             <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
@@ -368,13 +488,13 @@
               <li><strong>8:00 PM (Previous Night):</strong> Cut-off for online portal orders. Automatic picking slips generated.</li>
               <li><strong>3:30 AM:</strong> Goods arrive from Nyandarua and Kisumu cold trucks at Nairobi central packing depot (Industrial Area / City Market).</li>
               <li><strong>4:30 AM:</strong> Quality grading, weighing, and sorting into sanitized food-grade crates.</li>
-              <li><strong>5:15 AM - 7:30 AM:</strong> Route A (Westlands & Parklands), Route B (Kilimani & Hurlingham), Route C (CBD & Upper Hill).</li>
+              <li><strong>5:15 AM - 7:30 AM:</strong> Route A (Westlands & Parklands), Route B (Kilimani & Hurlingham), Route C (CBD & Upper Hill), Route D (Gigiri), Route E (Karen).</li>
             </ul>
           </div>
 
           <!-- Card 3: Export Compliance -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px;">
-            <h3 style="font-size: 1.1rem; font-weight: 700; color: #854d0e; margin-bottom: 8px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #854d0e; margin-bottom: 8px;">
               3. Agricultural Export Gateway (KEPHIS & HCD)
             </h3>
             <p style="font-size: 0.85rem; color: #334155; margin-bottom: 10px;">
@@ -382,7 +502,7 @@
             </p>
             <ul style="font-size: 0.82rem; color: #475569; padding-left: 18px;">
               <li><strong>HCD Dealer License:</strong> Register with Horticultural Crops Directorate (AFA).</li>
-              <li><strong>KEPHIS Phytosanitary Certificate:</strong> Every export consignment must undergo phytosanitary inspection at JKIA Cargo Village.</li>
+              <li><strong>KEPHIS Phytosanitary Certificate:</strong> Mandatory inspection for pests at JKIA Cargo Village.</li>
               <li><strong>GlobalG.A.P. Farm Traceability:</strong> Ensure outgrower farmers in Murang'a and Kinangop are audited with zero banned chemical residues.</li>
               <li><strong>Pre-Cooling:</strong> Hydro-cool avocados to 5.5°C and snow peas to 2°C within 4 hours of harvest.</li>
             </ul>
@@ -413,16 +533,16 @@
       </div>
 
       <!-- Order Details Form -->
-      <div style="background: #f8fafc; padding: 14px; border-radius: 10px; margin-bottom: 16px; border: 1px solid #e2e8f0;">
+      <div style="background: #f8fafc; padding: 14px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #e2e8f0;">
         <div style="margin-bottom: 10px;">
           <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Restaurant / Hotel Name:</label>
-          <input type="text" id="order-restaurant-name" placeholder="e.g. Ankole Grill, INTI, CJ's..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+          <input type="text" id="order-restaurant-name" placeholder="e.g. Seven Seafood, Ankole Grill, INTI, CJ's..." style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600;">
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
           <div>
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Delivery Time Slot:</label>
-            <select id="order-delivery-slot" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+            <select id="order-delivery-slot" style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600;">
               <option value="Morning 5:30 AM - 7:30 AM">Early Morning (5:30 AM - 7:30 AM)</option>
               <option value="Mid-day 11:00 AM - 1:00 PM">Mid-Day Restock (11:00 AM - 1:00 PM)</option>
               <option value="Standing Daily Order">Recurring Daily Standing Order</option>
@@ -431,7 +551,7 @@
 
           <div>
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Payment Terms:</label>
-            <select id="order-payment-terms" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+            <select id="order-payment-terms" style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600;">
               <option value="30-Day Corporate Invoice">30-Day Corporate Invoice</option>
               <option value="M-Pesa Express on Delivery">M-Pesa Express on Delivery</option>
               <option value="EFT / RTGS Bank Transfer">EFT / Bank Wire Transfer</option>
@@ -441,8 +561,8 @@
         </div>
 
         <div>
-          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Kitchen Prep & Butchery Instructions:</label>
-          <input type="text" id="order-instructions" placeholder="e.g. Descale and gut tilapia, cut beef into 250g portions, extra flake ice..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Kitchen Prep & Seafood/Butchery Notes:</label>
+          <input type="text" id="order-instructions" placeholder="e.g. Descale and gut tilapia, pack prawns on flake ice, cut beef into 250g steaks..." style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
         </div>
       </div>
 
@@ -455,29 +575,29 @@
   </div>
 
   <!-- =========================================================================
-       MODAL 2: ADD PRODUCT / INVENTORY
+       MODAL 2: ADVANCED ADD PRODUCT
        ========================================================================= -->
   <div class="modal-overlay" id="add-product-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">➕ Add New Item to Inventory</h3>
+        <h3 class="modal-title">➕ Add Detailed Product Specs</h3>
         <button class="modal-close-btn" id="close-add-product-modal">&times;</button>
       </div>
 
       <form id="add-product-form">
         <div style="margin-bottom: 12px;">
           <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Product Name:</label>
-          <input type="text" id="new-prod-name" placeholder="e.g. Sweet Yellow Passion Fruit, Lamb Chops..." required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
+          <input type="text" id="new-prod-name" placeholder="e.g. Rock Lobster Tails, Sweet Passion Fruit..." required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
           <div>
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Division / Category:</label>
             <select id="new-prod-category" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
-              <option value="Fresh Produce">Fresh Produce</option>
-              <option value="Prime Meat">Prime Meat</option>
-              <option value="Fish & Seafood">Fish & Seafood</option>
-              <option value="Export Division">Export Division</option>
+              <option value="Fresh Produce">🌱 Fresh Produce</option>
+              <option value="Fish & Seafood">🦐 Fish & Seafood</option>
+              <option value="Prime Meat">🥩 Prime Meat</option>
+              <option value="Export Division">✈️ Export Division</option>
             </select>
           </div>
 
@@ -505,7 +625,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
           <div>
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Sourcing Origin:</label>
-            <input type="text" id="new-prod-origin" placeholder="e.g. Nyandarua, Lake Victoria..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <input type="text" id="new-prod-origin" placeholder="e.g. Nyandarua, Kilifi, Lake Victoria..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
           </div>
           <div>
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Quality Grade:</label>
@@ -561,15 +681,16 @@
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Nairobi Area:</label>
             <select id="new-lead-area" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
               <option value="Westlands">Westlands & Parklands</option>
-              <option value="Kilimani">Kilimani & Hurlingham</option>
+              <option value="Kilimani">Kilimani, Hurlingham & Lavington</option>
               <option value="CBD">Nairobi CBD & Upper Hill</option>
-              <option value="Karen">Karen & Lavington</option>
+              <option value="Gigiri">Gigiri & Runda (Village Market)</option>
+              <option value="Karen">Karen & Lang'ata</option>
             </select>
           </div>
 
           <div>
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Cuisine / Concept:</label>
-            <input type="text" id="new-lead-cuisine" placeholder="e.g. Italian Bistro, Steakhouse..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <input type="text" id="new-lead-cuisine" placeholder="e.g. Seafood & Grill, Steakhouse..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
           </div>
         </div>
 
@@ -596,7 +717,7 @@
 
         <div style="margin-bottom: 16px;">
           <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Estimated Weekly Demand:</label>
-          <input type="text" id="new-lead-demand" placeholder="e.g. 300kg Shangi potatoes, 80kg beef cuts, 40kg Tilapia..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
+          <input type="text" id="new-lead-demand" placeholder="e.g. 50kg tiger prawns, 300kg Shangi potatoes, 80kg beef..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
         </div>
 
         <button type="submit" class="btn-primary" style="width: 100%; padding: 10px; justify-content: center;">
