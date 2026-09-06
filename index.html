@@ -425,6 +425,16 @@
           <div class="lead-stat-num" style="color: #d97706;" id="stat-crm-po-balance">KES 0</div>
           <div class="lead-stat-label">Balance in Active POs</div>
         </div>
+        <div class="lead-stat-card" style="background: #fff7ed; border: 2px solid #fdba74; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.1);">
+          <div class="lead-stat-num" style="color: #c2410c;" id="stat-crm-uncollected-receivables">KES 0</div>
+          <div class="lead-stat-label" style="color: #9a3412; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <span>⚡ Money Yet to Collect</span>
+            <span style="font-size: 0.65rem; background: #ea580c; color: #ffffff; padding: 2px 6px; border-radius: 6px; font-weight: 800; letter-spacing: 0.04em;">PUSH</span>
+          </div>
+          <div style="font-size: 0.7rem; color: #ea580c; font-weight: 700; margin-top: 3px;" id="stat-crm-receivables-sub">
+            POD & Advance Proformas Pending
+          </div>
+        </div>
         <div class="lead-stat-card">
           <div class="lead-stat-num" style="color: #7c3aed;" id="stat-crm-calls-count">0</div>
           <div class="lead-stat-label">Cold Calls & Touches Logged</div>
@@ -439,6 +449,15 @@
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; background: #ffffff; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0;">
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
           <div style="font-size: 0.8rem; font-weight: 700; color: #475569;">Filter Accounts:</div>
+
+          <!-- Receivables Status Filter -->
+          <select id="crm-filter-receivables" style="padding: 6px 12px; border-radius: 8px; border: 1.5px solid #fdba74; font-size: 0.8rem; font-weight: 700; background: #fff7ed; color: #9a3412;">
+            <option value="all">💸 All Payment Statuses</option>
+            <option value="pending_only">🚨 Money Yet to Collect (Push Receivables)</option>
+            <option value="pod_only">⚡ POD Due on Bay Drop</option>
+            <option value="advance_only">⏳ Advance Invoices Pending</option>
+            <option value="settled_only">✅ Fully Settled (KES 0 Due)</option>
+          </select>
 
           <!-- Region Filter -->
           <select id="crm-filter-region" style="padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.8rem; font-weight: 600; background: #ffffff;">
@@ -498,6 +517,9 @@
               <th>Total PO (KES)</th>
               <th>PO Balance (KES)</th>
               <th>Revenue (KES)</th>
+              <th style="background: #fff7ed; color: #9a3412; border-bottom: 2px solid #fdba74; white-space: nowrap;">
+                ⚡ Money Yet to Collect (Receivables)
+              </th>
               <th>Payment Terms</th>
               <th>Last Touchpoint Note</th>
               <th>Actions</th>
@@ -994,9 +1016,11 @@
           <div>
             <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Action Type:</label>
             <select id="po-action-type" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
-              <option value="deposit">Deposit / Top-Up PO Balance (+)</option>
-              <option value="drawdown">Delivery Drawdown (-)</option>
-              <option value="new_po">Issue New PO Allocation</option>
+              <option value="collect_receivable">💰 Collect Receivable / Record Payment Received (-)</option>
+              <option value="deposit">💳 Deposit / Top-Up PO Balance (+)</option>
+              <option value="add_receivable">⚡ Issue New Receivable / Pending Proforma (+)</option>
+              <option value="drawdown">🚚 Delivery Drawdown (-)</option>
+              <option value="new_po">📄 Issue New PO Allocation</option>
             </select>
           </div>
         </div>

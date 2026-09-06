@@ -1317,7 +1317,6 @@ export const INITIAL_CRM_ACCOUNTS = [
     restaurantName: "Seven Seafood & Grill",
     area: "Westlands",
     region: "Nairobi",
-    region: "Nairobi",
     contactPerson: "Executive Chef Kiran",
     phone: "+254 737 776 677",
     accountStage: "Active Account",
@@ -1330,13 +1329,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-04: Confirmed morning flake-ice lobster tails & snapper drop. Next PO deposit scheduled Monday.",
     paymentTerms: "100% Advance PO Deposit (Drawdown)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 165000,
+    receivableType: "Advance Proforma Pending",
+    receivableDueDate: "Today 5:00 PM",
+    receivableInvoiceRef: "INV-MD-8842-R",
+    receivableNotes: "Invoice issued for upcoming weekend lobster & tiger prawn consignment."
   },
   {
     id: "crm-acc-ankole",
     restaurantId: "lead-kilimani-ankole",
     restaurantName: "Ankole Grill Kilimani",
     area: "Kilimani",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Chef Patrick (Head of Butchery)",
     phone: "+254 710 265 653",
@@ -1350,13 +1354,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-03: 150kg dry-aged Boran ribeye delivered at 5:45 AM. Chef logged zero trimming waste.",
     paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 98000,
+    receivableType: "POD Due on Bay Drop",
+    receivableDueDate: "Tomorrow 05:30 AM",
+    receivableInvoiceRef: "POD-MD-9012-A",
+    receivableNotes: "Scheduled 120kg Boran ribeye delivery. M-Pesa Till collection upon bay inspection."
   },
   {
     id: "crm-acc-mama-oliech",
     restaurantId: "lead-kilimani-mama-oliech",
     restaurantName: "Mama Oliech Restaurant",
     area: "Kilimani",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Gladys Oliech (General Manager)",
     phone: "+254 722 795 628",
@@ -1370,13 +1379,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-05: Standing daily delivery of 120kg Lake Victoria tilapia received at 5:30 AM on slush ice.",
     paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 65000,
+    receivableType: "POD Due on Bay Drop",
+    receivableDueDate: "Today - At Receiving Bay",
+    receivableInvoiceRef: "POD-MD-8730-C",
+    receivableNotes: "Morning 120kg Tilapia delivery arrived. Courier waiting on Gladys for Till clearance."
   },
   {
     id: "crm-acc-carnivore",
     restaurantId: "lead-karen-carnivore",
     restaurantName: "Carnivore Restaurant",
     area: "Karen",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Master Carver Joseph & Head of Receiving",
     phone: "+254 722 204 647",
@@ -1390,13 +1404,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-04: Delivered 25 Kiamaiko whole goat carcasses (15kg avg) with veterinary health certificate.",
     paymentTerms: "100% Advance Bank RTGS per Batch",
     creditOutstanding: 0
+  ,
+    receivablesPending: 280000,
+    receivableType: "Advance RTGS Wire",
+    receivableDueDate: "Today 2:00 PM",
+    receivableInvoiceRef: "INV-MD-9150-TOP",
+    receivableNotes: "Proforma issued for 25 goat carcasses + 400kg beef. RTGS wire required before dispatch."
   },
   {
     id: "crm-acc-talisman",
     restaurantId: "lead-karen-talisman",
     restaurantName: "The Talisman Restaurant",
     area: "Karen",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Executive Chef Ian",
     phone: "+254 705 999 997",
@@ -1410,13 +1429,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-02: Delivered 40kg sashimi tuna loins and 50kg Kinangop snow peas; pristine rating from kitchen.",
     paymentTerms: "100% Advance PO Deposit (Drawdown)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 0,
+    receivableType: "Settled / Nil",
+    receivableDueDate: "N/A",
+    receivableInvoiceRef: "N/A",
+    receivableNotes: "Account paid up. Sufficient advance PO deposit balance (KES 145,000)."
   },
   {
     id: "crm-acc-kempinski",
     restaurantId: "lead-westlands-kempinski",
     restaurantName: "Villa Rosa Kempinski",
     area: "Westlands",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Sous Chef Alessandro (Lucca)",
     phone: "+254 703 049 000",
@@ -1430,13 +1454,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-05: 6:00 AM delivery of ocean snapper & rack of lamb. Logged probe temperature 1.2°C at receiving bay.",
     paymentTerms: "100% Advance Wire per Consignment",
     creditOutstanding: 0
+  ,
+    receivablesPending: 185000,
+    receivableType: "Advance Proforma Pending",
+    receivableDueDate: "Tomorrow 05:00 AM",
+    receivableInvoiceRef: "INV-MD-9204-B",
+    receivableNotes: "Snapper & lamb consignment invoice sent to Lucca kitchen accounts."
   },
   {
     id: "crm-acc-fourpoints",
     restaurantId: "lead-mombasa-four-points-jkia",
     restaurantName: "Four Points by Sheraton JKIA",
     area: "CBD",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Chef Brian (Executive Chef)",
     phone: "+254 709 760 000",
@@ -1450,13 +1479,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-04: Delivered 50kg tiger prawns and 300kg Shangi potatoes. Verified POD payment on M-Pesa Till.",
     paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 82000,
+    receivableType: "POD Due on Bay Drop",
+    receivableDueDate: "Tomorrow 06:00 AM",
+    receivableInvoiceRef: "POD-MD-8977-D",
+    receivableNotes: "Order for 300kg Shangi potatoes & prawns. Receiving chef to trigger corporate M-Pesa."
   },
   {
     id: "crm-acc-inti",
     restaurantId: "lead-westlands-inti",
     restaurantName: "INTI – A Nikkei Experience",
     area: "Westlands",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Head Sushi Chef Roberto",
     phone: "+254 734 845 845",
@@ -1470,13 +1504,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-04: Chef received tasting box (tuna loin, Hass avocados). Feedback positive; PO being prepared for 100% advance deposit.",
     paymentTerms: "100% Advance PO Deposit (Required)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 120000,
+    receivableType: "Advance Deposit Required",
+    receivableDueDate: "Due on Confirmation",
+    receivableInvoiceRef: "QUOTE-INTI-01",
+    receivableNotes: "Tasting approved. Sales following up with Roberto for advance deposit to activate account."
   },
   {
     id: "crm-acc-fogo",
     restaurantId: "lead-westlands-fogo",
     restaurantName: "Fogo Gaucho Westlands",
     area: "Westlands",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Master Carver Paulo",
     phone: "+254 712 123 456",
@@ -1490,13 +1529,18 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-03: Delivered 400kg Boran steer quarters. Balance drawdown updated to KES 240,000.",
     paymentTerms: "100% Advance PO Deposit (Drawdown)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 0,
+    receivableType: "Settled / Nil",
+    receivableDueDate: "N/A",
+    receivableInvoiceRef: "N/A",
+    receivableNotes: "Paid up. PO balance has KES 240,000 remaining."
   },
   {
     id: "crm-acc-cjs",
     restaurantId: "lead-kilimani-cjs",
     restaurantName: "CJ's Restaurant (Kilimani)",
     area: "Kilimani",
-    region: "Nairobi",
     region: "Nairobi",
     contactPerson: "Commissary Head Hassan",
     phone: "+254 792 000 055",
@@ -1510,6 +1554,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-05: Finalizing 50kg bag potato trial. Enforcing strict Advance / POD policy; commissary accepted M-Pesa Till on drop.",
     paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 145000,
+    receivableType: "POD Commitment",
+    receivableDueDate: "Today 4:00 PM",
+    receivableInvoiceRef: "DRAFT-PO-CJS-01",
+    receivableNotes: "Trial potato & avocado run agreed. Pushing commissary head to confirm Till deposit."
   }
 ,
   {
@@ -1530,6 +1580,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-04: SGR chilled container delivery of 400kg Shangi potatoes and 150kg Boran beef arrived 06:15 AM.",
     paymentTerms: "100% Advance PO Deposit (Drawdown)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 195000,
+    receivableType: "Advance RTGS Wire",
+    receivableDueDate: "Today 12:00 PM",
+    receivableInvoiceRef: "INV-MD-9311-SGR",
+    receivableNotes: "SGR chilled container shipment scheduled for Mombasa drop. Wire required before loading."
   },
   {
     id: "crm-acc-nomad",
@@ -1549,6 +1605,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-03: Delivered sample basket of cherry tomatoes, Kinangop snow peas, and aged tenderloin. Positive feedback.",
     paymentTerms: "100% Advance PO Deposit (Required)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 85000,
+    receivableType: "Advance Deposit Required",
+    receivableDueDate: "Due on Confirmation",
+    receivableInvoiceRef: "QUOTE-NOMAD-02",
+    receivableNotes: "Chef Mario requested formal invoice for seafood & steak trial pack."
   },
   {
     id: "crm-acc-hemingways",
@@ -1568,6 +1630,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-05: 21-day aged tenderloin & export snow peas delivered in sanitized Euro-crates. Drawdown confirmed.",
     paymentTerms: "100% Advance Wire per Consignment",
     creditOutstanding: 0
+  ,
+    receivablesPending: 0,
+    receivableType: "Settled / Nil",
+    receivableDueDate: "N/A",
+    receivableInvoiceRef: "N/A",
+    receivableNotes: "Account fully paid up. KES 180,000 advance balance available."
   },
   {
     id: "crm-acc-enashipai",
@@ -1587,6 +1655,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-04: Delivered 300kg striploin and 80kg jumbo prawns on ice for weekend conference banquets.",
     paymentTerms: "100% Advance PO Deposit (Drawdown)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 220000,
+    receivableType: "Advance RTGS Wire",
+    receivableDueDate: "Tomorrow 05:00 AM",
+    receivableInvoiceRef: "INV-MD-9510-W",
+    receivableNotes: "Weekend conference banquet restock: 300kg striploin & jumbo prawns. Wire verification pending."
   },
   {
     id: "crm-acc-grvl",
@@ -1606,6 +1680,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-03: 400kg Nyandarua potatoes and whole lamb carcasses delivered with verified health stamps.",
     paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 72000,
+    receivableType: "POD Due on Bay Drop",
+    receivableDueDate: "Tomorrow 06:30 AM",
+    receivableInvoiceRef: "POD-MD-9555-R",
+    receivableNotes: "Lamb carcass and Nyandarua potatoes scheduled. POD collection via M-Pesa Till at kitchen bay."
   },
   {
     id: "crm-acc-acacia",
@@ -1625,6 +1705,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-05: Weekly dispatch of graded Tilapia, coastal red snapper, and 450kg Shangi potatoes received.",
     paymentTerms: "100% Advance PO Deposit (Drawdown)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 0,
+    receivableType: "Settled / Nil",
+    receivableDueDate: "N/A",
+    receivableInvoiceRef: "N/A",
+    receivableNotes: "Fully paid up with KES 235,000 advance balance."
   },
   {
     id: "crm-acc-fairmont",
@@ -1644,6 +1730,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-04: Delivered 250kg dry-aged Boran ribeye and 60kg lobster tails in tamper-sealed red/blue Euro-crates.",
     paymentTerms: "100% Advance Wire per Consignment",
     creditOutstanding: 0
+  ,
+    receivablesPending: 150000,
+    receivableType: "Advance Proforma Pending",
+    receivableDueDate: "Today 3:00 PM",
+    receivableInvoiceRef: "INV-MD-9700-T",
+    receivableNotes: "Dry-aged Boran ribeye & lobster consignment proforma awaiting treasury sign-off."
   },
   {
     id: "crm-acc-sweetwaters",
@@ -1663,6 +1755,12 @@ export const INITIAL_CRM_ACCOUNTS = [
     lastInteraction: "2026-09-05: Rongai gate delivery completed at 06:15 AM. 180kg steaks and fresh highland produce cleared.",
     paymentTerms: "Payment on Delivery (POD via M-Pesa Till)",
     creditOutstanding: 0
+  ,
+    receivablesPending: 54000,
+    receivableType: "POD Due on Bay Drop",
+    receivableDueDate: "Today - Bay Collection",
+    receivableInvoiceRef: "POD-MD-9750-G",
+    receivableNotes: "Early morning delivery completed. Driver currently pushing camp storekeeper for Till payment."
   }
 
 ];

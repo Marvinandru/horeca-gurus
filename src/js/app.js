@@ -23,7 +23,7 @@ class Store {
   constructor() {
     this.inventory = this.loadInventory();
     this.leads = this.loadState("mahale_leads_v1", RESTAURANT_LEADS);
-    this.crmAccounts = this.loadState("mahale_crm_accounts_v1", INITIAL_CRM_ACCOUNTS);
+    this.crmAccounts = this.loadCRMAccounts();
     this.crmCallLogs = this.loadState("mahale_crm_logs_v1", INITIAL_CALL_LOGS);
     this.cart = this.loadState("mahale_cart_v1", {});
 
@@ -38,6 +38,7 @@ class Store {
     this.crmRegionFilter = "all";
     this.crmStageFilter = "all";
     this.crmAreaFilter = "all";
+    this.crmReceivablesFilter = "all";
     this.crmSearchQuery = "";
   }
 
@@ -50,7 +51,14 @@ class Store {
         return parsed.map((item) => {
           if (defaultMap.has(item.id)) {
             const def = defaultMap.get(item.id);
-            return { ...item, image: def.image, name: def.name, category: def.category };
+            return {
+              ...item,
+              image: def.image,
+              name: def.name,
+              category: def.category,
+              unit: def.unit || item.unit || "kg",
+              inStock: typeof item.inStock === "number" ? item.inStock : def.inStock
+            };
           }
           return item;
         });
@@ -60,6 +68,36 @@ class Store {
     } catch (e) {
       console.warn("Failed to read inventory from storage:", e);
       return DEFAULT_INVENTORY;
+    }
+  }
+
+  loadCRMAccounts() {
+    try {
+      const saved = localStorage.getItem("mahale_crm_accounts_v1");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const defaultMap = new Map(INITIAL_CRM_ACCOUNTS.map((a) => [a.id, a]));
+        return parsed.map((a) => {
+          if (defaultMap.has(a.id)) {
+            const def = defaultMap.get(a.id);
+            return {
+              ...def,
+              ...a,
+              receivablesPending: typeof a.receivablesPending === "number" ? a.receivablesPending : def.receivablesPending,
+              receivableType: a.receivableType || def.receivableType,
+              receivableDueDate: a.receivableDueDate || def.receivableDueDate,
+              receivableInvoiceRef: a.receivableInvoiceRef || def.receivableInvoiceRef,
+              receivableNotes: a.receivableNotes || def.receivableNotes
+            };
+          }
+          return a;
+        });
+      }
+      localStorage.setItem("mahale_crm_accounts_v1", JSON.stringify(INITIAL_CRM_ACCOUNTS));
+      return INITIAL_CRM_ACCOUNTS;
+    } catch (e) {
+      console.warn("Failed to read CRM accounts from storage:", e);
+      return INITIAL_CRM_ACCOUNTS;
     }
   }
 
@@ -290,6 +328,14 @@ function setupEventListeners() {
     updatePOForm.addEventListener("submit", handleUpdatePOSubmit);
   }
 
+  const crmReceivablesSelect = document.getElementById("crm-filter-receivables");
+  if (crmReceivablesSelect) {
+    crmReceivablesSelect.addEventListener("change", (e) => {
+      store.crmReceivablesFilter = e.target.value;
+      renderCRM();
+    });
+  }
+
   const crmRegionSelect = document.getElementById("crm-filter-region");
   if (crmRegionSelect) {
     crmRegionSelect.addEventListener("change", (e) => {
@@ -374,12 +420,37 @@ function renderStorefront() {
       if (item.category.includes("Fish") || item.category.includes("Sea")) catClass = "fish";
       if (item.category.includes("Export")) catClass = "export";
 
+      const totalStock = typeof item.inStock === "number" ? item.inStock : 1000;
+      const inCart = store.cart[item.id]?.quantity || 0;
+      const volumeLeft = Math.max(0, totalStock - inCart);
+
+      let stockClass = "stock-high";
+      let statusText = "🟢 Ample Packhouse Stock (Cold storage ready)";
+      let dotColor = "#10b981";
+      if (volumeLeft < 250) {
+        stockClass = "stock-low";
+        statusText = "🔥 Fast-Moving / Limited Volume Left";
+        dotColor = "#dc2626";
+      } else if (volumeLeft < 1000) {
+        stockClass = "stock-med";
+        statusText = "🔵 Stable Daily Allocation Batch";
+        dotColor = "#0284c7";
+      }
+
+      const barPercent = Math.min(100, Math.max(12, Math.round((volumeLeft / (totalStock || 1)) * 100)));
+      const isOutOfStock = volumeLeft <= 0;
+      const defaultQty = Math.min(item.moq, volumeLeft > 0 ? volumeLeft : item.moq);
+
       return `
       <div class="product-card">
         <div class="card-img-wrap">
           <img src="${item.image}" alt="${item.name}" class="card-img" loading="lazy" onerror="this.src='src/assets/products/tomatoes.jpg'">
           <span class="grade-badge">${item.grade}</span>
           <span class="cat-badge ${catClass}">${item.category}</span>
+          <div class="volume-float-badge ${stockClass}">
+            <span class="stock-pulse-dot" style="background-color: ${dotColor};"></span>
+            <span><strong>${volumeLeft.toLocaleString()} ${item.unit}</strong> left</span>
+          </div>
         </div>
         <div class="card-body">
           <div class="product-origin">
@@ -387,6 +458,26 @@ function renderStorefront() {
           </div>
           <h3 class="product-title">${item.name}</h3>
           <p class="product-desc">${item.description}</p>
+
+          <!-- Customer-Facing Volume Left Indicator -->
+          <div class="volume-meter-card ${stockClass}">
+            <div class="volume-meter-top">
+              <span class="volume-meter-label">
+                <span>📦 Packhouse Volume Left:</span>
+              </span>
+              <span class="volume-meter-value">
+                <strong>${volumeLeft.toLocaleString()}</strong> ${item.unit}
+              </span>
+            </div>
+            <div class="volume-meter-track">
+              <div class="volume-meter-bar" style="width: ${barPercent}%;"></div>
+            </div>
+            <div class="volume-meter-status">
+              <span>${statusText}</span>
+              ${inCart > 0 ? `<span class="cart-volume-tag">${inCart} ${item.unit} in your order</span>` : ""}
+            </div>
+          </div>
+
           <div class="price-box">
             <div class="price-main">KES ${item.price.toLocaleString()} <span>/ ${item.unit}</span></div>
             <div class="bulk-subtext">${item.bulkOption || `MOQ: ${item.moq} ${item.unit}`}</div>
@@ -396,12 +487,12 @@ function renderStorefront() {
           </div>
           <div class="card-actions">
             <div class="qty-control">
-              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', -5)">-</button>
-              <input type="number" id="qty-input-${item.id}" class="qty-input" value="${item.moq}" min="${item.moq}" step="5">
-              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', 5)">+</button>
+              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', -5)" ${isOutOfStock ? "disabled" : ""}>-</button>
+              <input type="number" id="qty-input-${item.id}" class="qty-input" value="${defaultQty}" min="${item.moq}" max="${volumeLeft}" step="5" ${isOutOfStock ? "disabled" : ""}>
+              <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', 5)" ${isOutOfStock ? "disabled" : ""}>+</button>
             </div>
-            <button class="add-order-btn" onclick="window.addToOrder('${item.id}')">
-              🛒 Add to Order
+            <button class="add-order-btn" onclick="window.addToOrder('${item.id}')" ${isOutOfStock ? 'disabled style="background: #94a3b8; cursor: not-allowed;"' : ""}>
+              ${isOutOfStock ? "❌ Sold Out" : "🛒 Add to Order"}
             </button>
           </div>
         </div>
@@ -412,11 +503,14 @@ function renderStorefront() {
 }
 
 window.adjustProductQty = (itemId, delta) => {
+  const item = store.inventory.find((i) => i.id === itemId);
   const input = document.getElementById(`qty-input-${itemId}`);
   if (!input) return;
   const current = parseInt(input.value) || 1;
   const min = parseInt(input.min) || 1;
-  const nextVal = Math.max(min, current + delta);
+  const inCart = store.cart[itemId]?.quantity || 0;
+  const maxAvailable = Math.max(min, (item?.inStock || 99999) - inCart);
+  const nextVal = Math.min(maxAvailable, Math.max(min, current + delta));
   input.value = nextVal;
 };
 
@@ -427,6 +521,15 @@ window.addToOrder = (itemId) => {
   const qty = parseInt(input ? input.value : item.moq) || item.moq;
 
   const currentCart = { ...store.cart };
+  const currentInCart = currentCart[itemId]?.quantity || 0;
+  const totalStock = typeof item.inStock === "number" ? item.inStock : 99999;
+
+  if (currentInCart + qty > totalStock) {
+    const remaining = Math.max(0, totalStock - currentInCart);
+    alert(`Cannot add ${qty} ${item.unit}. Packhouse volume left is only ${remaining.toLocaleString()} ${item.unit}.`);
+    return;
+  }
+
   if (currentCart[itemId]) {
     currentCart[itemId].quantity += qty;
   } else {
@@ -436,13 +539,16 @@ window.addToOrder = (itemId) => {
       price: item.price,
       unit: item.unit,
       quantity: qty,
-      category: item.category
+      category: item.category,
+      inStock: item.inStock
     };
   }
 
   store.updateCart(currentCart);
   updateCartBadge();
-  showToast(`Added ${qty} ${item.unit} of ${item.name} to Kitchen Order!`);
+  renderStorefront();
+  const volumeRemaining = Math.max(0, totalStock - currentCart[itemId].quantity);
+  showToast(`Added ${qty} ${item.unit} of ${item.name} (Volume left: ${volumeRemaining.toLocaleString()} ${item.unit})`);
 };
 
 // =========================================================================
@@ -858,6 +964,15 @@ function renderCRM() {
   const totalPoBalance = accounts.reduce((acc, curr) => acc + (curr.balanceInPo || 0), 0);
   const totalCalls = store.crmCallLogs.length;
 
+  const totalReceivables = accounts.reduce((acc, curr) => acc + (curr.receivablesPending || 0), 0);
+  const pendingAccounts = accounts.filter((a) => (a.receivablesPending || 0) > 0);
+  const podReceivables = accounts
+    .filter((a) => (a.receivableType || "").includes("POD"))
+    .reduce((acc, curr) => acc + (curr.receivablesPending || 0), 0);
+  const advanceReceivables = accounts
+    .filter((a) => !(a.receivableType || "").includes("POD") && (a.receivablesPending || 0) > 0)
+    .reduce((acc, curr) => acc + (curr.receivablesPending || 0), 0);
+
   document.getElementById("stat-crm-total-accounts").textContent = totalAccounts;
   document.getElementById("stat-crm-active-accounts").textContent = activeAccounts;
   document.getElementById("stat-crm-total-revenue").textContent = `KES ${totalRevenue.toLocaleString()}`;
@@ -865,24 +980,45 @@ function renderCRM() {
   document.getElementById("stat-crm-calls-count").textContent = totalCalls;
   document.getElementById("stat-crm-credit-debt").textContent = "KES 0.00";
 
+  const uncollectedEl = document.getElementById("stat-crm-uncollected-receivables");
+  if (uncollectedEl) uncollectedEl.textContent = `KES ${totalReceivables.toLocaleString()}`;
+  const receivablesSubEl = document.getElementById("stat-crm-receivables-sub");
+  if (receivablesSubEl) {
+    receivablesSubEl.textContent = `${pendingAccounts.length} Pending (POD: KES ${podReceivables.toLocaleString()} | Adv: KES ${advanceReceivables.toLocaleString()})`;
+  }
+
   // 2. Filter Accounts
   const filtered = accounts.filter((acc) => {
     const matchesRegion = store.crmRegionFilter === "all" || (acc.region || "Nairobi") === store.crmRegionFilter;
     const matchesStage = store.crmStageFilter === "all" || acc.accountStage === store.crmStageFilter;
     const matchesArea = store.crmAreaFilter === "all" || acc.area === store.crmAreaFilter;
+
+    let matchesReceivables = true;
+    const recAmount = acc.receivablesPending || 0;
+    if (store.crmReceivablesFilter === "pending_only") {
+      matchesReceivables = recAmount > 0;
+    } else if (store.crmReceivablesFilter === "pod_only") {
+      matchesReceivables = (acc.receivableType || "").includes("POD") && recAmount > 0;
+    } else if (store.crmReceivablesFilter === "advance_only") {
+      matchesReceivables = !(acc.receivableType || "").includes("POD") && recAmount > 0;
+    } else if (store.crmReceivablesFilter === "settled_only") {
+      matchesReceivables = recAmount === 0;
+    }
+
     const matchesSearch =
       acc.restaurantName.toLowerCase().includes(store.crmSearchQuery) ||
       acc.contactPerson.toLowerCase().includes(store.crmSearchQuery) ||
       acc.activePoNumber.toLowerCase().includes(store.crmSearchQuery) ||
       acc.area.toLowerCase().includes(store.crmSearchQuery) ||
+      (acc.receivableInvoiceRef && acc.receivableInvoiceRef.toLowerCase().includes(store.crmSearchQuery)) ||
       (acc.region && acc.region.toLowerCase().includes(store.crmSearchQuery));
-    return matchesRegion && matchesStage && matchesArea && matchesSearch;
+    return matchesRegion && matchesStage && matchesArea && matchesReceivables && matchesSearch;
   });
 
   if (filtered.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="11" style="text-align: center; padding: 32px; color: #64748b;">
+        <td colspan="12" style="text-align: center; padding: 32px; color: #64748b;">
           No customer accounts found matching your filter criteria.
         </td>
       </tr>
@@ -944,6 +1080,30 @@ function renderCRM() {
           <td style="font-weight: 800; color: #0f172a;">
             KES ${acc.revenueGenerated.toLocaleString()}
           </td>
+          <!-- Money Yet to Collect (Receivables to Push) -->
+          <td style="background: #fffaf5; min-width: 175px;">
+            ${(acc.receivablesPending || 0) > 0 ? `
+              <div style="font-weight: 900; color: #b91c1c; font-size: 0.92rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>KES ${(acc.receivablesPending || 0).toLocaleString()}</span>
+                <span style="font-size: 0.65rem; background: #fee2e2; color: #991b1b; padding: 1px 5px; border-radius: 4px; font-weight: 800; border: 1px solid #fca5a5;">PUSH</span>
+              </div>
+              <div style="margin-top: 3px;">
+                <span class="${(acc.receivableType || "").includes("POD") ? "badge-receivable-pod" : "badge-receivable-advance"}">
+                  ${acc.receivableType || "Receivable Pending"}
+                </span>
+              </div>
+              <div style="font-size: 0.68rem; color: #475569; margin-top: 2px;">
+                ⏱️ <strong>${acc.receivableDueDate || "Due on Bay Drop"}</strong>
+              </div>
+              <div style="font-size: 0.65rem; color: #64748b; font-family: monospace;">
+                Ref: ${acc.receivableInvoiceRef || "MD-INV"}
+              </div>
+            ` : `
+              <span class="badge-receivable-settled">
+                ✓ Fully Settled (KES 0 Due)
+              </span>
+            `}
+          </td>
           <td>
             <span style="font-size: 0.72rem; font-weight: 700; color: #991b1b; background: #fef2f2; padding: 2px 6px; border-radius: 4px; border: 1px solid #fecaca; white-space: nowrap;">
               ${acc.paymentTerms}
@@ -951,14 +1111,20 @@ function renderCRM() {
           </td>
           <td style="max-width: 220px; font-size: 0.75rem; color: #475569; line-height: 1.3;">
             ${acc.lastInteraction}
+            ${acc.receivableNotes ? `<div style="font-size: 0.7rem; color: #ea580c; font-weight: 600; margin-top: 3px;">📌 ${acc.receivableNotes}</div>` : ""}
           </td>
           <td>
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+              ${(acc.receivablesPending || 0) > 0 ? `
+                <button class="btn-push-receivables" onclick="window.pushReceivableWhatsApp('${acc.id}')" title="Send WhatsApp Payment Notice to Push Receivables">
+                  💸 Push
+                </button>
+              ` : ""}
               <button style="background: #e0f2fe; color: #0369a1; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700;" onclick="window.openLogCallModal('${acc.id}')">
                 📞 Call
               </button>
               <button style="background: #dcfce7; color: #166534; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700;" onclick="window.openUpdatePOModal('${acc.id}')">
-                💳 PO
+                💳 PO / Pay
               </button>
               <button style="background: #25d366; color: #ffffff; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700;" onclick="window.sendAccountWhatsApp('${acc.id}')">
                 💬 WA
@@ -1082,6 +1248,39 @@ We are preparing tomorrow morning's 5:30 AM dispatch routes. Would you like to c
   window.open(url, "_blank");
 };
 
+window.pushReceivableWhatsApp = (accountId) => {
+  const acc = store.crmAccounts.find((a) => a.id === accountId);
+  if (!acc) return;
+  const phoneClean = acc.phone.replace(/[^0-9]/g, "");
+  const amountStr = (acc.receivablesPending || 0).toLocaleString();
+
+  const message = `🔔 *URGENT PAYMENT REMINDER & DISPATCH CLEARANCE*
+
+Dear Chef / Accounts Desk at *${acc.restaurantName}*,
+This is MAHALE Distributors Accounts & Cold-Chain Logistics Desk.
+
+💰 *Total Money Yet to Collect:* KES ${amountStr}
+📄 *Invoice / Dispatch Ref:* ${acc.receivableInvoiceRef || "MD-INV-PENDING"}
+⚡ *Receivable Type:* ${acc.receivableType || "Payment Due"}
+⏱️ *Due Schedule:* ${acc.receivableDueDate || "Immediate Collection"}
+💳 *Agreed Payment Terms:* ${acc.paymentTerms}
+
+⛔ *ZERO-CREDIT CLEARANCE PROTOCOL:*
+In strict compliance with MAHALE Distributors B2B SOPs, refrigerated cold-chain trucks (5:00 AM dispatch) cannot unseal crates or release consignments without payment settlement confirmation.
+
+📲 *REMITTANCE CHANNELS:*
+1. *M-Pesa Buy Goods Till:* 9876543 (MAHALE Distributors Ltd)
+2. *Bank RTGS Transfer:* Standard Chartered Bank | Acc: 01080123456700 | Westlands Branch
+
+Kindly share your M-Pesa transaction confirmation or wire receipt here to release your cold-chain dispatch immediately.
+
+Thank you!
+*MAHALE Distributors Finance & Dispatch Desk*`;
+
+  const url = `https://wa.me/${phoneClean}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+};
+
 function handleLogCallSubmit(e) {
   e.preventDefault();
   const accountId = document.getElementById("log-call-account").value;
@@ -1145,22 +1344,41 @@ function handleUpdatePOSubmit(e) {
 
   const updatedAccounts = store.crmAccounts.map((a) => {
     if (a.id === accountId) {
-      let balance = a.balanceInPo;
-      let total = a.totalPoValue;
-      let rev = a.revenueGenerated;
-      let orders = a.ordersCompleted;
+      let balance = a.balanceInPo || 0;
+      let total = a.totalPoValue || 0;
+      let rev = a.revenueGenerated || 0;
+      let orders = a.ordersCompleted || 0;
+      let pendingRec = a.receivablesPending || 0;
+      let recType = a.receivableType || "Settled / Nil";
+      let note = "";
 
-      if (actionType === "deposit") {
+      if (actionType === "collect_receivable") {
+        const collected = Math.min(pendingRec, amount);
+        pendingRec = Math.max(0, pendingRec - amount);
+        rev += amount;
+        orders += 1;
+        if (pendingRec === 0) {
+          recType = "Settled / Nil";
+        }
+        note = `Collected receivable payment of KES ${amount.toLocaleString()} via ${method}. Money yet to collect now KES ${pendingRec.toLocaleString()}.`;
+      } else if (actionType === "add_receivable") {
+        pendingRec += amount;
+        recType = method.includes("M-Pesa") ? "POD Due on Bay Drop" : "Advance Proforma Pending";
+        note = `Issued new receivable of KES ${amount.toLocaleString()} for collection via ${method}. Total uncollected: KES ${pendingRec.toLocaleString()}.`;
+      } else if (actionType === "deposit") {
         balance += amount;
         total += amount;
         rev += amount;
+        note = `Posted advance deposit of KES ${amount.toLocaleString()} via ${method}. PO Balance now KES ${balance.toLocaleString()}.`;
       } else if (actionType === "drawdown") {
         balance = Math.max(0, balance - amount);
         orders += 1;
+        note = `Consignment delivery drawdown of KES ${amount.toLocaleString()}. Balance now KES ${balance.toLocaleString()}.`;
       } else if (actionType === "new_po") {
         balance = amount;
         total = amount;
         rev += amount;
+        note = `Allocated new active PO of KES ${amount.toLocaleString()} via ${method}.`;
       }
 
       return {
@@ -1170,7 +1388,9 @@ function handleUpdatePOSubmit(e) {
         balanceInPo: balance,
         revenueGenerated: rev,
         ordersCompleted: orders,
-        lastInteraction: `Posted ${actionType} of KES ${amount.toLocaleString()} via ${method}. Balance now KES ${balance.toLocaleString()}.`
+        receivablesPending: pendingRec,
+        receivableType: recType,
+        lastInteraction: `${new Date().toISOString().substring(0, 10)}: ${note}`
       };
     }
     return a;
@@ -1180,7 +1400,7 @@ function handleUpdatePOSubmit(e) {
   renderCRM();
   document.getElementById("update-po-modal").classList.remove("open");
   e.target.reset();
-  showToast(`Updated PO & Balance ledger for account!`);
+  showToast(`Updated B2B Ledger & Receivables for account!`);
 }
 
 function exportCRMToCSV() {
@@ -1195,6 +1415,10 @@ function exportCRMToCSV() {
     "Total PO Value (KES)",
     "Balance in PO (KES)",
     "Revenue Generated (KES)",
+    "Money Yet to Collect (Receivables KES)",
+    "Receivable Type",
+    "Receivable Due Schedule",
+    "Invoice / Ref",
     "Orders Completed",
     "Payment Terms",
     "Last Touchpoint"
@@ -1211,6 +1435,10 @@ function exportCRMToCSV() {
     a.totalPoValue,
     a.balanceInPo,
     a.revenueGenerated,
+    a.receivablesPending || 0,
+    `"${a.receivableType || "Settled / Nil"}"`,
+    `"${a.receivableDueDate || "N/A"}"`,
+    `"${a.receivableInvoiceRef || "N/A"}"`,
     a.ordersCompleted,
     `"${a.paymentTerms}"`,
     `"${(a.lastInteraction || "").replace(/"/g, '""')}"`
@@ -1220,7 +1448,7 @@ function exportCRMToCSV() {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `MAHALE_Distributors_B2B_CRM_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute("download", `MAHALE_Distributors_B2B_CRM_Receivables_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -1271,12 +1499,19 @@ function renderCartContents() {
     .map((item) => {
       const lineTotal = item.price * item.quantity;
       grandTotal += lineTotal;
+      const totalStock = typeof item.inStock === "number" ? item.inStock : 99999;
+      const volumeLeft = Math.max(0, totalStock - item.quantity);
 
       return `
       <div class="cart-item-row">
         <div>
           <div class="cart-item-title">${item.name}</div>
-          <div class="cart-item-sub">KES ${item.price.toLocaleString()} / ${item.unit} (${item.category})</div>
+          <div class="cart-item-sub">
+            KES ${item.price.toLocaleString()} / ${item.unit} (${item.category})
+            <span style="display: block; font-size: 0.72rem; color: #059669; font-weight: 700; margin-top: 2px;">
+              📦 Packhouse Volume Left: ${volumeLeft.toLocaleString()} ${item.unit} available
+            </span>
+          </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
           <div class="qty-control" style="transform: scale(0.9);">
@@ -1302,6 +1537,14 @@ function renderCartContents() {
 window.updateCartItemQty = (id, delta) => {
   const currentCart = { ...store.cart };
   if (!currentCart[id]) return;
+  const item = store.inventory.find((i) => i.id === id);
+  const totalStock = item && typeof item.inStock === "number" ? item.inStock : 99999;
+
+  if (delta > 0 && currentCart[id].quantity + delta > totalStock) {
+    alert(`Cannot increase quantity. Only ${totalStock.toLocaleString()} ${currentCart[id].unit} available in packhouse.`);
+    return;
+  }
+
   currentCart[id].quantity += delta;
   if (currentCart[id].quantity <= 0) {
     delete currentCart[id];
@@ -1309,6 +1552,7 @@ window.updateCartItemQty = (id, delta) => {
   store.updateCart(currentCart);
   updateCartBadge();
   renderCartContents();
+  renderStorefront();
 };
 
 window.removeCartItem = (id) => {
@@ -1317,6 +1561,7 @@ window.removeCartItem = (id) => {
   store.updateCart(currentCart);
   updateCartBadge();
   renderCartContents();
+  renderStorefront();
 };
 
 function dispatchOrderViaWhatsApp() {
@@ -1371,17 +1616,36 @@ _Generated via MAHALE Distributors Digital Kitchen Portal_`;
   const url = `https://wa.me/${dispatchPhone}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
 
-  // If this restaurant matches an account in CRM, automatically record the activity
+  // Deduct ordered volume from packhouse stock so volume left updates live!
+  const updatedInventory = store.inventory.map((invItem) => {
+    const cartItem = store.cart[invItem.id];
+    if (cartItem) {
+      return {
+        ...invItem,
+        inStock: Math.max(0, (invItem.inStock || 0) - cartItem.quantity)
+      };
+    }
+    return invItem;
+  });
+  store.updateInventory(updatedInventory);
+
+  // If this restaurant matches an account in CRM, automatically record the activity and receivables
   const matchedAcc = store.crmAccounts.find((a) =>
     a.restaurantName.toLowerCase().includes(restaurantName.toLowerCase())
   );
   if (matchedAcc) {
+    const isPOD = paymentTerm.includes("POD") || paymentTerm.includes("Delivery");
     const updated = store.crmAccounts.map((a) => {
       if (a.id === matchedAcc.id) {
         return {
           ...a,
-          ordersCompleted: a.ordersCompleted + 1,
-          revenueGenerated: a.revenueGenerated + totalKes,
+          ordersCompleted: (a.ordersCompleted || 0) + 1,
+          revenueGenerated: (a.revenueGenerated || 0) + totalKes,
+          receivablesPending: (a.receivablesPending || 0) + totalKes,
+          receivableType: isPOD ? "POD Due on Bay Drop" : "Advance Proforma Pending",
+          receivableDueDate: isPOD ? "Bay Drop Collection" : "Due on Dispatch",
+          receivableInvoiceRef: poNumber,
+          receivableNotes: `Order #${poNumber} (KES ${totalKes.toLocaleString()}) staged for delivery. Push for payment via ${paymentTerm}.`,
           lastInteraction: `PO #${poNumber} dispatched via WhatsApp for KES ${totalKes.toLocaleString()}.`
         };
       }
@@ -1391,6 +1655,7 @@ _Generated via MAHALE Distributors Digital Kitchen Portal_`;
     renderCRM();
   }
 
+  renderStorefront();
   showToast(`Purchase order #${poNumber} generated and sent to dispatch desk!`);
   store.updateCart({});
   updateCartBadge();
