@@ -1,5 +1,5 @@
 /**
- * MAHALE Distributors Kenya HoReCa Leads Database & Nationwide B2B CRM Engine
+ * MAHALE Kenya HoReCa Leads Database & Nationwide B2B CRM Engine
  * Comprehensive database of verified dining establishments across Nairobi's prime dining corridors,
  * accompanied by active client accounts, sales performance metrics, PO balances, and cold-call logs.
  */
@@ -1772,7 +1772,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-101",
     restaurantName: "INTI – A Nikkei Experience",
-    caller: "MAHALE Distributors Sales Desk",
+    caller: "MAHALE Sales Desk",
     date: "2026-09-04 11:15 AM",
     type: "Cold Call",
     contactPerson: "Chef Roberto (Head Sushi Chef)",
@@ -1783,7 +1783,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-102",
     restaurantName: "CJ's Restaurant (Kilimani)",
-    caller: "MAHALE Distributors Sales Desk",
+    caller: "MAHALE Sales Desk",
     date: "2026-09-05 09:40 AM",
     type: "In-Person Commissary Meeting",
     contactPerson: "Commissary Head Hassan",
@@ -1794,7 +1794,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-103",
     restaurantName: "Cultiva Kenya",
-    caller: "MAHALE Distributors Sales Desk",
+    caller: "MAHALE Sales Desk",
     date: "2026-09-03 02:15 PM",
     type: "Phone Follow-Up",
     contactPerson: "Chef Ariel Moss",
@@ -1805,7 +1805,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-104",
     restaurantName: "Ole Sereni Hotel",
-    caller: "MAHALE Distributors Sales Desk",
+    caller: "MAHALE Sales Desk",
     date: "2026-09-02 10:00 AM",
     type: "Cold Call",
     contactPerson: "Executive Chef & Purchasing Lead",
@@ -1816,7 +1816,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-105",
     restaurantName: "Seven Seafood & Grill",
-    caller: "MAHALE Distributors Account Manager",
+    caller: "MAHALE Account Manager",
     date: "2026-09-04 04:30 PM",
     type: "Account Check-In",
     contactPerson: "Executive Chef Kiran",
@@ -1828,7 +1828,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-106",
     restaurantName: "Enashipai Resort (Naivasha)",
-    caller: "MAHALE Distributors Sales Desk",
+    caller: "MAHALE Sales Desk",
     date: "2026-09-04 10:30 AM",
     type: "Account Check-In",
     contactPerson: "Executive Chef David",
@@ -1839,7 +1839,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-107",
     restaurantName: "Fairmont Mt Kenya Safari Club",
-    caller: "MAHALE Distributors Account Manager",
+    caller: "MAHALE Account Manager",
     date: "2026-09-04 03:45 PM",
     type: "Quality Review",
     contactPerson: "Executive Chef",
@@ -1850,7 +1850,7 @@ export const INITIAL_CALL_LOGS = [
   {
     id: "call-108",
     restaurantName: "Severin Sea Lodge (Mombasa)",
-    caller: "MAHALE Distributors Sales Desk",
+    caller: "MAHALE Sales Desk",
     date: "2026-09-05 08:30 AM",
     type: "Logistics Verification",
     contactPerson: "Executive Chef Kenneth",
@@ -1864,7 +1864,7 @@ export const INITIAL_CALL_LOGS = [
 export const SALES_SCRIPTS = {
   coldCall: {
     title: "Head Chef / F&B Manager Telephone Script (2-Minute Pitch)",
-    hook: "Good morning Chef [Name], this is [Your Name] from MAHALE Distributors Supply. I know your kitchen is busy prepping for lunch, so I'll take just 60 seconds.",
+    hook: "Good morning Chef [Name], this is [Your Name] from MAHALE Supply. I know your kitchen is busy prepping for lunch, so I'll take just 60 seconds.",
     body: "We currently supply fresh farm produce, aged Boran beef, coastal seafood (lobster, tiger prawns, red snapper), and Lake Victoria fish directly to premier kitchens like Seven Seafood, Ankole Grill, and Tamarind. We do 5:30 AM early morning kitchen deliveries in temperature-controlled vans, straight from our cold-chain packhouse.",
     valueProp: "Right now, market rates for Shangi potatoes are hitting KES 80/kg and seafood prices fluctuate wildly at City Market, but we fix your wholesale prices on 30-day contracts—and we guarantee Grade 1 sorting with zero kitchen rejection.",
     callToAction: "I'd love to drop off a complimentary Chef's Tasting Basket this Thursday morning at 6:00 AM—with 10kg of Nyandarua potatoes, 5kg Grade 1 Mwea salad tomatoes, and fresh ocean prawns or Lake Tilapia fillets for you to test during prep. Which morning works best for your receiving staff?"
@@ -1873,7 +1873,7 @@ export const SALES_SCRIPTS = {
     title: "Chef WhatsApp Introduction & Digital Catalog Link",
     template: `Hello Chef {chefName}! 👋 Hope service went great today.
 
-This is {salesRepName} from *MAHALE Distributors Supply Kenya*. We deliver farm-fresh produce, coastal seafood, Halal aged meats, and daily Lake Victoria catch direct to your kitchen door before 7:00 AM.
+This is {salesRepName} from *MAHALE Supply Kenya*. We deliver farm-fresh produce, coastal seafood, Halal aged meats, and daily Lake Victoria catch direct to your kitchen door before 7:00 AM.
 
 🔥 *This Week's Chef Wholesale Highlights:*
 🥔 Grade 1 Shangi Potatoes (Nyandarua) - KES {potatoPrice}/kg

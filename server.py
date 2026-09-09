@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MAHALE Distributors Local Server
+MAHALE Local Server
 Zero-dependency Python 3 HTTP Server with REST API Endpoints and Static File Serving.
 """
 
@@ -13,7 +13,7 @@ import sys
 PORT = 8000
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-class MahaleDistributorsHandler(http.server.SimpleHTTPRequestHandler):
+class MahaleHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
 
@@ -35,7 +35,7 @@ class MahaleDistributorsHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             response = {
                 "status": "healthy",
-                "service": "MAHALE Distributors Supply Engine",
+                "service": "MAHALE Supply Engine",
                 "version": "1.0.0",
                 "regions": ["Nairobi", "Coast", "Rift Valley", "Western", "Mount Kenya"]
             }
@@ -54,7 +54,7 @@ class MahaleDistributorsHandler(http.server.SimpleHTTPRequestHandler):
                 response = {
                     "status": "success",
                     "orderId": order_id,
-                    "message": "Purchase order successfully received by MAHALE Distributors Dispatch Hub.",
+                    "message": "Purchase order successfully received by MAHALE Dispatch Hub.",
                     "data": order_payload
                 }
                 self.send_response(201)
@@ -74,9 +74,9 @@ class MahaleDistributorsHandler(http.server.SimpleHTTPRequestHandler):
 def run(port=PORT):
     # Allow port reuse immediately
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", port), MahaleDistributorsHandler) as httpd:
+    with socketserver.TCPServer(("", port), MahaleHandler) as httpd:
         print("=" * 65)
-        print("🌿 MAHALE DISTRIBUTORS B2B PLATFORM")
+        print("🌿 MAHALE B2B PLATFORM")
         print("=" * 65)
         print(f"🚀 Server running locally at: http://localhost:{port}")
         print("📦 Serving Kitchen Storefront, Market Intelligence & Leads CRM")

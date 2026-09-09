@@ -1,5 +1,5 @@
 /**
- * MAHALE Distributors Supply Platform Controller
+ * MAHALE Supply Platform Controller
  * Manages reactive state, digital ordering, dynamic daily market pricing,
  * Nairobi restaurant leads directory, and B2B Accounts CRM with Zero-Credit enforcement.
  */
@@ -782,7 +782,7 @@ function renderLeadsCRM() {
           <!-- Tailored Supply Breakdown -->
           <div class="supply-box" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.78rem;">
             <div style="font-weight: 800; color: #0f172a; margin-bottom: 6px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;">
-              📦 What MAHALE Distributors Supplies (${lead.area}):
+              📦 What MAHALE Supplies (${lead.area}):
             </div>
             <div style="margin-bottom: 3px; color: #1e40af;">
               🦐 <strong>Sea Food & Lake Fish:</strong> ${supply.seafood}
@@ -854,7 +854,7 @@ window.sendChefWhatsApp = (leadId) => {
   const phoneClean = lead.phone.replace(/[^0-9]/g, "");
   const template = SALES_SCRIPTS.whatsappPitch.template
     .replace("{chefName}", lead.name)
-    .replace("{salesRepName}", "MAHALE Distributors Desk")
+    .replace("{salesRepName}", "MAHALE Desk")
     .replace("{potatoPrice}", "72")
     .replace("{tomatoPrice}", "85")
     .replace("{onionPrice}", "78")
@@ -884,7 +884,7 @@ window.viewPitchScript = (leadId) => {
     <div style="margin-bottom: 16px;">
       <h4 style="color: #059669; margin-bottom: 6px;">📞 Step 1: 60-Second Phone Pitch</h4>
       <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.5;">
-        <p style="margin-bottom: 8px;"><em>"Good morning Chef, this is MAHALE Distributors Supply. I know kitchen prep is underway, so I'll be brief."</em></p>
+        <p style="margin-bottom: 8px;"><em>"Good morning Chef, this is MAHALE Supply. I know kitchen prep is underway, so I'll be brief."</em></p>
         <p style="margin-bottom: 8px;"><em>"We do direct 5:30 AM early morning deliveries of Nyandarua potatoes, Mwea tomatoes, coastal seafood (prawns, red snapper, calamari), aged Boran beef, and Lake Victoria fish to fine kitchens across ${lead.area}."</em></p>
         <p style="margin-bottom: 8px;"><em>"We fix your wholesale prices with a 100% zero-rejection guarantee and strict Advance or POD payment terms via M-Pesa Till before crate unsealing."</em></p>
         <p><strong>The Close:</strong> <em>"Can we drop off a free Chef's Tasting Basket this Thursday at 6:00 AM with 10kg Shangi potatoes, Mwea salad tomatoes, and fresh ocean prawns or Lake Tilapia fillets for your prep team to test?"</em></p>
@@ -1234,7 +1234,7 @@ window.sendAccountWhatsApp = (accountId) => {
   const acc = store.crmAccounts.find((a) => a.id === accountId);
   if (!acc) return;
   const phoneClean = acc.phone.replace(/[^0-9]/g, "");
-  const message = `Hello ${acc.contactPerson}! 👋 This is MAHALE Distributors Supply Kenya regarding your account for *${acc.restaurantName}*.
+  const message = `Hello ${acc.contactPerson}! 👋 This is MAHALE Supply Kenya regarding your account for *${acc.restaurantName}*.
 
 📄 *Active PO Number:* ${acc.activePoNumber}
 💰 *Remaining PO Balance:* KES ${acc.balanceInPo.toLocaleString()}
@@ -1257,7 +1257,7 @@ window.pushReceivableWhatsApp = (accountId) => {
   const message = `🔔 *URGENT PAYMENT REMINDER & DISPATCH CLEARANCE*
 
 Dear Chef / Accounts Desk at *${acc.restaurantName}*,
-This is MAHALE Distributors Accounts & Cold-Chain Logistics Desk.
+This is MAHALE Accounts & Cold-Chain Logistics Desk.
 
 💰 *Total Money Yet to Collect:* KES ${amountStr}
 📄 *Invoice / Dispatch Ref:* ${acc.receivableInvoiceRef || "MD-INV-PENDING"}
@@ -1266,16 +1266,16 @@ This is MAHALE Distributors Accounts & Cold-Chain Logistics Desk.
 💳 *Agreed Payment Terms:* ${acc.paymentTerms}
 
 ⛔ *ZERO-CREDIT CLEARANCE PROTOCOL:*
-In strict compliance with MAHALE Distributors B2B SOPs, refrigerated cold-chain trucks (5:00 AM dispatch) cannot unseal crates or release consignments without payment settlement confirmation.
+In strict compliance with MAHALE B2B SOPs, refrigerated cold-chain trucks (5:00 AM dispatch) cannot unseal crates or release consignments without payment settlement confirmation.
 
 📲 *REMITTANCE CHANNELS:*
-1. *M-Pesa Buy Goods Till:* 9876543 (MAHALE Distributors Ltd)
+1. *M-Pesa Buy Goods Till:* 9876543 (MAHALE Ltd)
 2. *Bank RTGS Transfer:* Standard Chartered Bank | Acc: 01080123456700 | Westlands Branch
 
 Kindly share your M-Pesa transaction confirmation or wire receipt here to release your cold-chain dispatch immediately.
 
 Thank you!
-*MAHALE Distributors Finance & Dispatch Desk*`;
+*MAHALE Finance & Dispatch Desk*`;
 
   const url = `https://wa.me/${phoneClean}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
@@ -1298,7 +1298,7 @@ function handleLogCallSubmit(e) {
   const newLog = {
     id: `call-${Date.now()}`,
     restaurantName,
-    caller: "MAHALE Distributors Sales Rep",
+    caller: "MAHALE Sales Rep",
     date: dateNow,
     type,
     contactPerson: person,
@@ -1448,7 +1448,7 @@ function exportCRMToCSV() {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `MAHALE_Distributors_B2B_CRM_Receivables_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute("download", `MAHALE_B2B_CRM_Receivables_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -1591,7 +1591,7 @@ function dispatchOrderViaWhatsApp() {
 
   const poNumber = `PO-MD-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  const message = `*MAHALE DISTRIBUTORS B2B PURCHASE ORDER*
+  const message = `*MAHALE B2B PURCHASE ORDER*
 📄 *PO Number:* #${poNumber}
 🏨 *Kitchen / Client:* ${restaurantName}
 ⏰ *Scheduled Delivery:* ${deliverySlot}
@@ -1610,7 +1610,7 @@ ${lineItemsText}
 📝 *Kitchen Notes / Butcher & Seafood Prep:*
 "${instructions}"
 
-_Generated via MAHALE Distributors Digital Kitchen Portal_`;
+_Generated via MAHALE Digital Kitchen Portal_`;
 
   const dispatchPhone = "254722841290";
   const url = `https://wa.me/${dispatchPhone}?text=${encodeURIComponent(message)}`;

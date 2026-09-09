@@ -2,14 +2,14 @@
   "name": "horeca-gurus",
   "version": "1.0.0",
   "type": "module",
-  "description": "MAHALE Distributors - Kenya Food Supply Platform & Operations Tool",
+  "description": "MAHALE - Kenya Food Supply Platform & Operations Tool",
   "scripts": {
     "build": "mkdir -p dist && cp -r index.html src dist/",
     "start": "node local-server.js",
     "serve:py": "python3 server.py"
   },
   "keywords": [
-    "mahale-distributors",
+    "mahale",
     "kenya",
     "produce",
     "seafood",
@@ -20,6 +20,6 @@
     "b2b-supply",
     "nairobi-restaurants"
   ],
-  "author": "MAHALE Distributors Kenya",
+  "author": "MAHALE Kenya",
   "license": "ISC"
 }
