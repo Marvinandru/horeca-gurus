@@ -35,6 +35,8 @@ class Store {
     this.exchangeRate = 130; // 1 USD = 130 KES benchmark
     this.categoryFilter = "all";
     this.searchQuery = "";
+    this.exportSortBy = "volume_desc"; // "volume_desc", "price_asc", "price_desc", "stock_desc"
+    this.localSortBy = "default";
 
     this.leadsRegionFilter = "all";
     this.leadsAreaFilter = "all";
@@ -49,11 +51,10 @@ class Store {
 
   loadInventory() {
     try {
-      const saved = localStorage.getItem("mahale_inventory_v3");
+      const saved = localStorage.getItem("mahale_inventory_v4");
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Merge with DEFAULT_INVENTORY so all 34 items, seasonal availability, and export specs are up to date
-        const defaultMap = new Map(DEFAULT_INVENTORY.map((item) => [item.id, item]));
+        // Merge with DEFAULT_INVENTORY so volume moved metrics, rankings, seasonal availability, and export specs are refreshed
         const updated = DEFAULT_INVENTORY.map((def) => {
           const existing = parsed.find((p) => p.id === def.id);
           if (existing) {
@@ -64,10 +65,10 @@ class Store {
           }
           return def;
         });
-        localStorage.setItem("mahale_inventory_v3", JSON.stringify(updated));
+        localStorage.setItem("mahale_inventory_v4", JSON.stringify(updated));
         return updated;
       }
-      localStorage.setItem("mahale_inventory_v3", JSON.stringify(DEFAULT_INVENTORY));
+      localStorage.setItem("mahale_inventory_v4", JSON.stringify(DEFAULT_INVENTORY));
       return DEFAULT_INVENTORY;
     } catch (e) {
       console.warn("Failed to read inventory from storage:", e);
@@ -125,7 +126,7 @@ class Store {
 
   updateInventory(newInventory) {
     this.inventory = newInventory;
-    this.saveState("mahale_inventory_v3", this.inventory);
+    this.saveState("mahale_inventory_v4", this.inventory);
   }
 
   updateLeads(newLeads) {
@@ -218,6 +219,15 @@ function setupEventListeners() {
       store.exportCurrency = "KES";
       currencyKesBtn.classList.add("active");
       currencyUsdBtn?.classList.remove("active");
+      renderStorefront();
+    });
+  }
+
+  // Export Volume / Price Sort Dropdown
+  const exportSortSelect = document.getElementById("export-sort-select");
+  if (exportSortSelect) {
+    exportSortSelect.addEventListener("change", (e) => {
+      store.exportSortBy = e.target.value;
       renderStorefront();
     });
   }
@@ -436,6 +446,7 @@ export function switchMarketDivision(division) {
   const localBtn = document.getElementById("division-btn-local");
   const exportBtn = document.getElementById("division-btn-export");
   const currencyToggle = document.getElementById("export-currency-toggle");
+  const exportSortWrap = document.getElementById("export-sort-wrap");
 
   if (division === "local") {
     localBtn?.classList.add("active");
@@ -445,6 +456,7 @@ export function switchMarketDivision(division) {
     if (localBadge) localBadge.style.display = "inline-block";
     if (exportBadge) exportBadge.style.display = "none";
     if (currencyToggle) currencyToggle.style.display = "none";
+    if (exportSortWrap) exportSortWrap.style.display = "none";
   } else {
     exportBtn?.classList.add("active");
     localBtn?.classList.remove("active");
@@ -453,6 +465,7 @@ export function switchMarketDivision(division) {
     if (exportBadge) exportBadge.style.display = "inline-block";
     if (localBadge) localBadge.style.display = "none";
     if (currencyToggle) currencyToggle.style.display = "flex";
+    if (exportSortWrap) exportSortWrap.style.display = "flex";
   }
 
   renderCategoryPills();
@@ -580,6 +593,35 @@ function renderStorefront() {
     return matchesDivision && matchesSupplier && matchesCat && matchesSearch;
   });
 
+  // Sort items: for Export Market, default sorting is strictly by exportVolumeMoved descending
+  filtered.sort((a, b) => {
+    if (store.marketDivision === "export") {
+      if (store.exportSortBy === "volume_desc") {
+        return (b.exportVolumeMoved || 0) - (a.exportVolumeMoved || 0);
+      } else if (store.exportSortBy === "price_asc") {
+        const pA = typeof a.priceUsd === "number" ? a.priceUsd : (a.price / store.exchangeRate);
+        const pB = typeof b.priceUsd === "number" ? b.priceUsd : (b.price / store.exchangeRate);
+        return pA - pB;
+      } else if (store.exportSortBy === "price_desc") {
+        const pA = typeof a.priceUsd === "number" ? a.priceUsd : (a.price / store.exchangeRate);
+        const pB = typeof b.priceUsd === "number" ? b.priceUsd : (b.price / store.exchangeRate);
+        return pB - pA;
+      } else if (store.exportSortBy === "stock_desc") {
+        return (b.inStock || 0) - (a.inStock || 0);
+      }
+      return (b.exportVolumeMoved || 0) - (a.exportVolumeMoved || 0);
+    } else {
+      if (store.localSortBy === "price_asc") {
+        return a.price - b.price;
+      } else if (store.localSortBy === "price_desc") {
+        return b.price - a.price;
+      } else if (store.localSortBy === "stock_desc") {
+        return (b.inStock || 0) - (a.inStock || 0);
+      }
+      return 0;
+    }
+  });
+
   if (filtered.length === 0) {
     const isFilteredBySupplier = store.selectedSupplier !== "all";
     container.innerHTML = `
@@ -665,6 +707,19 @@ function renderStorefront() {
         ? `<div class="seasonal-timeline-badge">📅 <span>Availability Chances: <strong>High (${item.seasonalTimeline})</strong></span></div>`
         : "";
 
+      const exportVolumeHtml = (item.marketDivision === "export" || item.exportVolumeMoved)
+        ? `
+          <div class="export-volume-badge">
+            <div class="export-volume-left">
+              <span class="export-volume-icon">📊</span>
+              <span class="export-volume-label">Export Trade Volume:</span>
+              <strong class="export-volume-val">${item.exportVolumeLabel || `${item.exportVolumeMoved?.toLocaleString()} MT / yr`}</strong>
+            </div>
+            <span class="export-rank-tag">${item.exportVolumeRankBadge || (item.category.includes("Sea") ? `#${item.exportSeafoodRank} in Kenya Seafood` : `#${item.exportVolumeRank} by Volume`)}</span>
+          </div>
+        `
+        : "";
+
       return `
       <div class="product-card">
         <!-- Verified Supplier Bar (Glovo Multi-Vendor) -->
@@ -693,6 +748,7 @@ function renderStorefront() {
 
           ${oceanDirectHtml}
           ${seasonalTimelineHtml}
+          ${exportVolumeHtml}
 
           <h3 class="product-title">${item.name}</h3>
           <p class="product-desc">${item.description}</p>

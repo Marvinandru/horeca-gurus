@@ -174,6 +174,17 @@
             <span class="exchange-rate-badge" title="Live conversion rate">1 USD = 130 KES</span>
           </div>
 
+          <!-- Export Volume / Catalog Sort Dropdown -->
+          <div class="sort-select-wrap" id="export-sort-wrap" style="display: none;">
+            <label for="export-sort-select" class="sort-label">Sort by:</label>
+            <select id="export-sort-select" class="sort-select" aria-label="Sort Export Products">
+              <option value="volume_desc" selected>📊 Volume Moved (Export Trade)</option>
+              <option value="price_asc">💲 Price: Low to High</option>
+              <option value="price_desc">💲 Price: High to Low</option>
+              <option value="stock_desc">📦 Available Packhouse Volume</option>
+            </select>
+          </div>
+
           <div class="search-input-wrap">
             <span class="search-icon">🔍</span>
             <input type="text" id="storefront-search" placeholder="Search potatoes, tiger prawns, tilapia, ribeye, mangoes...">
