@@ -49,10 +49,10 @@ class Store {
 
   loadInventory() {
     try {
-      const saved = localStorage.getItem("mahale_inventory_v2");
+      const saved = localStorage.getItem("mahale_inventory_v3");
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Merge with DEFAULT_INVENTORY so all 29 items, supplier fields, and export specs are up to date
+        // Merge with DEFAULT_INVENTORY so all 34 items, seasonal availability, and export specs are up to date
         const defaultMap = new Map(DEFAULT_INVENTORY.map((item) => [item.id, item]));
         const updated = DEFAULT_INVENTORY.map((def) => {
           const existing = parsed.find((p) => p.id === def.id);
@@ -64,10 +64,10 @@ class Store {
           }
           return def;
         });
-        localStorage.setItem("mahale_inventory_v2", JSON.stringify(updated));
+        localStorage.setItem("mahale_inventory_v3", JSON.stringify(updated));
         return updated;
       }
-      localStorage.setItem("mahale_inventory_v2", JSON.stringify(DEFAULT_INVENTORY));
+      localStorage.setItem("mahale_inventory_v3", JSON.stringify(DEFAULT_INVENTORY));
       return DEFAULT_INVENTORY;
     } catch (e) {
       console.warn("Failed to read inventory from storage:", e);
@@ -125,7 +125,7 @@ class Store {
 
   updateInventory(newInventory) {
     this.inventory = newInventory;
-    this.saveState("mahale_inventory_v2", this.inventory);
+    this.saveState("mahale_inventory_v3", this.inventory);
   }
 
   updateLeads(newLeads) {
@@ -657,6 +657,14 @@ function renderStorefront() {
         ? `<div class="export-specs-box">✈️ <span>${item.exportSpecs}</span></div>`
         : "";
 
+      const oceanDirectHtml = item.oceanDirectBadge
+        ? `<div class="ocean-direct-badge">🌊 <span>${item.oceanDirectBadge}</span></div>`
+        : "";
+
+      const seasonalTimelineHtml = item.seasonalTimeline
+        ? `<div class="seasonal-timeline-badge">📅 <span>Availability Chances: <strong>High (${item.seasonalTimeline})</strong></span></div>`
+        : "";
+
       return `
       <div class="product-card">
         <!-- Verified Supplier Bar (Glovo Multi-Vendor) -->
@@ -682,6 +690,10 @@ function renderStorefront() {
           <div class="product-origin">
             📍 <span>${item.origin}</span>
           </div>
+
+          ${oceanDirectHtml}
+          ${seasonalTimelineHtml}
+
           <h3 class="product-title">${item.name}</h3>
           <p class="product-desc">${item.description}</p>
 
@@ -769,6 +781,8 @@ window.addToOrder = (itemId) => {
       category: item.category,
       marketDivision: item.marketDivision || "local",
       supplierName: item.supplierName || "Verified Producer Hub",
+      seasonalTimeline: item.seasonalTimeline || "",
+      oceanDirectBadge: item.oceanDirectBadge || "",
       inStock: item.inStock
     };
   }
@@ -1752,6 +1766,8 @@ function renderCartContents() {
           </div>
           <div class="cart-item-sub">
             KES ${item.price.toLocaleString()} / ${item.unit} ${item.marketDivision === "export" ? `($${unitUsd.toFixed(2)} USD)` : ""} • ${item.category}
+            ${item.oceanDirectBadge ? `<span style="display:block; font-size:0.7rem; color:#0284c7; font-weight:700;">🌊 Direct from Indian Ocean to your plate</span>` : ""}
+            ${item.seasonalTimeline ? `<span style="display:block; font-size:0.7rem; color:#0d9488; font-weight:600;">📅 Availability: High (${item.seasonalTimeline})</span>` : ""}
             <span style="display: block; font-size: 0.72rem; color: #059669; font-weight: 700; margin-top: 2px;">
               📦 Packhouse Volume Left: ${volumeLeft.toLocaleString()} ${item.unit} available
             </span>
@@ -1833,6 +1849,7 @@ function dispatchOrderViaWhatsApp() {
   let totalKes = 0;
   let totalUsd = 0;
   let hasExport = false;
+  let hasOceanFish = false;
 
   const lineItemsText = items
     .map((item, idx) => {
@@ -1846,12 +1863,17 @@ function dispatchOrderViaWhatsApp() {
         totalUsd += lineTotalUsd;
       }
 
+      if (item.oceanDirectBadge) {
+        hasOceanFish = true;
+      }
+
       const supplierTag = item.supplierName ? `[${item.supplierName}]` : "[Verified Hub]";
       const usdSnippet = (item.marketDivision === "export" || typeof item.priceUsd === "number")
         ? ` (≈ $${lineTotalUsd.toFixed(2)} USD)`
         : "";
+      const timelineTag = item.seasonalTimeline ? ` [High Availability: ${item.seasonalTimeline}]` : "";
 
-      return `${idx + 1}. *${item.name}* ${supplierTag} - ${item.quantity} ${item.unit} @ KES ${item.price}${usdSnippet} = KES ${lineTotalKes.toLocaleString()}`;
+      return `${idx + 1}. *${item.name}* ${supplierTag}${timelineTag} - ${item.quantity} ${item.unit} @ KES ${item.price}${usdSnippet} = KES ${lineTotalKes.toLocaleString()}`;
     })
     .join("\n");
 
@@ -1860,6 +1882,10 @@ function dispatchOrderViaWhatsApp() {
   const totalString = hasExport
     ? `KES ${totalKes.toLocaleString()} (≈ $${(totalKes / store.exchangeRate).toFixed(2)} USD / FOB JKIA)`
     : `KES ${totalKes.toLocaleString()}`;
+
+  const oceanGuaranteeBlock = hasOceanFish
+    ? `\n🌊 *FRESH INDIAN OCEAN DIRECT-TO-PLATE ASSURANCE:*\nAll ocean lines are guaranteed fresh, harvested directly from Indian Ocean waters to your plate on cold-chain wet flake ice.\n`
+    : "";
 
   const message = `*MAHALE B2B MULTI-VENDOR PURCHASE ORDER*
 📄 *PO Number:* #${poNumber}
@@ -1870,8 +1896,7 @@ function dispatchOrderViaWhatsApp() {
 🛡️ *RECEIVING & RETURN POLICY:*
 • Non-standard material MUST be inspected and reported immediately upon receipt.
 • Return window: Maximum 2 days depending on item perishability.
-• Fresh Fish & Seafood: Strict NO-RETURN POLICY once accepted at receiving bay.
-
+• Fresh Fish & Seafood: Strict NO-RETURN POLICY once accepted at receiving bay.${oceanGuaranteeBlock}
 📋 *ORDERED LINE ITEMS (WITH SUPPLIER ATTRIBUTION):*
 ${lineItemsText}
 
