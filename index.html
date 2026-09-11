@@ -50,7 +50,7 @@
         </div>
         <div>
           <h1 class="brand-title">MAHALE</h1>
-          <div class="brand-subtitle">Kenya's Premier Food Supply, Market Intelligence & Global Export</div>
+          <div class="brand-subtitle">B2B Food Supply Marketplace • Kenya Kitchens & Global Export</div>
         </div>
       </div>
 
@@ -92,15 +92,15 @@
     <section id="section-storefront" class="tab-section">
       <!-- Hero Banner -->
       <div class="hero-banner">
-        <div class="hero-tag">⚡ Nairobi Direct Kitchen Supply & Air-Freight Export</div>
-        <h2 class="hero-title">Farm-Fresh Produce, Coastal Seafood & Aged Halal Meats for Kenya’s Premier Kitchens</h2>
+        <div class="hero-tag">⚡ B2B Multi-Vendor Food Supply Marketplace • Kenya Kitchens & Global Export</div>
+        <h2 class="hero-title">Connecting Kenya’s Premier Kitchens Directly to Verified Farm, Ocean & Abattoir Producers</h2>
         <p class="hero-desc">
-          Supplying hotels, fine-dining restaurants, and cafes with zero cold-chain breaks. Direct from Nyandarua, Mwea, Kilifi Ocean waters, Lake Victoria, and Athi River straight to your prep station before 7:00 AM.
+          Order farm-gate produce from Nyandarua & Mwea, deep-sea catches from Kilifi, and certified Halal meats from Athi River. Like Glovo for B2B food supply—order directly from verified regional producer hubs with unbroken cold-chain tracking, dawn kitchen delivery, and international air-freight export.
         </p>
         <div class="hero-features">
           <div class="hero-feature-item">
             <span>🚚</span>
-            <span>Early Morning Delivery: 5:00 AM – 7:30 AM</span>
+            <span>Early Morning Kitchen Delivery: 5:00 AM – 7:30 AM</span>
           </div>
           <div class="hero-feature-item">
             <span>❄️</span>
@@ -108,28 +108,76 @@
           </div>
           <div class="hero-feature-item">
             <span>🛡️</span>
-            <span>100% Quality Guarantee: 2-Hour Replacement Policy</span>
+            <span>Instant Receiving Bay Inspection • Strict 2-Day Return Window</span>
           </div>
           <div class="hero-feature-item">
-            <span>🌍</span>
-            <span>GlobalG.A.P. & KEPHIS Phytosanitary Certified for Export</span>
+            <span>✈️</span>
+            <span>GlobalG.A.P. & KEPHIS Certified Air-Freight to GCC & Europe</span>
           </div>
         </div>
       </div>
 
-      <!-- Filter and Search Bar -->
+      <!-- Marketplace Division Switcher (Local HoReCa vs Global Export) -->
+      <div class="division-switcher-container">
+        <button class="division-tab active" data-division="local" id="division-btn-local">
+          <span class="division-tab-icon">🇰🇪</span>
+          <div class="division-tab-content">
+            <div class="division-tab-title">Local Kitchen Supply</div>
+            <div class="division-tab-sub">Nairobi HoReCa • Daily Farm-to-Kitchen Dawn Delivery (KES)</div>
+          </div>
+          <span class="division-status-badge">Active Market</span>
+        </button>
+
+        <button class="division-tab" data-division="export" id="division-btn-export">
+          <span class="division-tab-icon">🌍</span>
+          <div class="division-tab-content">
+            <div class="division-tab-title">Global Export Market</div>
+            <div class="division-tab-sub">Air-Freight & FOB JKIA • Meat, Seafood, Mangoes, Herbs, Pineapple, Passion (USD / KES)</div>
+          </div>
+          <span class="division-status-badge" style="display: none;">Active Market</span>
+        </button>
+      </div>
+
+      <!-- Verified Producer Hubs Carousel (Glovo for B2B Food Supply) -->
+      <div class="suppliers-section">
+        <div class="suppliers-header">
+          <div>
+            <h3 class="suppliers-title">🚜 Verified Producer & Aggregator Hubs</h3>
+            <p class="suppliers-sub">Direct source procurement from audited Kenyan farm cooperatives, artisanal ocean fleets, and certified export abattoirs.</p>
+          </div>
+          <div class="suppliers-header-right">
+            <span class="suppliers-filter-badge" id="suppliers-count-badge">All Producers</span>
+            <button class="btn-clear-supplier" id="btn-clear-supplier" style="display: none;">Show All Hubs</button>
+          </div>
+        </div>
+        <div class="suppliers-carousel-wrap">
+          <div class="suppliers-carousel" id="supplier-hubs-container">
+            <!-- Dynamically populated via app.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter, Search, and Currency Bar -->
       <div class="filter-bar">
-        <div class="pill-group">
-          <button class="filter-pill active" data-category="all">All Divisions</button>
-          <button class="filter-pill" data-category="Fresh Produce">🌱 Fresh Farm Produce</button>
-          <button class="filter-pill" data-category="Fish & Seafood">🦐 Sea Food & Lake Fish</button>
-          <button class="filter-pill" data-category="Prime Meat">🥩 Butchery & Halal Meat</button>
-          <button class="filter-pill" data-category="Export Division">✈️ Export Ready Crops</button>
+        <div class="pill-group" id="category-pills-container">
+          <!-- Dynamically populated via app.js depending on active division -->
         </div>
 
-        <div class="search-input-wrap">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="storefront-search" placeholder="Search potatoes, tiger prawns, tilapia, ribeye...">
+        <div class="filter-controls-right">
+          <!-- Currency Converter (Active on Export Division) -->
+          <div class="currency-toggle-wrap" id="export-currency-toggle" style="display: none;">
+            <span class="currency-label">Export Price:</span>
+            <div class="currency-btns">
+              <button class="currency-btn active" data-currency="USD" id="currency-usd-btn">$ USD (Air-Freight)</button>
+              <button class="currency-btn" data-currency="KES" id="currency-kes-btn">KES (Local Equiv)</button>
+            </div>
+            <span class="exchange-rate-badge" title="Live conversion rate">1 USD = 130 KES</span>
+          </div>
+
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="storefront-search" placeholder="Search potatoes, tiger prawns, tilapia, ribeye, mangoes...">
+          </div>
         </div>
       </div>
 

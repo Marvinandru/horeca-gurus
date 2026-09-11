@@ -51,9 +51,11 @@ const server = http.createServer((req, res) => {
   }
 
   const filePath = path.join(BASE_DIR, reqPath);
+  const resolvedBase = fs.existsSync(BASE_DIR) ? fs.realpathSync(BASE_DIR) : BASE_DIR;
+  const resolvedTarget = fs.existsSync(filePath) ? fs.realpathSync(filePath) : filePath;
 
   // Security check
-  if (!filePath.startsWith(BASE_DIR)) {
+  if (!resolvedTarget.startsWith(resolvedBase) && !filePath.startsWith(BASE_DIR)) {
     res.writeHead(403);
     res.end('Forbidden');
     return;

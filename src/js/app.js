@@ -1,6 +1,7 @@
 /**
  * MAHALE Supply Platform Controller
  * Manages reactive state, digital ordering, dynamic daily market pricing,
+ * multi-vendor supplier marketplace, export division with USD conversion,
  * Nairobi restaurant leads directory, and B2B Accounts CRM with Zero-Credit enforcement.
  */
 
@@ -16,7 +17,7 @@ import {
   INITIAL_CALL_LOGS,
   SALES_SCRIPTS
 } from "../data/leads_data.js";
-import { DEFAULT_INVENTORY } from "../data/default_inventory.js";
+import { SUPPLIERS, DEFAULT_INVENTORY } from "../data/default_inventory.js";
 
 // --- PERSISTENT STATE MANAGEMENT ---
 class Store {
@@ -28,6 +29,10 @@ class Store {
     this.cart = this.loadState("mahale_cart_v1", {});
 
     this.activeTab = "storefront";
+    this.marketDivision = "local"; // "local" or "export"
+    this.selectedSupplier = "all"; // "all" or specific supplierId
+    this.exportCurrency = "USD"; // "USD" or "KES"
+    this.exchangeRate = 130; // 1 USD = 130 KES benchmark
     this.categoryFilter = "all";
     this.searchQuery = "";
 
@@ -44,26 +49,25 @@ class Store {
 
   loadInventory() {
     try {
-      const saved = localStorage.getItem("mahale_inventory_v1");
+      const saved = localStorage.getItem("mahale_inventory_v2");
       if (saved) {
         const parsed = JSON.parse(saved);
+        // Merge with DEFAULT_INVENTORY so all 29 items, supplier fields, and export specs are up to date
         const defaultMap = new Map(DEFAULT_INVENTORY.map((item) => [item.id, item]));
-        return parsed.map((item) => {
-          if (defaultMap.has(item.id)) {
-            const def = defaultMap.get(item.id);
+        const updated = DEFAULT_INVENTORY.map((def) => {
+          const existing = parsed.find((p) => p.id === def.id);
+          if (existing) {
             return {
-              ...item,
-              image: def.image,
-              name: def.name,
-              category: def.category,
-              unit: def.unit || item.unit || "kg",
-              inStock: typeof item.inStock === "number" ? item.inStock : def.inStock
+              ...def,
+              inStock: typeof existing.inStock === "number" ? existing.inStock : def.inStock
             };
           }
-          return item;
+          return def;
         });
+        localStorage.setItem("mahale_inventory_v2", JSON.stringify(updated));
+        return updated;
       }
-      localStorage.setItem("mahale_inventory_v1", JSON.stringify(DEFAULT_INVENTORY));
+      localStorage.setItem("mahale_inventory_v2", JSON.stringify(DEFAULT_INVENTORY));
       return DEFAULT_INVENTORY;
     } catch (e) {
       console.warn("Failed to read inventory from storage:", e);
@@ -121,7 +125,7 @@ class Store {
 
   updateInventory(newInventory) {
     this.inventory = newInventory;
-    this.saveState("mahale_inventory_v1", this.inventory);
+    this.saveState("mahale_inventory_v2", this.inventory);
   }
 
   updateLeads(newLeads) {
@@ -178,15 +182,45 @@ function showTabSection(tabName) {
 }
 
 function setupEventListeners() {
-  // Storefront Filter Pills
-  document.querySelectorAll(".filter-pill").forEach((pill) => {
-    pill.addEventListener("click", (e) => {
-      document.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
-      e.target.classList.add("active");
-      store.categoryFilter = e.target.dataset.category;
+  // Marketplace Division Switcher (Local HoReCa vs Global Export)
+  const divisionLocalBtn = document.getElementById("division-btn-local");
+  const divisionExportBtn = document.getElementById("division-btn-export");
+  if (divisionLocalBtn) {
+    divisionLocalBtn.addEventListener("click", () => switchMarketDivision("local"));
+  }
+  if (divisionExportBtn) {
+    divisionExportBtn.addEventListener("click", () => switchMarketDivision("export"));
+  }
+
+  // Clear Supplier Filter Button
+  const clearSupplierBtn = document.getElementById("btn-clear-supplier");
+  if (clearSupplierBtn) {
+    clearSupplierBtn.addEventListener("click", () => {
+      store.selectedSupplier = "all";
+      renderSupplierHubs();
       renderStorefront();
     });
-  });
+  }
+
+  // Export Currency Converter Buttons (USD vs KES)
+  const currencyUsdBtn = document.getElementById("currency-usd-btn");
+  const currencyKesBtn = document.getElementById("currency-kes-btn");
+  if (currencyUsdBtn) {
+    currencyUsdBtn.addEventListener("click", () => {
+      store.exportCurrency = "USD";
+      currencyUsdBtn.classList.add("active");
+      currencyKesBtn?.classList.remove("active");
+      renderStorefront();
+    });
+  }
+  if (currencyKesBtn) {
+    currencyKesBtn.addEventListener("click", () => {
+      store.exportCurrency = "KES";
+      currencyKesBtn.classList.add("active");
+      currencyUsdBtn?.classList.remove("active");
+      renderStorefront();
+    });
+  }
 
   // Storefront Search Input
   const searchInput = document.getElementById("storefront-search");
@@ -379,6 +413,8 @@ function setupEventListeners() {
 
 // --- RENDER ALL SECTIONS ---
 export function renderAll() {
+  renderCategoryPills();
+  renderSupplierHubs();
   renderStorefront();
   renderMarketRates();
   renderMarginCalculator();
@@ -388,26 +424,168 @@ export function renderAll() {
 }
 
 // =========================================================================
-// 1. STOREFRONT CATALOG
+// 1. MARKETPLACE STOREFRONT & SUPPLIER HUBS
 // =========================================================================
+export function switchMarketDivision(division) {
+  if (store.marketDivision === division) return;
+  store.marketDivision = division;
+  store.selectedSupplier = "all";
+  store.categoryFilter = "all";
+
+  // Update tabs UI
+  const localBtn = document.getElementById("division-btn-local");
+  const exportBtn = document.getElementById("division-btn-export");
+  const currencyToggle = document.getElementById("export-currency-toggle");
+
+  if (division === "local") {
+    localBtn?.classList.add("active");
+    exportBtn?.classList.remove("active");
+    const localBadge = localBtn?.querySelector(".division-status-badge");
+    const exportBadge = exportBtn?.querySelector(".division-status-badge");
+    if (localBadge) localBadge.style.display = "inline-block";
+    if (exportBadge) exportBadge.style.display = "none";
+    if (currencyToggle) currencyToggle.style.display = "none";
+  } else {
+    exportBtn?.classList.add("active");
+    localBtn?.classList.remove("active");
+    const localBadge = localBtn?.querySelector(".division-status-badge");
+    const exportBadge = exportBtn?.querySelector(".division-status-badge");
+    if (exportBadge) exportBadge.style.display = "inline-block";
+    if (localBadge) localBadge.style.display = "none";
+    if (currencyToggle) currencyToggle.style.display = "flex";
+  }
+
+  renderCategoryPills();
+  renderSupplierHubs();
+  renderStorefront();
+}
+
+export function renderCategoryPills() {
+  const container = document.getElementById("category-pills-container");
+  if (!container) return;
+
+  const localCategories = [
+    { id: "all", label: "All Local Items" },
+    { id: "Fresh Produce", label: "🌱 Fresh Farm Produce" },
+    { id: "Fish & Seafood", label: "🦐 Sea Food & Lake Fish" },
+    { id: "Prime Meat", label: "🥩 Butchery & Halal Meat" }
+  ];
+
+  const exportCategories = [
+    { id: "all", label: "All Export Lines" },
+    { id: "Export Meat", label: "🥩 Export Meat & Livestock" },
+    { id: "Export Seafood", label: "🦞 Ocean Seafood Export" },
+    { id: "Export Mangoes", label: "🥭 Export Mangoes" },
+    { id: "Export Herbs", label: "🌿 Culinary Fresh Herbs" },
+    { id: "Export Pineapple", label: "🍍 MD2 Golden Pineapples" },
+    { id: "Export Passion Fruit", label: "🟣 Export Passion Fruit" },
+    { id: "Export Crops", label: "🫛 Fresh Crops (Peas & Avocados)" }
+  ];
+
+  const categories = store.marketDivision === "export" ? exportCategories : localCategories;
+
+  container.innerHTML = categories
+    .map((cat) => {
+      const isActive = store.categoryFilter === cat.id ? "active" : "";
+      return `<button class="filter-pill ${isActive}" data-category="${cat.id}">${cat.label}</button>`;
+    })
+    .join("");
+
+  container.querySelectorAll(".filter-pill").forEach((pill) => {
+    pill.addEventListener("click", (e) => {
+      container.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
+      e.currentTarget.classList.add("active");
+      store.categoryFilter = e.currentTarget.dataset.category;
+      renderStorefront();
+    });
+  });
+}
+
+export function renderSupplierHubs() {
+  const container = document.getElementById("supplier-hubs-container");
+  const countBadge = document.getElementById("suppliers-count-badge");
+  const clearBtn = document.getElementById("btn-clear-supplier");
+  if (!container) return;
+
+  const activeSuppliers = SUPPLIERS.filter(
+    (s) => s.division === store.marketDivision || s.division === "both"
+  );
+
+  if (store.selectedSupplier !== "all") {
+    const sel = SUPPLIERS.find((s) => s.id === store.selectedSupplier);
+    if (countBadge) countBadge.textContent = sel ? `Filtered: ${sel.name}` : "Selected Hub";
+    if (clearBtn) clearBtn.style.display = "inline-block";
+  } else {
+    if (countBadge) countBadge.textContent = `Showing All ${activeSuppliers.length} Verified Hubs`;
+    if (clearBtn) clearBtn.style.display = "none";
+  }
+
+  container.innerHTML = activeSuppliers
+    .map((s) => {
+      const isSelected = store.selectedSupplier === s.id;
+      return `
+      <div class="supplier-hub-card ${isSelected ? "active" : ""}" data-supplier-id="${s.id}">
+        <div class="supplier-hub-top">
+          <div class="supplier-hub-avatar">${s.avatar}</div>
+          <div class="supplier-hub-names">
+            <div class="supplier-hub-name" title="${s.name}">${s.name}</div>
+            <div class="supplier-hub-badge">${s.badge}</div>
+          </div>
+        </div>
+        <div class="supplier-hub-meta">
+          <span class="supplier-hub-rating">★ ${s.rating} <span style="color:#64748b; font-size:0.68rem; font-weight:600;">(${s.reviewCount})</span></span>
+          <span class="supplier-hub-sla">⏱️ ${s.deliverySla}</span>
+        </div>
+        <div class="supplier-hub-specialties">
+          ${s.specialties.slice(0, 3).map((spec) => `<span class="supplier-hub-pill">${spec}</span>`).join("")}
+        </div>
+      </div>
+    `;
+    })
+    .join("");
+
+  container.querySelectorAll(".supplier-hub-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const supId = card.dataset.supplierId;
+      if (store.selectedSupplier === supId) {
+        store.selectedSupplier = "all";
+      } else {
+        store.selectedSupplier = supId;
+      }
+      renderSupplierHubs();
+      renderStorefront();
+    });
+  });
+}
+
 function renderStorefront() {
   const container = document.getElementById("product-grid-container");
   if (!container) return;
 
   const filtered = store.inventory.filter((item) => {
+    const itemDivision = item.marketDivision || (item.category.includes("Export") ? "export" : "local");
+    const matchesDivision = itemDivision === store.marketDivision;
+    const matchesSupplier = store.selectedSupplier === "all" || item.supplierId === store.selectedSupplier;
     const matchesCat = store.categoryFilter === "all" || item.category === store.categoryFilter;
+
+    const q = store.searchQuery.toLowerCase().trim();
     const matchesSearch =
-      item.name.toLowerCase().includes(store.searchQuery) ||
-      item.origin.toLowerCase().includes(store.searchQuery) ||
-      item.description.toLowerCase().includes(store.searchQuery);
-    return matchesCat && matchesSearch;
+      !q ||
+      item.name.toLowerCase().includes(q) ||
+      item.origin.toLowerCase().includes(q) ||
+      item.description.toLowerCase().includes(q) ||
+      (item.supplierName && item.supplierName.toLowerCase().includes(q)) ||
+      (item.grade && item.grade.toLowerCase().includes(q));
+
+    return matchesDivision && matchesSupplier && matchesCat && matchesSearch;
   });
 
   if (filtered.length === 0) {
+    const isFilteredBySupplier = store.selectedSupplier !== "all";
     container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: 48px; background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;">
-        <h3 style="color: #475569; margin-bottom: 8px; font-weight: 700; font-size: 1.1rem;">No produce, meat or seafood items match your criteria</h3>
-        <p style="color: #94a3b8; font-size: 0.9rem;">Try selecting another division or clearing your search query.</p>
+        <h3 style="color: #475569; margin-bottom: 8px; font-weight: 700; font-size: 1.1rem;">No items match your selected filters in ${store.marketDivision === "export" ? "Global Export Market" : "Local Kitchen Supply"}</h3>
+        <p style="color: #94a3b8; font-size: 0.9rem;">${isFilteredBySupplier ? 'This hub may not supply products under the selected category. Click "Show All Hubs" above.' : 'Try selecting another category pill or clearing your search query.'}</p>
       </div>
     `;
     return;
@@ -418,14 +596,14 @@ function renderStorefront() {
       let catClass = "produce";
       if (item.category.includes("Meat")) catClass = "meat";
       if (item.category.includes("Fish") || item.category.includes("Sea")) catClass = "fish";
-      if (item.category.includes("Export")) catClass = "export";
+      if (item.category.includes("Export") || item.marketDivision === "export") catClass = "export";
 
       const totalStock = typeof item.inStock === "number" ? item.inStock : 1000;
       const inCart = store.cart[item.id]?.quantity || 0;
       const volumeLeft = Math.max(0, totalStock - inCart);
 
       let stockClass = "stock-high";
-      let statusText = "🟢 Ample Packhouse Stock (Cold storage ready)";
+      let statusText = "🟢 Ample Packhouse Stock";
       let dotColor = "#10b981";
       if (volumeLeft < 250) {
         stockClass = "stock-low";
@@ -441,8 +619,55 @@ function renderStorefront() {
       const isOutOfStock = volumeLeft <= 0;
       const defaultQty = Math.min(item.moq, volumeLeft > 0 ? volumeLeft : item.moq);
 
+      // Supplier Info
+      const supplier = SUPPLIERS.find((s) => s.id === item.supplierId);
+      const supplierAvatar = supplier?.avatar || "🚜";
+      const supplierName = item.supplierName || supplier?.name || "Verified Producer Hub";
+      const supplierRating = item.supplierRating || supplier?.rating || 4.9;
+
+      // Dual-Currency Pricing
+      let priceHtml = "";
+      const priceUsd = typeof item.priceUsd === "number" ? item.priceUsd : (item.price / store.exchangeRate);
+      if (store.marketDivision === "export") {
+        if (store.exportCurrency === "USD") {
+          priceHtml = `
+            <div class="price-box">
+              <div class="export-price-usd">$ ${priceUsd.toFixed(2)} <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">/ ${item.unit}</span></div>
+              <div class="export-price-kes-sub">≈ KES ${item.price.toLocaleString()} / ${item.unit} • ${item.bulkOption || `MOQ: ${item.moq} ${item.unit}`}</div>
+            </div>
+          `;
+        } else {
+          priceHtml = `
+            <div class="price-box">
+              <div class="price-main">KES ${item.price.toLocaleString()} <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">/ ${item.unit}</span></div>
+              <div class="export-price-kes-sub">≈ $ ${priceUsd.toFixed(2)} USD / ${item.unit} • ${item.bulkOption || `MOQ: ${item.moq} ${item.unit}`}</div>
+            </div>
+          `;
+        }
+      } else {
+        priceHtml = `
+          <div class="price-box">
+            <div class="price-main">KES ${item.price.toLocaleString()} <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">/ ${item.unit}</span></div>
+            <div class="bulk-subtext">${item.bulkOption || `MOQ: ${item.moq} ${item.unit}`}</div>
+          </div>
+        `;
+      }
+
+      const exportSpecsHtml = item.exportSpecs
+        ? `<div class="export-specs-box">✈️ <span>${item.exportSpecs}</span></div>`
+        : "";
+
       return `
       <div class="product-card">
+        <!-- Verified Supplier Bar (Glovo Multi-Vendor) -->
+        <div class="product-supplier-bar">
+          <div class="product-supplier-info" title="${supplierName}">
+            <span class="product-supplier-avatar">${supplierAvatar}</span>
+            <span>${supplierName}</span>
+          </div>
+          <div class="product-supplier-rating">★ ${supplierRating}</div>
+        </div>
+
         <div class="card-img-wrap">
           <img src="${item.image}" alt="${item.name}" class="card-img" loading="lazy" onerror="this.src='src/assets/products/tomatoes.jpg'">
           <span class="grade-badge">${item.grade}</span>
@@ -452,12 +677,15 @@ function renderStorefront() {
             <span><strong>${volumeLeft.toLocaleString()} ${item.unit}</strong> left</span>
           </div>
         </div>
+
         <div class="card-body">
           <div class="product-origin">
             📍 <span>${item.origin}</span>
           </div>
           <h3 class="product-title">${item.name}</h3>
           <p class="product-desc">${item.description}</p>
+
+          ${exportSpecsHtml}
 
           <!-- Customer-Facing Volume Left Indicator -->
           <div class="volume-meter-card ${stockClass}">
@@ -478,10 +706,8 @@ function renderStorefront() {
             </div>
           </div>
 
-          <div class="price-box">
-            <div class="price-main">KES ${item.price.toLocaleString()} <span>/ ${item.unit}</span></div>
-            <div class="bulk-subtext">${item.bulkOption || `MOQ: ${item.moq} ${item.unit}`}</div>
-          </div>
+          ${priceHtml}
+
           <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">
             ❄️ Storage: <strong>${item.coldStorage}</strong>
           </div>
@@ -537,9 +763,12 @@ window.addToOrder = (itemId) => {
       id: item.id,
       name: item.name,
       price: item.price,
+      priceUsd: typeof item.priceUsd === "number" ? item.priceUsd : (item.price / store.exchangeRate),
       unit: item.unit,
       quantity: qty,
       category: item.category,
+      marketDivision: item.marketDivision || "local",
+      supplierName: item.supplierName || "Verified Producer Hub",
       inStock: item.inStock
     };
   }
@@ -1487,27 +1716,42 @@ function renderCartContents() {
     container.innerHTML = `
       <div style="text-align: center; padding: 32px 16px; color: #64748b;">
         <p style="font-size: 1.1rem; margin-bottom: 8px;">🛒 Your Kitchen Order is empty</p>
-        <p style="font-size: 0.85rem;">Browse produce, seafood, or meat cuts above to add items to your scheduled delivery.</p>
+        <p style="font-size: 0.85rem;">Browse produce, seafood, meat cuts, or export lines above to add items to your scheduled delivery.</p>
       </div>
     `;
     totalEl.textContent = "KES 0";
     return;
   }
 
-  let grandTotal = 0;
+  let grandTotalKes = 0;
+  let hasExportItems = false;
+  let grandTotalUsd = 0;
+
   container.innerHTML = items
     .map((item) => {
-      const lineTotal = item.price * item.quantity;
-      grandTotal += lineTotal;
+      const lineTotalKes = item.price * item.quantity;
+      grandTotalKes += lineTotalKes;
+      const unitUsd = typeof item.priceUsd === "number" ? item.priceUsd : (item.price / store.exchangeRate);
+      const lineTotalUsd = unitUsd * item.quantity;
+
+      if (item.marketDivision === "export" || item.category.includes("Export") || typeof item.priceUsd === "number") {
+        hasExportItems = true;
+        grandTotalUsd += lineTotalUsd;
+      }
+
       const totalStock = typeof item.inStock === "number" ? item.inStock : 99999;
       const volumeLeft = Math.max(0, totalStock - item.quantity);
+      const supplierLabel = item.supplierName || "Verified Producer Hub";
 
       return `
       <div class="cart-item-row">
         <div>
           <div class="cart-item-title">${item.name}</div>
+          <div style="font-size: 0.72rem; color: #047857; font-weight: 700; margin-bottom: 2px;">
+            🚜 Hub: ${supplierLabel}
+          </div>
           <div class="cart-item-sub">
-            KES ${item.price.toLocaleString()} / ${item.unit} (${item.category})
+            KES ${item.price.toLocaleString()} / ${item.unit} ${item.marketDivision === "export" ? `($${unitUsd.toFixed(2)} USD)` : ""} • ${item.category}
             <span style="display: block; font-size: 0.72rem; color: #059669; font-weight: 700; margin-top: 2px;">
               📦 Packhouse Volume Left: ${volumeLeft.toLocaleString()} ${item.unit} available
             </span>
@@ -1520,7 +1764,8 @@ function renderCartContents() {
             <button class="qty-btn" onclick="window.updateCartItemQty('${item.id}', 5)">+</button>
           </div>
           <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; min-width: 90px; text-align: right;">
-            KES ${lineTotal.toLocaleString()}
+            KES ${lineTotalKes.toLocaleString()}
+            ${item.marketDivision === "export" ? `<div style="font-size: 0.7rem; color: #059669; font-weight: 700;">≈ $${lineTotalUsd.toFixed(2)} USD</div>` : ""}
           </div>
           <button style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 1.1rem;" onclick="window.removeCartItem('${item.id}')">
             ×
@@ -1531,7 +1776,12 @@ function renderCartContents() {
     })
     .join("");
 
-  totalEl.textContent = `KES ${grandTotal.toLocaleString()}`;
+  if (hasExportItems || store.marketDivision === "export") {
+    const totalUsdEquivalent = (grandTotalKes / store.exchangeRate).toFixed(2);
+    totalEl.innerHTML = `KES ${grandTotalKes.toLocaleString()} <span style="font-size: 0.95rem; color: #059669; font-weight: 700;">(≈ $${totalUsdEquivalent} USD)</span>`;
+  } else {
+    totalEl.textContent = `KES ${grandTotalKes.toLocaleString()}`;
+  }
 }
 
 window.updateCartItemQty = (id, delta) => {
@@ -1581,17 +1831,37 @@ function dispatchOrderViaWhatsApp() {
     "Standard cold-chain packing on flake ice in food-grade Euro-crates.";
 
   let totalKes = 0;
+  let totalUsd = 0;
+  let hasExport = false;
+
   const lineItemsText = items
     .map((item, idx) => {
-      const lineTotal = item.price * item.quantity;
-      totalKes += lineTotal;
-      return `${idx + 1}. *${item.name}* - ${item.quantity} ${item.unit} @ KES ${item.price} = KES ${lineTotal.toLocaleString()}`;
+      const lineTotalKes = item.price * item.quantity;
+      totalKes += lineTotalKes;
+      const unitUsd = typeof item.priceUsd === "number" ? item.priceUsd : (item.price / store.exchangeRate);
+      const lineTotalUsd = unitUsd * item.quantity;
+
+      if (item.marketDivision === "export" || item.category.includes("Export") || typeof item.priceUsd === "number") {
+        hasExport = true;
+        totalUsd += lineTotalUsd;
+      }
+
+      const supplierTag = item.supplierName ? `[${item.supplierName}]` : "[Verified Hub]";
+      const usdSnippet = (item.marketDivision === "export" || typeof item.priceUsd === "number")
+        ? ` (≈ $${lineTotalUsd.toFixed(2)} USD)`
+        : "";
+
+      return `${idx + 1}. *${item.name}* ${supplierTag} - ${item.quantity} ${item.unit} @ KES ${item.price}${usdSnippet} = KES ${lineTotalKes.toLocaleString()}`;
     })
     .join("\n");
 
   const poNumber = `PO-MD-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  const message = `*MAHALE B2B PURCHASE ORDER*
+  const totalString = hasExport
+    ? `KES ${totalKes.toLocaleString()} (≈ $${(totalKes / store.exchangeRate).toFixed(2)} USD / FOB JKIA)`
+    : `KES ${totalKes.toLocaleString()}`;
+
+  const message = `*MAHALE B2B MULTI-VENDOR PURCHASE ORDER*
 📄 *PO Number:* #${poNumber}
 🏨 *Kitchen / Client:* ${restaurantName}
 ⏰ *Scheduled Delivery:* ${deliverySlot}
@@ -1602,15 +1872,15 @@ function dispatchOrderViaWhatsApp() {
 • Return window: Maximum 2 days depending on item perishability.
 • Fresh Fish & Seafood: Strict NO-RETURN POLICY once accepted at receiving bay.
 
-📋 *ORDERED LINE ITEMS:*
+📋 *ORDERED LINE ITEMS (WITH SUPPLIER ATTRIBUTION):*
 ${lineItemsText}
 
-💰 *ESTIMATED TOTAL:* KES ${totalKes.toLocaleString()}
+💰 *ESTIMATED TOTAL:* ${totalString}
 
 📝 *Kitchen Notes / Butcher & Seafood Prep:*
 "${instructions}"
 
-_Generated via MAHALE Digital Kitchen Portal_`;
+_Generated via MAHALE B2B Food Supply Marketplace_`;
 
   const dispatchPhone = "254722841290";
   const url = `https://wa.me/${dispatchPhone}?text=${encodeURIComponent(message)}`;
