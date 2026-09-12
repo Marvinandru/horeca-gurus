@@ -59,8 +59,8 @@
         <button class="nav-tab-btn active" data-tab="storefront">
           🛒 Kitchen Storefront
         </button>
-        <button class="nav-tab-btn" data-tab="market">
-          📊 Market Rates & Sourcing
+        <button class="nav-tab-btn" data-tab="market" id="nav-btn-market">
+          📊 Sourcing & Suppliers View
         </button>
         <button class="nav-tab-btn" data-tab="leads">
           🎯 Nairobi Restaurant Leads
@@ -202,143 +202,43 @@
          SECTION 2: KENYA MARKET RATES & SOURCING HUB
          ========================================================================= -->
     <section id="section-market" class="tab-section" style="display: none;">
-      <!-- Collapsible Live Market Ticker Dropdown -->
-      <div class="market-ticker-accordion">
-        <div class="market-ticker-header" id="market-ticker-toggle-btn">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2rem;">📈</span>
-            <span>Kenya Live Wholesale Commodity Ticker (Tap to expand/collapse live terminal rates)</span>
-          </div>
-          <span id="ticker-toggle-icon" style="color: #059669; font-size: 0.9rem;">▲</span>
+      <!-- View Page Top Navigation & Breadcrumbs Bar -->
+      <div class="view-page-nav-bar">
+        <button class="back-to-storefront-btn" id="view-page-back-btn" onclick="window.returnToStorefront()">
+          <span>←</span>
+          <span>Back to Kitchen Storefront</span>
+        </button>
+        <div class="view-page-breadcrumbs">
+          <span class="breadcrumb-root" id="breadcrumb-storefront-link" onclick="window.returnToStorefront()">🛒 Kitchen Storefront</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-field" id="view-breadcrumb-field">Highland Tubers & Root Veg</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current" id="view-breadcrumb-product">Irish Potatoes (Shangi Variety)</span>
         </div>
-        
-        <div class="market-ticker-dropdown-body" id="market-ticker-dropdown-content">
-          <div class="ticker-pill-box">
-            <div class="title">🥔 Shangi Potatoes (Nyandarua)</div>
-            <div class="price">KES 72 / kg</div>
-            <div class="sub">50kg Bag: KES 3,600 | Terminal: Wakulima</div>
-          </div>
-          <div class="ticker-pill-box">
-            <div class="title">🧅 Bombay Red Onions (Oloitokitok)</div>
-            <div class="price">KES 78 / kg</div>
-            <div class="sub">50kg Net: KES 3,900 | Sourcing: Loitokitok</div>
-          </div>
-          <div class="ticker-pill-box">
-            <div class="title">🍅 Anna F1 Salad Tomatoes (Mwea)</div>
-            <div class="price">KES 85 / kg</div>
-            <div class="sub">64kg Crate: KES 5,200 | Sourcing: Kirinyaga</div>
-          </div>
-          <div class="ticker-pill-box">
-            <div class="title">🫛 Crisp Snow Peas & Minji (Kinangop)</div>
-            <div class="price">KES 145 - 190 / kg</div>
-            <div class="sub">Highland Outgrowers | GlobalG.A.P.</div>
-          </div>
-          <div class="ticker-pill-box">
-            <div class="title">🦐 Jumbo Tiger Prawns (U-10 Coastal)</div>
-            <div class="price">KES 2,400 / kg</div>
-            <div class="sub">Shimoni & Lamu Mangrove Catch</div>
-          </div>
-          <div class="ticker-pill-box">
-            <div class="title">🥩 Halal Boran Beef Steer</div>
-            <div class="price">KES 620 / kg</div>
-            <div class="sub">Fillet: KES 1,150 | Neema Abattoir</div>
-          </div>
-          <div class="ticker-pill-box">
-            <div class="title">🐟 L. Victoria Fresh Tilapia</div>
-            <div class="price">KES 540 / kg</div>
-            <div class="sub">Fillet: KES 1,100 | Kisumu Dunga Pier</div>
-          </div>
+        <div class="view-page-header-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <span id="market-today-date-badge" style="background: #dcfce7; color: #166534; font-size: 0.8rem; font-weight: 800; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bbf7d0;">
+            <span class="pulse-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); animation: pulseGreen 1.8s infinite;"></span>
+            <span>Nairobi Live Rates: <strong id="market-live-date-text">Loading...</strong></span>
+          </span>
+          <button class="btn-outline" id="sync-live-rates-btn" style="font-size: 0.8rem; padding: 6px 14px; background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700; cursor: pointer;">
+            🔄 Sync Live Rates
+          </button>
         </div>
       </div>
 
-      <!-- Sourcing Overview Banner with Live Nairobi Date -->
-      <div style="background: #ffffff; padding: 20px 24px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-              <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Kenya Wholesale Produce & Seafood Market Intelligence</h2>
-            </div>
-            <p style="font-size: 0.85rem; color: #64748b;">
-              Daily morning wholesale pricing benchmarks for onions, tomatoes, potatoes, peas, seafood, beef, and fish across Wakulima/Marikiti, Kongowea, and farm aggregation hubs.
-            </p>
-          </div>
-          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span id="market-today-date-badge" style="background: #dcfce7; color: #166534; font-size: 0.82rem; font-weight: 800; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bbf7d0;">
-              <span class="pulse-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); animation: pulseGreen 1.8s infinite;"></span>
-              <span>Live Today in Nairobi (EAT): <strong id="market-live-date-text">Loading...</strong></span>
-            </span>
-            <button class="btn-outline" id="sync-live-rates-btn" style="font-size: 0.8rem; padding: 6px 14px; background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700; cursor: pointer;">
-              🔄 Sync Live Rates
-            </button>
-          </div>
+      <!-- Fast Field / Commodity Quick Switcher Bar -->
+      <div class="commodity-quick-switcher-bar">
+        <div class="commodity-switcher-label">
+          <span>🌾 Sourcing Fields:</span>
+        </div>
+        <div class="commodity-switcher-pills" id="commodity-switcher-pills">
+          <!-- Dynamically populated via app.js -->
         </div>
       </div>
 
-      <!-- Commodity Price Cards Grid -->
-      <div class="market-grid" id="market-rates-grid">
-        <!-- Injected via app.js -->
-      </div>
-
-      <!-- Interactive Wholesale Margin & Arbitrage Calculator -->
-      <div class="calc-container">
-        <div style="margin-bottom: 16px;">
-          <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
-            🧮 Farm-Gate to HoReCa Gross Margin Calculator
-          </h3>
-          <p style="font-size: 0.85rem; color: #64748b;">
-            Calculate your wholesale profit margins when aggregating from source farms in Nyandarua, Mwea, or Loitokitok and coastal seafood landing sites, delivering directly to Nairobi kitchens.
-          </p>
-        </div>
-
-        <div class="calc-grid">
-          <div class="form-group">
-            <label for="calc-commodity">Select Commodity:</label>
-            <select id="calc-commodity">
-              <option value="onions">Red Bulb Onions (Oloitokitok)</option>
-              <option value="tomatoes">Salad Tomatoes (Mwea Scheme)</option>
-              <option value="potatoes" selected>Shangi Potatoes (Nyandarua)</option>
-              <option value="peas">Garden Peas / Minji (Kinangop)</option>
-              <option value="prawns">Jumbo Tiger Prawns (Shimoni/Kilifi)</option>
-              <option value="beef">Prime Steer Carcass (Athi River)</option>
-              <option value="fish">Fresh Lake Tilapia (Kisumu)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="calc-farm-gate">Farm-Gate / Landing Buy Price (KES/kg):</label>
-            <input type="number" id="calc-farm-gate" value="42" step="0.5">
-          </div>
-
-          <div class="form-group">
-            <label for="calc-transport">Transit & Packhouse (KES/kg):</label>
-            <input type="number" id="calc-transport" value="9" step="0.5">
-          </div>
-
-          <div class="form-group">
-            <label for="calc-sale-price">Delivered Sale Price (KES/kg):</label>
-            <input type="number" id="calc-sale-price" value="72" step="0.5">
-          </div>
-
-          <div class="form-group">
-            <label for="calc-volume">Batch Delivery Run Volume (kg):</label>
-            <input type="number" id="calc-volume" value="1500" step="100">
-          </div>
-        </div>
-
-        <div class="calc-results-panel">
-          <div>
-            <div style="font-size: 0.8rem; opacity: 0.85; text-transform: uppercase;">Gross Profit Per Kg</div>
-            <div class="calc-stat-val" id="res-margin-kg">KES 21.00</div>
-          </div>
-          <div>
-            <div style="font-size: 0.8rem; opacity: 0.85; text-transform: uppercase;">Gross Margin %</div>
-            <div class="calc-stat-val" id="res-margin-pct">29.2%</div>
-          </div>
-          <div>
-            <div style="font-size: 0.8rem; opacity: 0.85; text-transform: uppercase;">Projected Run Profit</div>
-            <div class="calc-stat-val" id="res-profit-run">KES 31,500</div>
-          </div>
-        </div>
+      <!-- Main View Page Content Injection Container -->
+      <div id="product-sourcing-view-container">
+        <!-- Dynamically rendered via app.js: renderProductSourcingViewPage() -->
       </div>
     </section>
 

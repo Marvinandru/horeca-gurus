@@ -47,6 +47,7 @@ class Store {
     this.crmAreaFilter = "all";
     this.crmReceivablesFilter = "all";
     this.crmSearchQuery = "";
+    this.activeViewProductId = "prod-potatoes-shangi"; // Default to potatoes as primary view product
   }
 
   loadInventory() {
@@ -168,9 +169,56 @@ function setupNavigation() {
       const targetTab = btn.dataset.tab;
       store.activeTab = targetTab;
       showTabSection(targetTab);
+      if (targetTab === "market") {
+        renderProductSourcingViewPage(store.activeViewProductId);
+      }
     });
   });
 }
+
+// Navigation helper: Open dedicated Product Sourcing & Supplier View Page
+window.openProductSourcingView = (productId) => {
+  store.activeViewProductId = productId;
+  store.activeTab = "market";
+  
+  // Update header nav tabs
+  const tabs = document.querySelectorAll(".nav-tab-btn");
+  tabs.forEach((t) => {
+    if (t.dataset.tab === "market") {
+      t.classList.add("active");
+    } else {
+      t.classList.remove("active");
+    }
+  });
+
+  showTabSection("market");
+  renderProductSourcingViewPage(productId);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+// Navigation helper: Return back to Kitchen Storefront
+window.returnToStorefront = () => {
+  store.activeTab = "storefront";
+
+  // Update header nav tabs
+  const tabs = document.querySelectorAll(".nav-tab-btn");
+  tabs.forEach((t) => {
+    if (t.dataset.tab === "storefront") {
+      t.classList.add("active");
+    } else {
+      t.classList.remove("active");
+    }
+  });
+
+  showTabSection("storefront");
+  renderStorefront();
+  const productsContainer = document.getElementById("products-container");
+  if (productsContainer) {
+    productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+};
 
 function showTabSection(tabName) {
   document.querySelectorAll(".tab-section").forEach((sec) => {
@@ -426,8 +474,7 @@ export function renderAll() {
   renderCategoryPills();
   renderSupplierHubs();
   renderStorefront();
-  renderMarketRates();
-  renderMarginCalculator();
+  renderProductSourcingViewPage(store.activeViewProductId);
   renderLeadsCRM();
   renderCRM();
   updateCartBadge();
@@ -732,7 +779,7 @@ function renderStorefront() {
         </div>
 
         <div class="card-img-wrap">
-          <img src="${item.image}" alt="${item.name}" class="card-img" loading="lazy" onerror="this.src='src/assets/products/tomatoes.jpg'">
+          <img src="${item.image}" alt="${item.name}" class="card-img" loading="lazy" style="cursor: pointer;" onclick="window.openProductSourcingView('${item.id}')" title="Click to open full product sourcing and supplier view page" onerror="this.src='src/assets/products/tomatoes.jpg'">
           <span class="grade-badge">${item.grade}</span>
           <span class="cat-badge ${catClass}">${item.category}</span>
           <div class="volume-float-badge ${stockClass}">
@@ -750,7 +797,7 @@ function renderStorefront() {
           ${seasonalTimelineHtml}
           ${exportVolumeHtml}
 
-          <h3 class="product-title">${item.name}</h3>
+          <h3 class="product-title" style="cursor: pointer;" onclick="window.openProductSourcingView('${item.id}')" title="Click to open full product sourcing and supplier view page">${item.name}</h3>
           <p class="product-desc">${item.description}</p>
 
           ${exportSpecsHtml}
@@ -779,6 +826,12 @@ function renderStorefront() {
           <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">
             ❄️ Storage: <strong>${item.coldStorage}</strong>
           </div>
+
+          <!-- Direct View Page Action Button -->
+          <button class="view-sourcing-btn" onclick="window.openProductSourcingView('${item.id}')">
+            🔍 View Sourcing & Suppliers (${item.origin ? item.origin.split('(')[0].trim() : 'View Field'})
+          </button>
+
           <div class="card-actions">
             <div class="qty-control">
               <button class="qty-btn" onclick="window.adjustProductQty('${item.id}', -5)" ${isOutOfStock ? "disabled" : ""}>-</button>
@@ -851,168 +904,1088 @@ window.addToOrder = (itemId) => {
 };
 
 // =========================================================================
-// 2. KENYA MARKET RATES & SOURCING HUB (DYNAMIC DAILY AUTO-REFRESH)
 // =========================================================================
-function renderMarketRates() {
-  const container = document.getElementById("market-rates-grid");
-  const dateTextEl = document.getElementById("market-live-date-text");
-  if (dateTextEl) {
-    dateTextEl.textContent = getNairobiDate();
+// 2. PRODUCT SOURCING & SUPPLIER FIELD VIEW PAGE (KITCHEN INTELLIGENCE)
+// =========================================================================
+
+// Field Registry: Maps sectors to verified multi-vendor producers, agronomy specs, and market rates
+const FIELD_REGISTRY = {
+  tubers: {
+    key: "tubers",
+    title: "Highland Tubers & Root Vegetables",
+    badge: "Nyandarua & Mount Kenya High-Altitude Belts",
+    originDesc: "Cold-climate, deep volcanic soils above 2,400m altitude in Nyandarua (Kinangop & Ol Kalou) and Meru (Timau). High dry-matter starch content ideal for crispy restaurant French fries and rustic wedges with minimal oil absorption.",
+    commodityId: "potatoes-irish-shangi",
+    primaryProductId: "prod-potatoes-shangi",
+    farmGatePrice: 42,
+    transitCost: 9,
+    deliveredPrice: 72,
+    bulkUnit: "50kg Bag",
+    suppliers: [
+      {
+        id: "sup-mt-kenya",
+        name: "Mount Kenya Farm Collective",
+        badge: "Primary Hub • Highland Tubers & Root Veg",
+        origin: "Nyandarua & Nyeri Counties",
+        distance: "140 km (~2.5 hrs to Nairobi)",
+        rating: 4.9,
+        reviewCount: 142,
+        deliverySla: "5:00 AM Dawn Haul in cold van",
+        minOrder: "50 kg (1 sack)",
+        capacity: "18 Tonnes / day",
+        avatar: "🏔️",
+        contactPerson: "David Kariuki (Central Receiving Desk)",
+        phone: "+254 722 890 123",
+        certifications: "KeBS Grade 1 Certified, Washed & 60-80mm Sized, Zero Soil Residue",
+        specialties: ["Shangi Potatoes", "Highland Carrots", "Cabbages", "Garden Peas"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-nyandarua-coop",
+        name: "Nyandarua Highland Potato Growers Co-op",
+        badge: "High-Dry-Matter Chip Seedline Hub",
+        origin: "Kinangop & Ol Kalou Basins",
+        distance: "125 km (~2.2 hrs to Nairobi)",
+        rating: 4.85,
+        reviewCount: 96,
+        deliverySla: "5:30 AM Direct Kitchen Drop",
+        minOrder: "100 kg (2 sacks)",
+        capacity: "12 Tonnes / day",
+        avatar: "🥔",
+        contactPerson: "James Mwangi (Packhouse Logistics Head)",
+        phone: "+254 711 234 567",
+        certifications: "Mechanical De-stoned, Cured 14-day Skins, Kitchen-Ready",
+        specialties: ["Dutch Robijn", "Shangi Jumbo Cut", "Baby Potatoes (Gourmet Roast)"],
+        isPrimaryHub: false
+      },
+      {
+        id: "sup-timau-aggregators",
+        name: "Mount Kenya Tuber Aggregators",
+        badge: "High-Altitude Volcanic Loam Farms",
+        origin: "Timau & Buuri (Meru Slopes)",
+        distance: "215 km (~3.8 hrs to Nairobi)",
+        rating: 4.8,
+        reviewCount: 68,
+        deliverySla: "Midnight Haul • 6:00 AM CBD Drop",
+        minOrder: "150 kg",
+        capacity: "8 Tonnes / day",
+        avatar: "🚜",
+        contactPerson: "David Murithi (Outgrower Manager)",
+        phone: "+254 722 987 654",
+        certifications: "GlobalG.A.P. Certified, Zero Sprout Chemical Application",
+        specialties: ["Uncinata Variety", "Yellow Flesh Salad Potatoes"],
+        isPrimaryHub: false
+      },
+      {
+        id: "sup-mau-narok",
+        name: "Mau Narok Tuber Depot",
+        badge: "Rift Valley Volcanic Red Soil Growers",
+        origin: "Mau Narok & Molo Sub-counties",
+        distance: "190 km (~3.5 hrs via Nakuru)",
+        rating: 4.75,
+        reviewCount: 54,
+        deliverySla: "Reefer Truck Scheduled Runs",
+        minOrder: "100 kg",
+        capacity: "10 Tonnes / day",
+        avatar: "🚛",
+        contactPerson: "Daniel Ole Kaelo (Ranch & Farm Desk)",
+        phone: "+254 700 112 233",
+        certifications: "Red Soil Naturally Preserved, Low Moisture Content",
+        specialties: ["Tigoni Table Potatoes", "Shangi Red Skin"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  tomatoes: {
+    key: "tomatoes",
+    title: "Irrigation Salad Crops & Vine Tomatoes",
+    badge: "Kirinyaga Mwea Irrigation Scheme & Rombo",
+    originDesc: "Gravity-fed canal furrow and modern drip irrigation producing firm, fleshy Anna F1 and Kilele salad tomatoes with thick cellular walls and balanced brix acidity.",
+    commodityId: "tomatoes-salad-plum",
+    primaryProductId: "prod-tomatoes-anna",
+    farmGatePrice: 45,
+    transitCost: 10,
+    deliveredPrice: 85,
+    bulkUnit: "64kg Wooden Crate",
+    suppliers: [
+      {
+        id: "sup-mwea-growers",
+        name: "Mwea Sun-Grown Growers Hub",
+        badge: "Primary Hub • Salad Crops & Aromatics",
+        origin: "Kirinyaga & Rombo",
+        distance: "105 km (~2.0 hrs to Nairobi)",
+        rating: 4.8,
+        reviewCount: 98,
+        deliverySla: "5:30 AM Early Drop",
+        minOrder: "30 kg (Half Crate)",
+        capacity: "14 Tonnes / day",
+        avatar: "🍅",
+        contactPerson: "Francis Njeru (Harvest Coordinator)",
+        phone: "+254 721 690 334",
+        certifications: "Blemish-Free Calibrated, Foam-Cushioned Crates, Zero Crushed Fruit",
+        specialties: ["Anna F1 Tomatoes", "Red Onions", "Capsicums", "French Beans"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-rombo-depot",
+        name: "Loitokitok Sun-Ripened Depot",
+        badge: "Kilimanjaro Sun-Drenched Open Fields",
+        origin: "Rombo & Entonet (Kajiado South)",
+        distance: "255 km (~4.5 hrs via Emali)",
+        rating: 4.82,
+        reviewCount: 75,
+        deliverySla: "Overnight Direct Canter Run",
+        minOrder: "64 kg (1 Standard Crate)",
+        capacity: "9 Tonnes / day",
+        avatar: "☀️",
+        contactPerson: "Stephen Meitamei (Growers Desk)",
+        phone: "+254 701 445 678",
+        certifications: "Thick-Skinned High Pulp Density, Extended 14-Day Kitchen Shelf Life",
+        specialties: ["Kilele F1 Salad", "Roma Plum Slicing"],
+        isPrimaryHub: false
+      },
+      {
+        id: "sup-naivasha-hydro",
+        name: "Rift Basin Fresh Farms",
+        badge: "Greenhouse Hydroponic Precision Agriculture",
+        origin: "Naivasha Lake Shore Greenhouse Corridor",
+        distance: "90 km (~1.5 hrs to Nairobi)",
+        rating: 4.9,
+        reviewCount: 82,
+        deliverySla: "6:00 AM Temperature-Controlled Van",
+        minOrder: "20 kg",
+        capacity: "5 Tonnes / day",
+        avatar: "🏡",
+        contactPerson: "Rachel Chebet (Horticultural Lead)",
+        phone: "+254 724 311 889",
+        certifications: "Zero-Pesticide Tested Hydroponic, High Brix Sweetness",
+        specialties: ["Cherry Tomatoes on Vine", "Cocktail Plum", "Yellow Pear Tomatoes"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  aromatics: {
+    key: "aromatics",
+    title: "Dry Bulb Aromatics & Alliums",
+    badge: "Oloitokitok Kilimanjaro Runoff & Kieni West",
+    originDesc: "Sun-cured Bombay Red bulb onions with paper-dry exterior skins and pungent aromatics, harvested from the volcanic plains of Kajiado South and Nyeri.",
+    commodityId: "onions-red-bulb",
+    primaryProductId: "prod-onions-red",
+    farmGatePrice: 48,
+    transitCost: 8,
+    deliveredPrice: 78,
+    bulkUnit: "50kg Net Sack",
+    suppliers: [
+      {
+        id: "sup-mwea-growers",
+        name: "Mwea Sun-Grown Growers Hub",
+        badge: "Primary Hub • Salad Crops & Aromatics",
+        origin: "Kirinyaga & Rombo",
+        distance: "105 km (~2 hrs to Nairobi)",
+        rating: 4.8,
+        reviewCount: 98,
+        deliverySla: "5:30 AM Early Drop",
+        minOrder: "25 kg (Half Net)",
+        capacity: "16 Tonnes / day",
+        avatar: "🍅",
+        contactPerson: "Francis Njeru",
+        phone: "+254 721 690 334",
+        certifications: "Cured 21 Days, Double Sorted, Size Calibrated 55-75mm",
+        specialties: ["Red Onions", "Anna F1 Tomatoes", "Garlic", "Ginger"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-oloitokitok-hub",
+        name: "Oloitokitok Horticultural Aggregators",
+        badge: "Premier Kenya Onion Capital",
+        origin: "Oloitokitok & Rombo (Kajiado South)",
+        distance: "240 km (~4.2 hrs via Emali)",
+        rating: 4.9,
+        reviewCount: 112,
+        deliverySla: "Night Haul • 5:00 AM Nairobi Packhouse",
+        minOrder: "50 kg (1 Full Net)",
+        capacity: "25 Tonnes / day",
+        avatar: "🧅",
+        contactPerson: "Peter Nkaisserry (Co-op Chair)",
+        phone: "+254 722 841 290",
+        certifications: "Top Dryness Rating, Zero Sprouting Guarantee",
+        specialties: ["Bombay Red Jumbo", "Red Creole Medium"],
+        isPrimaryHub: false
+      },
+      {
+        id: "sup-kieni-coop",
+        name: "Kieni Produce Marketing Co-op",
+        badge: "Nyeri Semi-Arid Drip Allium Belts",
+        origin: "Kieni West & Mweiga (Nyeri)",
+        distance: "165 km (~2.8 hrs to Nairobi)",
+        rating: 4.75,
+        reviewCount: 63,
+        deliverySla: "Direct Early Morning Delivery",
+        minOrder: "50 kg",
+        capacity: "8 Tonnes / day",
+        avatar: "🌾",
+        contactPerson: "Grace Wambui (Marketing Manager)",
+        phone: "+254 713 540 182",
+        certifications: "Commercial Kitchen Slicing Grade, Tight Neck Bulbs",
+        specialties: ["Red Bulb Onions", "Spring Onions", "Leeks"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  ocean_seafood: {
+    key: "ocean_seafood",
+    title: "Indian Ocean Wild Catch (Direct from Ocean to Plate)",
+    badge: "Kilifi, Malindi & Lamu Coral Reef Waters",
+    originDesc: "Daily artisanal line-caught and dive-harvested wild ocean seafood from the nutrient-rich coral streams of Kenya. Harvested at midnight, bled and chilled on flake-ice slurry at 0°C, and dispatched on scheduled morning refrigerated flights directly to your plate.",
+    commodityId: "tiger-prawns-coastal",
+    primaryProductId: "prod-lobster-tails",
+    farmGatePrice: 1600,
+    transitCost: 150,
+    deliveredPrice: 2400,
+    bulkUnit: "10kg Flake-Ice Air Box",
+    suppliers: [
+      {
+        id: "sup-kilifi-coastal",
+        name: "Kilifi Coastal Fishermen Co-op",
+        badge: "Primary Hub • Indian Ocean Artisanal Fleet",
+        origin: "Kilifi, Malindi & Lamu Waters",
+        distance: "Direct Same-Day Cold-Chain Flight from Coast",
+        rating: 4.95,
+        reviewCount: 210,
+        deliverySla: "Cold-Chain Flake-Ice Run & Air-Cargo (Dawn Dispatch)",
+        minOrder: "5 kg",
+        capacity: "6 Tonnes / day",
+        avatar: "🦞",
+        contactPerson: "Captain Omar Bakari (Fleet Master)",
+        phone: "+254 722 554 433",
+        certifications: "Ikejime Bled at Sea, 0°C Flake-Ice Slurry, KeBS & Marine Certified",
+        specialties: ["Spiny Lobster", "Tiger Prawns", "Yellowfin Tuna", "Red Grouper", "Octopus", "Calamari"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-shimoni-mangrove",
+        name: "Shimoni & Wasini Mangrove Fishermen",
+        badge: "South Coast Crustacean Landing Site",
+        origin: "Shimoni, Wasini & Vanga Waters (Kwale)",
+        distance: "Refrigerated Van to Moi Int. Airport, Flight to JKIA",
+        rating: 4.92,
+        reviewCount: 88,
+        deliverySla: "6:00 AM Nairobi Kitchen Drop",
+        minOrder: "10 kg",
+        capacity: "3 Tonnes / day",
+        avatar: "🦐",
+        contactPerson: "Fatuma Swaleh (Landing Coordinator)",
+        phone: "+254 733 887 766",
+        certifications: "Wild Mangrove Prawns, Live Lobster Holding Tank Verified",
+        specialties: ["U-10 Jumbo Tiger Prawns", "Mud Crabs", "King Prawns"],
+        isPrimaryHub: false
+      },
+      {
+        id: "sup-lamu-pelagic",
+        name: "Lamu Deep-Sea Pelagic Fleet",
+        badge: "Deep Continental Shelf Game Fishermen",
+        origin: "Lamu Archipelago & Kiwayu Offshore",
+        distance: "Air-Cargo Manda Airstrip to Wilson / JKIA",
+        rating: 4.88,
+        reviewCount: 72,
+        deliverySla: "Scheduled Air-Cargo Same-Day",
+        minOrder: "15 kg",
+        capacity: "4 Tonnes / day",
+        avatar: "🌊",
+        contactPerson: "Bwana Ali (Archipelago Dispatch)",
+        phone: "+254 712 998 877",
+        certifications: "AAA Sashimi Grade Yellowfin Tuna, Deep Sea Swordfish & Wahoo",
+        specialties: ["Yellowfin Tuna Sashimi Loins", "Kingfish Steaks", "Sailfish"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  freshwater_fish: {
+    key: "freshwater_fish",
+    title: "Lake Victoria Freshwater Fisheries",
+    badge: "Kisumu Bay, Dunga Pier & Rusinga Island",
+    originDesc: "Daily wild freshwater harvest from Lake Victoria deep waters. Freshly filleted or whole scaled wild tilapia and export-grade Nile perch loins on sub-zero flake ice.",
+    commodityId: "fish-tilapia-nileperch",
+    primaryProductId: "exp-sea-nile-perch",
+    farmGatePrice: 380,
+    transitCost: 35,
+    deliveredPrice: 540,
+    bulkUnit: "20kg Styrofoam Crate on Ice",
+    suppliers: [
+      {
+        id: "sup-lake-victoria",
+        name: "Lake Victoria Artisanal Fisheries",
+        badge: "Primary Hub • Daily Freshwater & Air Export",
+        origin: "Kisumu Bay & Rusinga Island",
+        distance: "340 km (Night Haul & Scheduled JKIA Flights)",
+        rating: 4.9,
+        reviewCount: 176,
+        deliverySla: "5:00 AM Dawn Delivery on Slush Ice",
+        minOrder: "20 kg",
+        capacity: "12 Tonnes / day",
+        avatar: "🐟",
+        contactPerson: "Otieno Omondi (Pier Manager)",
+        phone: "+254 720 112 244",
+        certifications: "EU & FDA Certified Fish Processing Packhouse, HACCP Compliant",
+        specialties: ["Wild Tilapia Whole", "Nile Perch Fillets (Export Grade)"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-rusinga-deep",
+        name: "Rusinga Island Deep-Water Co-op",
+        badge: "Clean Open Water Fishing Fleet",
+        origin: "Mbita & Rusinga Channel",
+        distance: "Reefer Night Haul to Nairobi",
+        rating: 4.92,
+        reviewCount: 65,
+        deliverySla: "6:00 AM Kitchen Bay Drop",
+        minOrder: "25 kg",
+        capacity: "5 Tonnes / day",
+        avatar: "🎣",
+        contactPerson: "Jared Odhiambo",
+        phone: "+254 714 332 211",
+        certifications: "Deep-Skinned Boneless Fillets, Snow-White Firm Flakes",
+        specialties: ["Nile Perch 500-1200g Loins", "Whole Giant Tilapia (1-2kg)"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  meats: {
+    key: "meats",
+    title: "Certified Halal Abattoirs & Pastoralist Ranches",
+    badge: "Athi River Export Zone & Laikipia Boran Plains",
+    originDesc: "Grass-fed East African Boran steers and rangeland Galla goats, slaughtered under strict Halal certification at export-standard abattoirs with dry-aging cold rooms.",
+    commodityId: "meat-beef-cuts",
+    primaryProductId: "prod-beef-ribeye",
+    farmGatePrice: 480,
+    transitCost: 25,
+    deliveredPrice: 650,
+    bulkUnit: "Full Carcass / 15kg Vacuum Primal",
+    suppliers: [
+      {
+        id: "sup-naivasha-abattoir",
+        name: "Naivasha & Athi River Halal Butchery",
+        badge: "Primary Hub • Certified Halal Abattoir",
+        origin: "Rift Valley & Athi Plains",
+        distance: "35 km (~45 mins to Nairobi CBD)",
+        rating: 4.85,
+        reviewCount: 164,
+        deliverySla: "Chilled Reefer Van (0-2°C) at 5:30 AM",
+        minOrder: "15 kg",
+        capacity: "20 Tonnes / day",
+        avatar: "🥩",
+        contactPerson: "Abdi Hassan (Master Halal Butcher)",
+        phone: "+254 722 998 811",
+        certifications: "Supreme Council of Kenya Muslims (SUPKEM) Halal Certified, Vet Inspected",
+        specialties: ["Aged Boran Ribeye", "Tenderloin", "Boran Stewing Beef", "Whole Goat Carcass"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-laikipia-ranches",
+        name: "Laikipia Pastoralist Ranches Co-op",
+        badge: "100% Free-Range Boran Steer Beef",
+        origin: "Nanyuki & Rumuruti Plains",
+        distance: "195 km (~3.2 hrs to Nairobi)",
+        rating: 4.8,
+        reviewCount: 92,
+        deliverySla: "Scheduled Reefer Inflow Twice Weekly",
+        minOrder: "30 kg",
+        capacity: "10 Tonnes / day",
+        avatar: "🐂",
+        contactPerson: "Leshore ole Saitoti (Ranch Head)",
+        phone: "+254 710 445 566",
+        certifications: "Pasture-Raised, Zero Hormones, 21-Day Dry Aged in Cold Rooms",
+        specialties: ["Prime T-Bone", "Boran Tomahawk Steaks", "Brisket"],
+        isPrimaryHub: false
+      },
+      {
+        id: "sup-halal-export",
+        name: "Kenya Halal Meat Export Consortium",
+        badge: "GCC & Middle East Air-Freight Exporter",
+        origin: "Athi River Export Processing Zone",
+        distance: "30 km to JKIA Cargo Terminal",
+        rating: 4.95,
+        reviewCount: 115,
+        deliverySla: "Air Cargo Chilled Carcasses & Domestic Prime Cuts",
+        minOrder: "50 kg",
+        capacity: "35 Tonnes / day",
+        avatar: "🍖",
+        contactPerson: "Dr. Farah Noor (Quality Director)",
+        phone: "+254 733 667 788",
+        certifications: "GCC GSO 993 Halal Certified, ISO 22000, Cold Chain Continuous Log",
+        specialties: ["Chilled Goat Carcass Export", "Chilled Lamb Carcass", "Export Prime Boran Beef"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  peas_beans: {
+    key: "peas_beans",
+    title: "Highland Export Horticulture (GlobalG.A.P.)",
+    badge: "Timau & Kinangop High Altitude Slopes",
+    originDesc: "Sweet, crisp pod vegetables and fine stringless legumes grown in cool misty mountain conditions under strict European MRL (maximum residue limit) standards.",
+    commodityId: "peas-garden-snow",
+    primaryProductId: "prod-peas-green-minji",
+    farmGatePrice: 85,
+    transitCost: 12,
+    deliveredPrice: 145,
+    bulkUnit: "50kg Sack / 5kg Carton",
+    suppliers: [
+      {
+        id: "sup-highland-export",
+        name: "Highland Export Horticultural Hub",
+        badge: "Primary Hub • GlobalG.A.P. & KEPHIS Certified",
+        origin: "Timau & Kinangop",
+        distance: "160 km (~2.8 hrs to Nairobi)",
+        rating: 4.95,
+        reviewCount: 88,
+        deliverySla: "5:00 AM JKIA & Nairobi Kitchen Drop",
+        minOrder: "15 kg",
+        capacity: "15 Tonnes / day",
+        avatar: "✈️",
+        contactPerson: "Francis Gitonga (Export Manager)",
+        phone: "+254 723 667 788",
+        certifications: "GlobalG.A.P. Certified, Zero MRL Residue, Calibrated Pod Lengths",
+        specialties: ["Snow Peas", "Sugar Snaps", "Extra Fine Beans", "Bird's Eye Chillies"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-aberdare-outgrowers",
+        name: "Aberdare Outgrowers Network",
+        badge: "Highland Fresh Legumes Collective",
+        origin: "Limuru & Kinangop",
+        distance: "60 km (~1.0 hr to Nairobi)",
+        rating: 4.85,
+        reviewCount: 74,
+        deliverySla: "Dawn Delivery (Freshly Podded Same Morning)",
+        minOrder: "10 kg",
+        capacity: "6 Tonnes / day",
+        avatar: "🫛",
+        contactPerson: "Mary Nduta (Co-op Chair)",
+        phone: "+254 725 443 322",
+        certifications: "Rapid Hydro-Cooled, 1-3°C Storage, Sweet High-Sugar Varieties",
+        specialties: ["Minji Freshi (Garden Peas in Pod)", "Shelled Peas", "French Beans"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  tropical_fruits: {
+    key: "tropical_fruits",
+    title: "Tropical Fruit Orchards & Citrus",
+    badge: "Machakos, Makueni & Thika Golden Plantations",
+    originDesc: "Sun-ripened, hot-water treated export mangoes and high-brix MD2 golden pineapples harvested at optimal maturity from Eastern Kenya and Central plantations.",
+    commodityId: "tomatoes-salad-plum",
+    primaryProductId: "exp-hort-mangoes",
+    farmGatePrice: 60,
+    transitCost: 15,
+    deliveredPrice: 130,
+    bulkUnit: "4kg Export Carton / 100kg Crate",
+    suppliers: [
+      {
+        id: "sup-eastern-mangoes",
+        name: "Eastern Kenya Tropical Orchards",
+        badge: "Primary Hub • Hot-Water Treated Packhouse",
+        origin: "Machakos & Makueni Counties",
+        distance: "120 km (~2.2 hrs to Nairobi)",
+        rating: 4.9,
+        reviewCount: 74,
+        deliverySla: "Air/Sea Freight Pallets & Daily Kitchen Deliveries",
+        minOrder: "20 kg",
+        capacity: "22 Tonnes / day",
+        avatar: "🥭",
+        contactPerson: "Boniface Mutua (Packhouse Head)",
+        phone: "+254 718 332 211",
+        certifications: "KEPHIS Hot-Water Dip Treated (Zero Fruit Fly), GlobalG.A.P.",
+        specialties: ["Apple Mangoes", "Ngowe Mangoes", "Purple Passion Fruit"],
+        isPrimaryHub: true
+      },
+      {
+        id: "sup-thika-pineapple",
+        name: "Thika Golden Fruit Plantations",
+        badge: "High-Brix Golden Sweet Pineapples",
+        origin: "Thika & Murang'a",
+        distance: "45 km (~50 mins to Nairobi)",
+        rating: 4.85,
+        reviewCount: 92,
+        deliverySla: "Fresh Field-Packed Cartons at 6:00 AM",
+        minOrder: "30 kg",
+        capacity: "30 Tonnes / day",
+        avatar: "🍍",
+        contactPerson: "Evans Kariuki (Plantation Manager)",
+        phone: "+254 722 334 455",
+        certifications: "Brix 14+ Guaranteed Sweetness, Hand Selected Golden Ripe",
+        specialties: ["MD2 Golden Sweet Pineapples", "Smooth Cayenne"],
+        isPrimaryHub: false
+      }
+    ]
+  },
+  herbs: {
+    key: "herbs",
+    title: "High-Altitude Culinary Herb Estates",
+    badge: "Aberdare Forest Edge (Limuru & Kinangop)",
+    originDesc: "Aromatic, high-essential-oil culinary herbs harvested at dawn and packed same-day in insulated cold containers for luxury hotel kitchens and export.",
+    commodityId: "tomatoes-salad-plum",
+    primaryProductId: "exp-hort-herbs",
+    farmGatePrice: 180,
+    transitCost: 20,
+    deliveredPrice: 280,
+    bulkUnit: "1kg Thermal Air Pouch",
+    suppliers: [
+      {
+        id: "sup-aberdare-herbs",
+        name: "Aberdare Fresh Herb Estate",
+        badge: "Primary Hub • High-Altitude Culinary Herbs",
+        origin: "Limuru & Kinangop",
+        distance: "55 km (~1.1 hrs to Nairobi)",
+        rating: 4.9,
+        reviewCount: 65,
+        deliverySla: "Same-Day Cut & Pack (Dispatched 5:30 AM)",
+        minOrder: "2 kg",
+        capacity: "2 Tonnes / day",
+        avatar: "🌿",
+        contactPerson: "Catherine Njeri (Estate Manager)",
+        phone: "+254 715 778 899",
+        certifications: "Unbroken Cold-Chain, Micro-Perforated Bags, Extended Aromatic Life",
+        specialties: ["Sweet Basil", "Rosemary", "Thyme", "Mint", "Tarragon"],
+        isPrimaryHub: true
+      }
+    ]
+  }
+};
+
+// Commodity Quick Switcher Data (Top Bar Pills)
+const QUICK_COMMODITY_PILLS = [
+  { id: "prod-potatoes-shangi", emoji: "🥔", label: "Irish Potatoes (Shangi)", field: "tubers" },
+  { id: "prod-onions-red", emoji: "🧅", label: "Red Bulb Onions", field: "aromatics" },
+  { id: "prod-tomatoes-anna", emoji: "🍅", label: "Salad Tomatoes (Anna F1)", field: "tomatoes" },
+  { id: "prod-peas-green-minji", emoji: "🫛", label: "Garden Peas (Minji)", field: "peas_beans" },
+  { id: "exp-sea-nile-perch", emoji: "🐟", label: "Nile Perch Fillet", field: "freshwater_fish" },
+  { id: "prod-lobster-tails", emoji: "🦞", label: "Spiny Lobster Tails", field: "ocean_seafood" },
+  { id: "prod-prawns-tiger", emoji: "🦐", label: "Tiger Prawns (U-10)", field: "ocean_seafood" },
+  { id: "prod-beef-ribeye", emoji: "🥩", label: "Aged Boran Ribeye", field: "meats" },
+  { id: "exp-hort-mangoes", emoji: "🥭", label: "Export Apple Mangoes", field: "tropical_fruits" },
+  { id: "exp-hort-pineapple", emoji: "🍍", label: "MD2 Golden Pineapple", field: "tropical_fruits" },
+  { id: "exp-hort-herbs", emoji: "🌿", label: "Fresh Culinary Herbs", field: "herbs" }
+];
+
+function getFieldForProduct(product) {
+  if (!product) return FIELD_REGISTRY.tubers;
+  const id = product.id.toLowerCase();
+  const name = product.name.toLowerCase();
+  const cat = (product.category || "").toLowerCase();
+
+  if (id.includes("potato") || name.includes("potato")) return FIELD_REGISTRY.tubers;
+  if (id.includes("onion") || name.includes("onion")) return FIELD_REGISTRY.aromatics;
+  if (id.includes("tomato") || name.includes("tomato")) return FIELD_REGISTRY.tomatoes;
+  if (id.includes("pea") || id.includes("bean") || name.includes("pea") || name.includes("bean")) return FIELD_REGISTRY.peas_beans;
+  if (id.includes("tuna") || id.includes("lobster") || id.includes("prawn") || id.includes("calamari") || id.includes("octopus") || id.includes("grouper") || id.includes("snapper") || id.includes("kingfish") || cat.includes("sea")) return FIELD_REGISTRY.ocean_seafood;
+  if (id.includes("tilapia") || id.includes("perch") || name.includes("tilapia") || name.includes("perch")) return FIELD_REGISTRY.freshwater_fish;
+  if (id.includes("beef") || id.includes("goat") || id.includes("chicken") || id.includes("lamb") || cat.includes("meat")) return FIELD_REGISTRY.meats;
+  if (id.includes("mango") || id.includes("passion") || id.includes("pineapple") || name.includes("mango") || name.includes("pineapple")) return FIELD_REGISTRY.tropical_fruits;
+  if (id.includes("herb") || id.includes("chilli") || name.includes("herb")) return FIELD_REGISTRY.herbs;
+
+  return FIELD_REGISTRY.tubers;
+}
+
+// Global Main View Page Renderer
+export function renderProductSourcingViewPage(productId) {
+  const container = document.getElementById("product-sourcing-view-container");
+  const pillsContainer = document.getElementById("commodity-switcher-pills");
+  const liveDateEl = document.getElementById("market-live-date-text");
+
+  if (liveDateEl) {
+    liveDateEl.textContent = getNairobiDate();
+  }
+
+  // Find product from store inventory
+  const targetId = productId || store.activeViewProductId || "prod-potatoes-shangi";
+  const product = store.inventory.find((p) => p.id === targetId) || store.inventory.find((p) => p.id === "prod-potatoes-shangi") || store.inventory[0];
+  store.activeViewProductId = product.id;
+
+  const field = getFieldForProduct(product);
+
+  // Update Breadcrumbs
+  const breadcrumbFieldEl = document.getElementById("view-breadcrumb-field");
+  const breadcrumbProductEl = document.getElementById("view-breadcrumb-product");
+  if (breadcrumbFieldEl) breadcrumbFieldEl.textContent = field.title;
+  if (breadcrumbProductEl) breadcrumbProductEl.textContent = product.name;
+
+  // Render Horizontal Quick Switcher Pills
+  if (pillsContainer) {
+    pillsContainer.innerHTML = QUICK_COMMODITY_PILLS.map((pill) => {
+      const isActive = pill.id === product.id;
+      return `
+        <button class="commodity-switcher-pill ${isActive ? "active" : ""}" onclick="window.openProductSourcingView('${pill.id}')">
+          <span>${pill.emoji}</span>
+          <span>${pill.label}</span>
+        </button>
+      `;
+    }).join("");
   }
 
   if (!container) return;
 
+  // Stock & Volume calculations
+  const totalStock = typeof product.inStock === "number" ? product.inStock : 1000;
+  const inCart = store.cart[product.id]?.quantity || 0;
+  const volumeLeft = Math.max(0, totalStock - inCart);
+  const barPercent = Math.min(100, Math.max(10, Math.round((volumeLeft / (totalStock || 1)) * 100)));
+  const isOutOfStock = volumeLeft <= 0;
+  const defaultQty = Math.min(product.moq, volumeLeft > 0 ? volumeLeft : product.moq);
+
+  let stockClass = "stock-high";
+  let statusText = "🟢 Ample Packhouse Stock";
+  let dotColor = "#10b981";
+  if (volumeLeft < 250) {
+    stockClass = "stock-low";
+    statusText = "🔥 Fast-Moving / Limited Volume Left";
+    dotColor = "#dc2626";
+  } else if (volumeLeft < 1000) {
+    stockClass = "stock-med";
+    statusText = "🔵 Stable Daily Allocation Batch";
+    dotColor = "#0284c7";
+  }
+
+  // Price calculations
+  const priceUsd = typeof product.priceUsd === "number" ? product.priceUsd : (product.price / store.exchangeRate);
+  const initialSubtotalKes = product.price * defaultQty;
+  const initialSubtotalUsd = priceUsd * defaultQty;
+
+  // Find matching daily rates from KENYA_COMMODITY_RATES
   const dailyRates = getDailyMarketRates();
+  const matchedCommodity = dailyRates.find((c) => c.id === field.commodityId) || dailyRates[0];
 
-  container.innerHTML = dailyRates
-    .map((commodity) => {
-      return `
-      <div class="market-card">
-        <div class="market-card-header">
-          <div>
-            <h3 class="commodity-title">${commodity.name}</h3>
-            <div class="swahili-badge">🇰🇪 ${commodity.swahiliName}</div>
+  // Verified suppliers list for this field
+  const fieldSuppliers = field.suppliers || [];
+
+  // Related products from this field in inventory
+  const relatedProducts = store.inventory
+    .filter((p) => p.id !== product.id && (p.category === product.category || p.supplierId === product.supplierId))
+    .slice(0, 4);
+
+  // Is ocean seafood policy (0 return) vs standard 2 days
+  const isSeafood = product.category.includes("Sea") || product.category.includes("Fish") || field.key.includes("seafood") || field.key.includes("freshwater");
+
+  container.innerHTML = `
+    <div class="product-sourcing-view-layout">
+      
+      <!-- =====================================================================
+           LEFT COLUMN: PRODUCT SHOWCASE & INTERACTIVE KITCHEN ORDER HUB
+           ===================================================================== -->
+      <div class="view-product-card">
+        <div class="view-product-hero-img-wrap">
+          <img src="${product.image}" alt="${product.name}" class="view-product-hero-img" onerror="this.src='src/assets/products/potatoes.jpg'">
+          <div class="view-product-badges-overlay">
+            <span class="cat-badge produce">${product.category}</span>
+            <span class="grade-badge">${product.grade || "Grade 1 Washed"}</span>
           </div>
-          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-            <span style="background: #e2e8f0; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px;">
-              ${commodity.category}
-            </span>
-            <span style="font-size: 0.68rem; background: #ecfdf5; color: #065f46; padding: 2px 6px; border-radius: 10px; font-weight: 700;">
-              🟢 ${commodity.dailyTrend}
-            </span>
+          <div class="volume-float-badge ${stockClass}">
+            <span class="stock-pulse-dot" style="background-color: ${dotColor};"></span>
+            <span><strong>${volumeLeft.toLocaleString()} ${product.unit}</strong> available</span>
           </div>
         </div>
 
-        <div class="rate-highlights">
-          <div>
-            <div class="rate-stat-label">Nairobi Benchmark (${commodity.todayDate.split(",")[0]})</div>
-            <div class="rate-stat-value">${commodity.wholesaleRange}</div>
+        <div class="view-product-body">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #0284c7; font-weight: 700; margin-bottom: 6px;">
+            <span>📍</span>
+            <span>${product.origin}</span>
           </div>
-          <div>
-            <div class="rate-stat-label">Bulk Container Price</div>
-            <div style="font-size: 0.95rem; font-weight: 700; color: #047857;">${commodity.bulkBagPrice}</div>
-          </div>
-        </div>
 
-        <div style="margin-bottom: 12px;">
-          <div style="font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Terminal Market Price Comparison:</div>
-          <table class="market-table">
-            <thead>
-              <tr>
-                <th>Market Location</th>
-                <th>Current Wholesale</th>
-                <th>Supply Trend</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${commodity.primaryMarkets
-                .map(
-                  (m) => `
-                <tr>
-                  <td><strong>${m.name}</strong></td>
-                  <td>${m.price}</td>
-                  <td><span style="font-weight: 600; color: ${m.trend.includes("High") || m.trend.includes("Volatile") ? "#b91c1c" : "#047857"};">${m.trend}</span></td>
-                </tr>
-              `
-                )
-                .join("")}
-            </tbody>
-          </table>
-        </div>
+          ${product.oceanDirectBadge ? `<div class="ocean-direct-badge" style="margin-bottom: 8px;">🌊 <span>${product.oceanDirectBadge}</span></div>` : ""}
+          ${product.seasonalTimeline ? `<div class="seasonal-timeline-badge" style="margin-bottom: 8px;">📅 <span>Availability Chances: <strong>High (${product.seasonalTimeline})</strong></span></div>` : ""}
 
-        <div class="sourcing-hubs-box">
-          <div class="hub-title">🚜 Verified Sourcing Aggregators & Direct Contacts:</div>
-          ${commodity.sourcingHubs
-            .map(
-              (hub) => `
-            <div class="hub-card-item">
-              <div class="hub-card-name">
-                <span>📍 ${hub.county}</span>
-                <span style="color: #64748b;">${hub.distanceToNairobi}</span>
-              </div>
-              <div style="color: #475569; margin: 3px 0;">${hub.description}</div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                <span>👤 <strong>${hub.contactPerson}</strong></span>
-                <a href="tel:${hub.phone}" class="hub-contact-link">📞 ${hub.phone}</a>
-              </div>
-              <div style="font-size: 0.72rem; color: #047857; margin-top: 2px;">⚡ Peak Inflow: ${hub.peakHarvest}</div>
+          <h1 class="view-product-title">${product.name}</h1>
+          <p class="view-product-desc">${product.description}</p>
+
+          <!-- Packhouse Volume Left Meter -->
+          <div class="volume-meter-card ${stockClass}" style="margin-bottom: 16px;">
+            <div class="volume-meter-top">
+              <span class="volume-meter-label">
+                <span>📦 Packhouse Stock Remaining:</span>
+              </span>
+              <span class="volume-meter-value">
+                <strong>${volumeLeft.toLocaleString()}</strong> ${product.unit}
+              </span>
             </div>
-          `
-            )
-            .join("")}
+            <div class="volume-meter-track">
+              <div class="volume-meter-bar" style="width: ${barPercent}%;"></div>
+            </div>
+            <div class="volume-meter-status">
+              <span>${statusText}</span>
+              ${inCart > 0 ? `<span class="cart-volume-tag">${inCart} ${product.unit} in your order</span>` : ""}
+            </div>
+          </div>
+
+          <!-- Dual Currency Pricing -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <div>
+                <span style="font-size: 1.45rem; font-weight: 800; color: #0f172a;">KES ${product.price.toLocaleString()}</span>
+                <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">/ ${product.unit}</span>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 1.15rem; font-weight: 800; color: #0284c7;">$ ${priceUsd.toFixed(2)} USD</span>
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">/ ${product.unit}</span>
+              </div>
+            </div>
+            <div style="font-size: 0.8rem; color: #047857; font-weight: 700; margin-top: 4px;">
+              💎 ${product.bulkOption || `Minimum Order: ${product.moq} ${product.unit}`}
+            </div>
+          </div>
+
+          <!-- Interactive Kitchen Order Console -->
+          <div class="view-order-console">
+            <div class="view-order-console-title">
+              <span>🛒 Dispatch Order Console</span>
+              <span style="font-size: 0.75rem; color: #059669; font-weight: 700;">MOQ: ${product.moq} ${product.unit}</span>
+            </div>
+
+            <div class="view-qty-row">
+              <div class="view-qty-control">
+                <button class="view-qty-btn" onclick="window.adjustViewProductQty(-5)" ${isOutOfStock ? "disabled" : ""}>-</button>
+                <input type="number" id="view-qty-input" class="view-qty-input" value="${defaultQty}" min="${product.moq}" max="${volumeLeft}" step="5" oninput="window.updateViewSubtotal()" ${isOutOfStock ? "disabled" : ""}>
+                <button class="view-qty-btn" onclick="window.adjustViewProductQty(5)" ${isOutOfStock ? "disabled" : ""}>+</button>
+              </div>
+              <div style="font-size: 0.85rem; font-weight: 700; color: #475569;">
+                ${product.unit.toUpperCase()} Units
+              </div>
+            </div>
+
+            <!-- Quick Preset Bag / Volume Pills -->
+            <div class="view-preset-pills">
+              <button class="view-preset-pill" onclick="window.setViewProductQty(${product.moq})">MOQ (${product.moq}${product.unit})</button>
+              <button class="view-preset-pill" onclick="window.setViewProductQty(50)">+50 ${product.unit} (1 Bag)</button>
+              <button class="view-preset-pill" onclick="window.setViewProductQty(100)">+100 ${product.unit} (2 Bags)</button>
+              <button class="view-preset-pill" onclick="window.setViewProductQty(250)">+250 ${product.unit} (5 Bags)</button>
+            </div>
+
+            <!-- Dynamic Live Subtotal -->
+            <div class="view-subtotal-bar">
+              <span style="font-size: 0.82rem; font-weight: 700; color: #475569;">Calculated Order Value:</span>
+              <div style="text-align: right;">
+                <div class="view-subtotal-val" id="view-subtotal-kes">KES ${initialSubtotalKes.toLocaleString()}</div>
+                <div style="font-size: 0.72rem; color: #64748b;" id="view-subtotal-usd">≈ $${initialSubtotalUsd.toFixed(2)} USD</div>
+              </div>
+            </div>
+
+            <button class="view-add-order-btn" onclick="window.addViewProductToOrder()" ${isOutOfStock ? 'disabled style="background: #94a3b8; cursor: not-allowed;"' : ""}>
+              ${isOutOfStock ? "❌ Sold Out for Today" : `🛒 Add to Kitchen Order`}
+            </button>
+          </div>
+
+          <!-- Quality SOP & Receiving Bay Policy Box -->
+          <div class="view-receiving-sop-box">
+            <div class="view-receiving-sop-title">
+              <span>🛡️ Receiving Bay SOP & Return Policy</span>
+            </div>
+            <div class="view-receiving-sop-text">
+              ${isSeafood ? `
+                • <strong>Strict No-Return Policy</strong>: Fresh Indian Ocean wild catch is harvested daily and iced at 0°C directly from ocean to plate. Temperature logs are verified on receiving bay drop.<br>
+                • <strong>Inspection on Receipt</strong>: Non-standard or temperature-deviated boxes must be recorded with receiving bay rep immediately upon drop.
+              ` : `
+                • <strong>Strict 2-Day Return Window</strong>: Report any blemish or weight variance within a maximum of 2 days from morning delivery.<br>
+                • <strong>Immediate Receiving Bay Notice</strong>: Non-standard crates must be flagged to the delivery driver immediately on receipt.<br>
+                • <strong>Dawn Delivery Guarantee</strong>: Delivered between 5:00 AM – 7:30 AM in refrigerated temperature-controlled vans (0–4°C).
+              `}
+            </div>
+          </div>
+
+          <!-- Cold Chain & Storage Specs -->
+          <div style="margin-top: 14px; padding: 12px; background: #f1f5f9; border-radius: 10px; font-size: 0.78rem; color: #475569;">
+            ❄️ <strong>Cold-Chain Storage Specs</strong>: ${product.coldStorage || "Maintain in cool, dark ventilated room (8-10°C)."}
+          </div>
         </div>
       </div>
-    `;
-    })
-    .join("");
+
+      <!-- =====================================================================
+           RIGHT COLUMN: DETAILS OF SUPPLIERS FROM THIS FIELD & SOURCING INTEL
+           ===================================================================== -->
+      <div class="view-field-intel-column">
+        
+        <!-- Field Header Banner -->
+        <div class="field-header-banner">
+          <div class="field-header-title-row">
+            <div class="field-header-title">
+              <span>🌾</span>
+              <span>${field.title}</span>
+            </div>
+            <span class="field-header-badge">
+              <span>✓</span>
+              <span>${fieldSuppliers.length} Verified Field Producers</span>
+            </span>
+          </div>
+          <p class="field-header-sub">${field.originDesc}</p>
+        </div>
+
+        <!-- Verified Suppliers From this Field Grid -->
+        <div class="field-suppliers-section">
+          <div class="field-suppliers-title-bar">
+            <div class="field-suppliers-title">
+              <span>🚜</span>
+              <span>Details of Verified Producers & Hubs in this Field</span>
+            </div>
+            <span style="font-size: 0.78rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 4px 10px; border-radius: 8px; border: 1px solid #a7f3d0;">
+              Active Kenya Supply Corridor
+            </span>
+          </div>
+
+          <div class="field-suppliers-grid">
+            ${fieldSuppliers.map((sup) => {
+              return `
+                <div class="field-supplier-card ${sup.isPrimaryHub ? "is-primary-hub" : ""}">
+                  <div>
+                    <div class="supplier-card-top">
+                      <div class="supplier-card-identity">
+                        <div class="supplier-card-avatar">${sup.avatar}</div>
+                        <div>
+                          <div class="supplier-card-name">${sup.name}</div>
+                          <div class="supplier-card-badge">${sup.badge}</div>
+                        </div>
+                      </div>
+                      <span class="supplier-card-rating">★ ${sup.rating} (${sup.reviewCount || 40})</span>
+                    </div>
+
+                    <div style="font-size: 0.78rem; color: #475569; margin-bottom: 6px;">
+                      📍 <strong>Origin Hub</strong>: ${sup.origin} ${sup.distance ? `<span style="color: #64748b;">(${sup.distance})</span>` : ""}
+                    </div>
+
+                    <div class="supplier-card-specs">
+                      <div class="supplier-spec-item">
+                        <span class="supplier-spec-label">Delivery SLA:</span>
+                        <span class="supplier-spec-val">${sup.deliverySla}</span>
+                      </div>
+                      <div class="supplier-spec-item">
+                        <span class="supplier-spec-label">Min Order:</span>
+                        <span class="supplier-spec-val">${sup.minOrder}</span>
+                      </div>
+                      <div class="supplier-spec-item">
+                        <span class="supplier-spec-label">Daily Capacity:</span>
+                        <span class="supplier-spec-val">${sup.capacity}</span>
+                      </div>
+                      <div class="supplier-spec-item">
+                        <span class="supplier-spec-label">Contact Person:</span>
+                        <span class="supplier-spec-val">${sup.contactPerson.split("(")[0].trim()}</span>
+                      </div>
+                    </div>
+
+                    <div style="font-size: 0.72rem; color: #047857; background: #f0fdf4; padding: 6px 8px; border-radius: 6px; border: 1px solid #bbf7d0; margin-bottom: 8px;">
+                      🛡️ <strong>Quality Specs</strong>: ${sup.certifications}
+                    </div>
+
+                    <div class="supplier-specialties-wrap">
+                      ${sup.specialties.map((s) => `<span class="supplier-specialty-pill">${s}</span>`).join("")}
+                    </div>
+                  </div>
+
+                  <div class="supplier-card-footer">
+                    <span style="color: #64748b;">Direct Dispatch:</span>
+                    <a href="tel:${sup.phone}" class="supplier-contact-link">
+                      <span>📞</span>
+                      <span>${sup.phone}</span>
+                    </a>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+
+        <!-- Live Kenya Wholesale Market Rates & Terminal Arbitrage -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">📊 Terminal Wholesale Market Intelligence (${matchedCommodity.name})</h3>
+              <div style="font-size: 0.78rem; color: #0284c7; font-weight: 700;">🇰🇪 ${matchedCommodity.swahiliName || "Viwango vya Marikiti"}</div>
+            </div>
+            <span style="background: #ecfdf5; color: #047857; font-size: 0.75rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; border: 1px solid #a7f3d0;">
+              🟢 ${matchedCommodity.dailyTrend}
+            </span>
+          </div>
+
+          <div class="rate-highlights">
+            <div>
+              <div class="rate-stat-label">Nairobi Benchmark (${matchedCommodity.todayDate.split(",")[0]})</div>
+              <div class="rate-stat-value">${matchedCommodity.wholesaleRange}</div>
+            </div>
+            <div>
+              <div class="rate-stat-label">Bulk Pack Container Benchmark</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: #047857;">${matchedCommodity.bulkBagPrice}</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Terminal Price Comparison Across Kenya:</div>
+            <table class="market-table">
+              <thead>
+                <tr>
+                  <th>Market Location</th>
+                  <th>Current Wholesale Rate</th>
+                  <th>Inflow Supply Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${matchedCommodity.primaryMarkets.map((m) => `
+                  <tr>
+                    <td><strong>${m.name}</strong></td>
+                    <td>${m.price}</td>
+                    <td><span style="font-weight: 700; color: ${m.trend.includes("High") || m.trend.includes("Volatile") ? "#b91c1c" : "#047857"};">${m.trend}</span></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Interactive Wholesale Margin Calculator pre-filled for this commodity -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+              <span style="font-size: 0.84rem; font-weight: 800; color: #0f172a;">🧮 Farm-to-Kitchen Wholesale Arbitrage Calculator</span>
+              <span style="font-size: 0.72rem; color: #64748b;">Live for ${product.name.split("(")[0].trim()}</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 12px;">
+              <div>
+                <label style="font-size: 0.72rem; font-weight: 700; color: #64748b; display: block; margin-bottom: 3px;">Farm Buy Price (KES/kg):</label>
+                <input type="number" id="view-calc-farm" value="${field.farmGatePrice || 42}" step="0.5" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;" oninput="window.calcViewMargin()">
+              </div>
+              <div>
+                <label style="font-size: 0.72rem; font-weight: 700; color: #64748b; display: block; margin-bottom: 3px;">Transit & Chill (KES/kg):</label>
+                <input type="number" id="view-calc-transit" value="${field.transitCost || 9}" step="0.5" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;" oninput="window.calcViewMargin()">
+              </div>
+              <div>
+                <label style="font-size: 0.72rem; font-weight: 700; color: #64748b; display: block; margin-bottom: 3px;">Delivered HoReCa Price:</label>
+                <input type="number" id="view-calc-sale" value="${product.price}" step="0.5" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;" oninput="window.calcViewMargin()">
+              </div>
+              <div>
+                <label style="font-size: 0.72rem; font-weight: 700; color: #64748b; display: block; margin-bottom: 3px;">Delivery Run Batch (kg):</label>
+                <input type="number" id="view-calc-vol" value="1500" step="100" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;" oninput="window.calcViewMargin()">
+              </div>
+            </div>
+
+            <div class="calc-results-panel" style="padding: 12px 14px;">
+              <div>
+                <div style="font-size: 0.7rem; opacity: 0.85; text-transform: uppercase;">Gross Profit / kg</div>
+                <div class="calc-stat-val" id="view-res-margin-kg">KES ${((product.price) - (field.farmGatePrice + field.transitCost)).toFixed(2)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.7rem; opacity: 0.85; text-transform: uppercase;">Gross Margin %</div>
+                <div class="calc-stat-val" id="view-res-margin-pct">${(((product.price - (field.farmGatePrice + field.transitCost)) / product.price) * 100).toFixed(1)}%</div>
+              </div>
+              <div>
+                <div style="font-size: 0.7rem; opacity: 0.85; text-transform: uppercase;">Projected Run Profit</div>
+                <div class="calc-stat-val" id="view-res-profit-run">KES ${Math.round((product.price - (field.farmGatePrice + field.transitCost)) * 1500).toLocaleString()}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Produce from this Field -->
+        ${relatedProducts.length > 0 ? `
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <span>📦</span>
+              <span>Other Products Available from this Producer Field</span>
+            </div>
+            <div class="related-field-grid">
+              ${relatedProducts.map((rel) => `
+                <div class="related-field-item-card" onclick="window.openProductSourcingView('${rel.id}')">
+                  <img src="${rel.image}" alt="${rel.name}" class="related-item-img" onerror="this.src='src/assets/products/potatoes.jpg'">
+                  <div class="related-item-title">${rel.name}</div>
+                  <div class="related-item-price">KES ${rel.price.toLocaleString()} / ${rel.unit}</div>
+                  <div style="font-size: 0.7rem; color: #64748b;">${rel.supplierName || "Verified Producer"}</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+
+      </div>
+    </div>
+  `;
 }
 
-// Profit Margin Calculator Logic
-function renderMarginCalculator() {
-  updateCalculatorDefaults();
-  computeMargin();
+// Backward compatibility function for renderMarketRates
+export function renderMarketRates() {
+  renderProductSourcingViewPage(store.activeViewProductId);
 }
 
-function updateCalculatorDefaults() {
-  const commoditySelect = document.getElementById("calc-commodity");
-  const farmGateInput = document.getElementById("calc-farm-gate");
-  const transportInput = document.getElementById("calc-transport");
-  const salePriceInput = document.getElementById("calc-sale-price");
+// View Page Interactive Order Quantity Handlers
+window.adjustViewProductQty = (delta) => {
+  const input = document.getElementById("view-qty-input");
+  if (!input) return;
+  const product = store.inventory.find((p) => p.id === store.activeViewProductId);
+  const min = parseInt(input.min) || product?.moq || 1;
+  const inCart = store.cart[store.activeViewProductId]?.quantity || 0;
+  const totalStock = typeof product?.inStock === "number" ? product.inStock : 99999;
+  const maxAvailable = Math.max(min, totalStock - inCart);
 
-  if (!commoditySelect || !farmGateInput || !salePriceInput) return;
+  const current = parseInt(input.value) || min;
+  const nextVal = Math.min(maxAvailable, Math.max(min, current + delta));
+  input.value = nextVal;
+  window.updateViewSubtotal();
+};
 
-  const selected = commoditySelect.value;
-  if (selected === "onions") {
-    farmGateInput.value = 48;
-    transportInput.value = 8;
-    salePriceInput.value = 78;
-  } else if (selected === "tomatoes") {
-    farmGateInput.value = 45;
-    transportInput.value = 10;
-    salePriceInput.value = 85;
-  } else if (selected === "potatoes") {
-    farmGateInput.value = 42;
-    transportInput.value = 9;
-    salePriceInput.value = 72;
-  } else if (selected === "peas") {
-    farmGateInput.value = 85;
-    transportInput.value = 12;
-    salePriceInput.value = 150;
-  } else if (selected === "beef") {
-    farmGateInput.value = 480;
-    transportInput.value = 25;
-    salePriceInput.value = 650;
-  } else if (selected === "prawns") {
-    farmGateInput.value = 1600;
-    transportInput.value = 150;
-    salePriceInput.value = 2400;
-  } else if (selected === "fish") {
-    farmGateInput.value = 380;
-    transportInput.value = 35;
-    salePriceInput.value = 540;
-  }
-  computeMargin();
-}
+window.setViewProductQty = (qty) => {
+  const input = document.getElementById("view-qty-input");
+  if (!input) return;
+  const product = store.inventory.find((p) => p.id === store.activeViewProductId);
+  const min = parseInt(input.min) || product?.moq || 1;
+  const inCart = store.cart[store.activeViewProductId]?.quantity || 0;
+  const totalStock = typeof product?.inStock === "number" ? product.inStock : 99999;
+  const maxAvailable = Math.max(min, totalStock - inCart);
 
-function computeMargin() {
-  const farmGate = parseFloat(document.getElementById("calc-farm-gate")?.value) || 0;
-  const transport = parseFloat(document.getElementById("calc-transport")?.value) || 0;
-  const salePrice = parseFloat(document.getElementById("calc-sale-price")?.value) || 0;
-  const volume = parseFloat(document.getElementById("calc-volume")?.value) || 1000;
+  input.value = Math.min(maxAvailable, Math.max(min, qty));
+  window.updateViewSubtotal();
+};
 
-  const totalCostPerKg = farmGate + transport;
-  const grossMarginPerKg = salePrice - totalCostPerKg;
-  const marginPercentage = salePrice > 0 ? ((grossMarginPerKg / salePrice) * 100).toFixed(1) : 0;
-  const totalProfitRun = grossMarginPerKg * volume;
+window.updateViewSubtotal = () => {
+  const input = document.getElementById("view-qty-input");
+  const product = store.inventory.find((p) => p.id === store.activeViewProductId);
+  if (!input || !product) return;
 
-  const marginPerKgEl = document.getElementById("res-margin-kg");
-  const marginPctEl = document.getElementById("res-margin-pct");
-  const profitRunEl = document.getElementById("res-profit-run");
+  const qty = parseInt(input.value) || product.moq;
+  const priceUsd = typeof product.priceUsd === "number" ? product.priceUsd : (product.price / store.exchangeRate);
+  const totalKes = product.price * qty;
+  const totalUsd = priceUsd * qty;
 
-  if (marginPerKgEl) marginPerKgEl.textContent = `KES ${grossMarginPerKg.toFixed(2)}`;
-  if (marginPctEl) marginPctEl.textContent = `${marginPercentage}%`;
-  if (profitRunEl) profitRunEl.textContent = `KES ${Math.round(totalProfitRun).toLocaleString()}`;
-}
+  const kesEl = document.getElementById("view-subtotal-kes");
+  const usdEl = document.getElementById("view-subtotal-usd");
+  if (kesEl) kesEl.textContent = `KES ${totalKes.toLocaleString()}`;
+  if (usdEl) usdEl.textContent = `≈ $${totalUsd.toFixed(2)} USD`;
+};
+
+window.addViewProductToOrder = () => {
+  const product = store.inventory.find((p) => p.id === store.activeViewProductId);
+  if (!product) return;
+  const input = document.getElementById("view-qty-input");
+  const qty = parseInt(input ? input.value : product.moq) || product.moq;
+
+  // Update input on storefront product card so window.addToOrder uses this exact quantity
+  const cardInput = document.getElementById(`qty-input-${product.id}`);
+  if (cardInput) cardInput.value = qty;
+
+  window.addToOrder(product.id);
+  // Re-render view page to update packhouse volume meter
+  renderProductSourcingViewPage(product.id);
+};
+
+window.calcViewMargin = () => {
+  const farm = parseFloat(document.getElementById("view-calc-farm")?.value) || 0;
+  const transit = parseFloat(document.getElementById("view-calc-transit")?.value) || 0;
+  const sale = parseFloat(document.getElementById("view-calc-sale")?.value) || 0;
+  const vol = parseFloat(document.getElementById("view-calc-vol")?.value) || 1000;
+
+  const grossPerKg = sale - (farm + transit);
+  const marginPct = sale > 0 ? ((grossPerKg / sale) * 100).toFixed(1) : 0;
+  const totalRunProfit = grossPerKg * vol;
+
+  const marginKgEl = document.getElementById("view-res-margin-kg");
+  const marginPctEl = document.getElementById("view-res-margin-pct");
+  const profitRunEl = document.getElementById("view-res-profit-run");
+
+  if (marginKgEl) marginKgEl.textContent = `KES ${grossPerKg.toFixed(2)}`;
+  if (marginPctEl) marginPctEl.textContent = `${marginPct}%`;
+  if (profitRunEl) profitRunEl.textContent = `KES ${Math.round(totalRunProfit).toLocaleString()}`;
+};
+
 
 // =========================================================================
 // 3. NAIROBI RESTAURANT SALES LEADS DIRECTORY
